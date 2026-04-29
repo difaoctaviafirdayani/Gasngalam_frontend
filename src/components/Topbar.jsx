@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import Sidebar from './Sidebar';
+import logo from '../assets/logo gasngalam.svg';
 
 export default function Topbar() {
   const { user, logout } = useApp();
@@ -18,11 +19,13 @@ export default function Topbar() {
       <nav className="topbar">
         <button className="menu-btn" onClick={() => setSidebarOpen(true)}>&#9776;</button>
         <a className="logo-wrap" onClick={() => navigate('/')}>
-          <div className="logo-text">Gas<span>Ngalam</span></div>
+          <img src={logo} alt="GasNgalam" style={{ height: 28, objectFit: 'contain' }} />
         </a>
-        <div className="search-wrap">
-          <svg className="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input className="searchbar" type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Cari Destinasi Wisata" onKeyDown={e => e.key === 'Enter' && doSearch()} />
+        <div className="search-wrap" style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+          <div style={{ position: 'relative', width: '100%', maxWidth: 480 }}>
+            <svg className="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input className="searchbar" type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Cari Destinasi Wisata" onKeyDown={e => e.key === 'Enter' && doSearch()} />
+          </div>
         </div>
         <div className="topbar-right">
           {!user ? (
