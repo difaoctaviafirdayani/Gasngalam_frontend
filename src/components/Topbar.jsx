@@ -21,10 +21,20 @@ export default function Topbar() {
         <a className="logo-wrap" onClick={() => navigate('/')}>
           <img src={logo} alt="GasNgalam" style={{ height: 28, objectFit: 'contain' }} />
         </a>
-        <div className="search-wrap" style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+        <div className="search-wrap">
           <div style={{ position: 'relative', width: '100%', maxWidth: 480 }}>
-            <svg className="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input className="searchbar" type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Cari Destinasi Wisata" onKeyDown={e => e.key === 'Enter' && doSearch()} />
+            <svg className="search-icon" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+          <input
+            className="searchbar"
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Cari Destinasi Wisata"
+            onKeyDown={e => e.key === 'Enter' && doSearch()}
+          />
           </div>
         </div>
         <div className="topbar-right">
