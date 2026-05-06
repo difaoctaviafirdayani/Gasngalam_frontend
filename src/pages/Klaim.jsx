@@ -30,7 +30,7 @@ export default function Klaim() {
   const submit = async () => {
     if (!requireLogin('Login dulu untuk mengajukan klaim bisnis.')) return;
     if (!form.nama || !form.email || !form.hp || !form.ket) {
-      showToast('Harap lengkapi seluruh data yang diperlukan');
+      showToast('Harap lengkapi seluruh data yang wajib diisi (*)');
       return;
     }
     setLoading(true);
@@ -46,38 +46,56 @@ export default function Klaim() {
     if (ok) setTimeout(() => navigate(-1), 1500);
   };
 
+  const Lbl = ({ children, required }) => (
+    <label style={{ fontSize: 12, fontWeight: 600, marginBottom: 5, display: 'block', color: 'var(--text2)' }}>
+      {children} {required && <span style={{ color: 'var(--red)', fontWeight: 700 }}>*</span>}
+    </label>
+  );
+
   return (
     <div>
       <Topbar />
       <div className="content">
         <button className="back-btn" onClick={() => navigate(-1)}>← Kembali</button>
+
         <div className="klaim-header">
           <h2>Ajukan Klaim Bisnis</h2>
           <p>Kelola informasi destinasi wisata Anda secara resmi melalui GasNgalam</p>
           <div className="klaim-dest-badge">📍 Destinasi ID: {id}</div>
         </div>
+
+        <p style={{ fontSize: 12, color: 'var(--text3)', marginBottom: 16 }}>
+          <span style={{ color: 'var(--red)', fontWeight: 700 }}>*</span> Wajib diisi
+        </p>
+
         <div className="form-card">
           <div className="form-row">
             <div className="fg">
-              <label>Nama Lengkap</label>
+              <Lbl required>Nama Lengkap</Lbl>
               <input value={form.nama} onChange={e => setForm({ ...form, nama: e.target.value })} placeholder="Masukkan nama lengkap" />
             </div>
             <div className="fg">
-              <label>Email</label>
+              <Lbl required>Email</Lbl>
               <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="nama@gmail.com" />
             </div>
           </div>
+
           <div className="fg">
-            <label>Nomor Telepon</label>
+            <Lbl required>Nomor Telepon</Lbl>
             <input value={form.hp} onChange={e => setForm({ ...form, hp: e.target.value })} placeholder="08XXXXXXXXXX" />
-          </div>
-          <div className="fg">
-            <label>Keterangan</label>
-            <textarea value={form.ket} onChange={e => setForm({ ...form, ket: e.target.value })} placeholder="Jelaskan hubungan Anda dengan destinasi ini dan apa yang ingin diubah..." />
           </div>
 
           <div className="fg">
-            <label>Bukti Pendukung <span style={{ fontWeight: 400, color: 'var(--text4)', fontSize: 12 }}>(opsional)</span></label>
+            <Lbl required>Keterangan</Lbl>
+            <textarea
+              value={form.ket}
+              onChange={e => setForm({ ...form, ket: e.target.value })}
+              placeholder="Jelaskan hubungan Anda dengan destinasi ini dan apa yang ingin diubah..."
+            />
+          </div>
+
+          <div className="fg">
+            <Lbl>Bukti Pendukung <span style={{ fontWeight: 400, color: 'var(--text4)', fontSize: 11 }}>(opsional)</span></Lbl>
             <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: 'none' }} onChange={handleFile} />
             {!file ? (
               <div className="upload-zone" onClick={() => fileRef.current.click()} style={{ cursor: 'pointer' }}>
@@ -104,7 +122,7 @@ export default function Klaim() {
           <div className="form-actions">
             <button className="btn-secondary" onClick={() => navigate(-1)}>Batal</button>
             <button className="btn-primary" onClick={submit} disabled={loading}>
-              {loading ? 'Mengirim...' : 'Kirim'}
+              {loading ? 'Mengirim...' : 'Kirim Pengajuan'}
             </button>
           </div>
         </div>

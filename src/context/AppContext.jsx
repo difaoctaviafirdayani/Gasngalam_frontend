@@ -39,17 +39,22 @@ export function AppProvider({ children }) {
 
   const closeLoginModal = () => setLoginModal({ open: false, msg: '' });
 
+  /* ─── AUTH ─────────────────────────────────────────────── */
+
   const login = async (email, password) => {
     if (!email || !password) { showToast('Email dan password harus diisi'); return null; }
     try {
-      const res = await api.post('/login', { email, password });
+      const res  = await api.post('/login', { email, password });
       const data = res.data;
       localStorage.setItem('token', data.token);
       localStorage.setItem('user',  data.user.name);
       localStorage.setItem('role',  data.user.role);
       setUser(data.user.name);
       setRole(data.user.role);
-      showToast(data.user.role === 'admin' ? 'Login sebagai Admin berhasil!' : `Selamat datang, ${data.user.name}!`);
+      showToast(data.user.role === 'admin'
+        ? 'Login sebagai Admin berhasil!'
+        : `Selamat datang, ${data.user.name}!`
+      );
       api.get('/favorites/ids').then(r => setFavs(new Set(r.data))).catch(() => {});
       return data.user.role;
     } catch (err) {
@@ -60,7 +65,10 @@ export function AppProvider({ children }) {
 
   const register = async (name, email, phone, password, passwordConfirmation) => {
     try {
-      const res = await api.post('/register', { name, email, phone, password, password_confirmation: passwordConfirmation });
+      const res  = await api.post('/register', {
+        name, email, phone, password,
+        password_confirmation: passwordConfirmation,
+      });
       const data = res.data;
       localStorage.setItem('token', data.token);
       localStorage.setItem('user',  data.user.name);
@@ -80,9 +88,14 @@ export function AppProvider({ children }) {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('role');
-    setUser(null); setRole(null); setFavs(new Set());
+    setUser(null);
+    setRole(null);
+    setFavs(new Set());
+    setComments({});
     showToast('Sampai jumpa!');
   };
+
+  /* ─── FAVORIT ───────────────────────────────────────────── */
 
   const toggleFav = async (id) => {
     if (!requireLogin('Login dulu untuk menyimpan destinasi favorit.')) return;
@@ -102,30 +115,54 @@ export function AppProvider({ children }) {
     }
   };
 
+  /* ─── KOMENTAR ──────────────────────────────────────────── */
+
   const fetchComments = async (destId) => {
     try {
       const res = await api.get(`/destinations/${destId}/reviews`);
       const formatted = res.data.map(r => ({
-        user:     r.user?.name || 'Anonim',
-        time:     new Date(r.created_at).toLocaleDateString('id-ID'),
-        text:     r.comment,
-        rating:   r.rating,
-        reported: r.is_reported || false,
+        id:             r.id,
+        user:           r.user?.name || 'Anonim',
+        time:           new Date(r.created_at).toLocaleDateString('id-ID'),
+        text:           r.comment,
+        rating:         r.rating,
+        is_reported:    r.is_reported || false,
+        photo_full_url: r.photo_full_url || null,
       }));
       setComments(prev => ({ ...prev, [destId]: formatted }));
     } catch {}
   };
 
-  const addComment = async (destId, { rating, text }) => {
+  const addComment = async (destId, { rating, text, photo }) => {
     if (!requireLogin('Login dulu untuk memberikan ulasan.')) return;
     try {
-      await api.post(`/destinations/${destId}/reviews`, { rating, comment: text });
+      const formData = new FormData();
+      formData.append('rating',  rating);
+      formData.append('comment', text);
+      if (photo) formData.append('photo', photo);
+      await api.post(`/destinations/${destId}/reviews`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       showToast('Ulasan berhasil ditambahkan!');
       await fetchComments(destId);
     } catch (err) {
       showToast(err.message || 'Gagal mengirim ulasan');
     }
   };
+
+  const reportComment = async (reviewId) => {
+    if (!requireLogin('Login dulu untuk melaporkan ulasan.')) return false;
+    try {
+      await api.post(`/reviews/${reviewId}/report`);
+      showToast('Ulasan berhasil dilaporkan. Admin akan meninjau.');
+      return true;
+    } catch (err) {
+      showToast(err.message || 'Gagal melaporkan ulasan');
+      return false;
+    }
+  };
+
+  /* ─── KLAIM ─────────────────────────────────────────────── */
 
   const addKlaim = async ({ destination_id, nama, email, hp, ket, file }) => {
     if (!requireLogin('Login dulu untuk mengajukan klaim bisnis.')) return false;
@@ -137,7 +174,9 @@ export function AppProvider({ children }) {
       formData.append('phone',          hp);
       formData.append('description',    ket);
       if (file) formData.append('document', file);
-      await api.post('/claims', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await api.post('/claims', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       showToast('Klaim berhasil dikirim! Menunggu verifikasi admin.');
       return true;
     } catch (err) {
@@ -150,7 +189,7 @@ export function AppProvider({ children }) {
     <AppContext.Provider value={{
       user, role, favs, comments, toast, loginModal,
       login, register, logout, toggleFav,
-      addComment, fetchComments, addKlaim,
+      addComment, fetchComments, addKlaim, reportComment,
       requireLogin, closeLoginModal, showToast,
     }}>
       {children}
