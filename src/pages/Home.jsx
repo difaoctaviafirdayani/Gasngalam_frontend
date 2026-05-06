@@ -137,7 +137,7 @@ export default function Home() {
       <div className="hero">
         <div className="hero-inner">
           <div className="hero-eyebrow">🗺️ Wisata Kota Malang · Jawa Timur</div>
-          <h1 className="hero-title">EKSPLOR MALANG</h1>
+          <h1 className="hero-title">EKSPLOR KOTA MALANG</h1>
           <p className="hero-sub">Temukan Destinasi Terbaik di Kota Malang — dari taman kota yang asri hingga kampung budaya yang memukau.</p>
         </div>
       </div>
