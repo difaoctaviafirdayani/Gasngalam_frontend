@@ -18,12 +18,13 @@ export default function Home() {
   const [destinations, setDestinations] = useState([]);
   const [categories, setCategories]     = useState(['Semua']);
   const [loading, setLoading]           = useState(true);
-  const [sortBy, setSortBy]             =useState('semua');
+  const [sortBy, setSortBy]             = useState('semua');
   const { favs, toggleFav }             = useApp();
   const navigate                        = useNavigate();
 
   useEffect(() => {
     setLoading(true);
+    setSortBy('semua');
     const params = cat !== 'Semua' ? { category: cat } : {};
     api.get('/destinations', { params })
       .then(res => setDestinations(res.data))
@@ -41,6 +42,22 @@ export default function Home() {
     if (d.gradient) return d.gradient;
     if (d.color) return `linear-gradient(135deg, ${d.color}, ${d.color}cc)`;
     return 'linear-gradient(135deg,#3498db,#2980b9)';
+  };
+
+  const parseDistance = (str) => {
+    if (!str) return Infinity;
+    const num = parseFloat(str.replace(',', '.'));
+    if (str.includes('km')) return num * 1000;
+    return num;
+  };
+
+  const getSorted = (list) => {
+    if (sortBy === 'terdekat')
+      return [...list].sort((a, b) => parseDistance(a.distance) - parseDistance(b.distance));
+    if (sortBy === 'terpopuler')
+      return [...list].sort((a, b) =>
+        b.rating - a.rating || b.review_count - a.review_count);
+    return list;
   };
 
   const cardHtml = (d) => (
@@ -122,11 +139,17 @@ export default function Home() {
           <strong style={{ color: 'var(--text)' }}>{CAT_ICONS[cat] || '📍'} {cat}</strong> — Menampilkan semua destinasi {cat.toLowerCase()}
         </div>
         <div className="sort-tabs">
-          <button className="sort-btn active">Semua</button>
-          <button className="sort-btn">Terdekat</button>
-          <button className="sort-btn">Terpopuler</button>
+          {['semua', 'terdekat', 'terpopuler'].map(s => (
+            <button
+              key={s}
+              className={'sort-btn' + (sortBy === s ? ' active' : '')}
+              onClick={() => setSortBy(s)}
+            >
+              {s.charAt(0).toUpperCase() + s.slice(1)}
+            </button>
+          ))}
         </div>
-        {destinations.map(listHtml)}
+        {getSorted(destinations).map(listHtml)}
       </>
     );
   };
@@ -137,7 +160,7 @@ export default function Home() {
       <div className="hero">
         <div className="hero-inner">
           <div className="hero-eyebrow">🗺️ Wisata Kota Malang · Jawa Timur</div>
-          <h1 className="hero-title">EKSPLOR KOTA MALANG</h1>
+          <h1 className="hero-title">EKSPLOR MALANG</h1>
           <p className="hero-sub">Temukan Destinasi Terbaik di Kota Malang — dari taman kota yang asri hingga kampung budaya yang memukau.</p>
         </div>
       </div>
