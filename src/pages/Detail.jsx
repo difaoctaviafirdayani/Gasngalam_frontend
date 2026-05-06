@@ -7,7 +7,7 @@ import api from '../services/api';
 export default function Detail() {
   const { id }                  = useParams();
   const navigate                = useNavigate();
-  const { favs, toggleFav, comments, fetchComments, requireLogin } = useApp();
+  const { favs, toggleFav, comments, fetchComments, requireLogin, userCoords, hitungJarak } = useApp();
   const [d, setD]               = useState(null);
   const [loading, setLoading]   = useState(true);
 
@@ -46,6 +46,10 @@ export default function Detail() {
     return 'linear-gradient(135deg,#3498db,#2980b9)';
   };
 
+  const jarakKm = (userCoords && d.latitude && d.longitude)
+    ? hitungJarak(userCoords.lat, userCoords.lng, d.latitude, d.longitude).toFixed(1) + ' km'
+    : d.distance || '-';
+
   return (
     <div>
       <Topbar />
@@ -63,7 +67,7 @@ export default function Detail() {
               <div className="detail-meta-item" style={{ color: 'var(--gold)', fontWeight: 700 }}>
                 ★ {d.rating} <span style={{ fontWeight: 400, color: 'var(--text3)' }}>({d.review_count} ulasan)</span>
               </div>
-              <div className="detail-meta-item">🗺️ {d.distance} dari lokasimu</div>
+              <div className="detail-meta-item">🗺️ {jarakKm} dari lokasimu</div>
               <div style={{ background: 'var(--bg)', padding: '3px 10px', borderRadius: 99, fontSize: 11.5, color: 'var(--text2)', fontWeight: 500, border: '1px solid var(--border)' }}>
                 {d.category}
               </div>
@@ -117,11 +121,11 @@ export default function Detail() {
             <div className="info-card">
               <div className="info-card-title">Info Destinasi</div>
               {[
-                ['Alamat',         d.address],
-                ['Contact Person', d.contact],
+                ['Alamat',          d.address],
+                ['Contact Person',  d.contact],
                 ['Jam Operasional', d.open_hours],
-                ['HTM',            d.ticket_price, 'price'],
-                ['Sosial Media',   d.social_media],
+                ['HTM',             d.ticket_price, 'price'],
+                ['Sosial Media',    d.social_media],
               ].map(([label, val, cls]) => (
                 <div key={label} className="info-row">
                   <div className="info-label">{label}</div>
