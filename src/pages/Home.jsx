@@ -18,8 +18,8 @@ export default function Home() {
   const [destinations, setDestinations] = useState([]);
   const [categories, setCategories]     = useState(['Semua']);
   const [loading, setLoading]           = useState(true);
-  const [sortBy, setSortBy]             =useState('semua');
-  const { favs, toggleFav }             = useApp();
+  const [sortBy, setSortBy]             = useState('semua');
+  const { favs, toggleFav, userCoords, hitungJarak } = useApp();
   const navigate                        = useNavigate();
 
   useEffect(() => {
@@ -37,10 +37,35 @@ export default function Home() {
       .catch(() => {});
   }, []);
 
+  const getSortedDestinations = () => {
+    if (sortBy === 'terdekat' && userCoords) {
+      return [...destinations].sort((a, b) => {
+        const jA = (a.latitude && a.longitude)
+          ? hitungJarak(userCoords.lat, userCoords.lng, a.latitude, a.longitude)
+          : 9999;
+        const jB = (b.latitude && b.longitude)
+          ? hitungJarak(userCoords.lat, userCoords.lng, b.latitude, b.longitude)
+          : 9999;
+        return jA - jB;
+      });
+    }
+    if (sortBy === 'terpopuler') {
+      return [...destinations].sort((a, b) => b.rating - a.rating);
+    }
+    return destinations;
+  };
+
   const gradForColor = (d) => {
     if (d.gradient) return d.gradient;
     if (d.color) return `linear-gradient(135deg, ${d.color}, ${d.color}cc)`;
     return 'linear-gradient(135deg,#3498db,#2980b9)';
+  };
+
+  const getJarak = (d) => {
+    if (userCoords && d.latitude && d.longitude) {
+      return hitungJarak(userCoords.lat, userCoords.lng, d.latitude, d.longitude).toFixed(1) + ' km';
+    }
+    return d.distance || '-';
   };
 
   const cardHtml = (d) => (
@@ -57,7 +82,7 @@ export default function Home() {
         <div className="card-loc">📍 {d.location}</div>
         <div className="card-footer">
           <div className="card-rating">★ {d.rating} <span style={{ fontWeight: 400, color: 'var(--text4)' }}>({d.review_count})</span></div>
-          <div className="card-dist">{d.distance}</div>
+          <div className="card-dist">{getJarak(d)}</div>
         </div>
       </div>
     </div>
@@ -75,7 +100,7 @@ export default function Home() {
         </div>
       </div>
       <div className="list-right">
-        <div style={{ fontSize: 11, color: 'var(--text4)' }}>{d.distance} 🗺️</div>
+        <div style={{ fontSize: 11, color: 'var(--text4)' }}>{getJarak(d)} 🗺️</div>
         <button className="fav-list-btn" onClick={e => { e.stopPropagation(); toggleFav(d.id); }}>
           {favs.has(d.id) ? '❤️' : '🤍'}
         </button>
@@ -122,11 +147,11 @@ export default function Home() {
           <strong style={{ color: 'var(--text)' }}>{CAT_ICONS[cat] || '📍'} {cat}</strong> — Menampilkan semua destinasi {cat.toLowerCase()}
         </div>
         <div className="sort-tabs">
-          <button className="sort-btn active">Semua</button>
-          <button className="sort-btn">Terdekat</button>
-          <button className="sort-btn">Terpopuler</button>
+          <button className={'sort-btn' + (sortBy === 'semua' ? ' active' : '')} onClick={() => setSortBy('semua')}>Semua</button>
+          <button className={'sort-btn' + (sortBy === 'terdekat' ? ' active' : '')} onClick={() => setSortBy('terdekat')}>Terdekat</button>
+          <button className={'sort-btn' + (sortBy === 'terpopuler' ? ' active' : '')} onClick={() => setSortBy('terpopuler')}>Terpopuler</button>
         </div>
-        {destinations.map(listHtml)}
+        {getSortedDestinations().map(listHtml)}
       </>
     );
   };

@@ -14,6 +14,7 @@ export default function AdminWisata() {
   const [editData, setEditData]         = useState(null);
   const [form, setForm] = useState({
     name: '', category: '', location: '',
+    latitude: '', longitude: '',
     ticket_price: '', open_hours: '', description: '',
     address: '', contact: '', social_media: '',
     image: null, imagePreview: null,
@@ -31,6 +32,7 @@ export default function AdminWisata() {
   const resetForm = () => {
     setForm({
       name: '', category: '', location: '',
+      latitude: '', longitude: '',
       ticket_price: '', open_hours: '', description: '',
       address: '', contact: '', social_media: '',
       image: null, imagePreview: null,
@@ -46,6 +48,8 @@ export default function AdminWisata() {
       name:         d.name         || '',
       category:     d.category     || '',
       location:     d.location     || '',
+      latitude:     d.latitude     || '',
+      longitude:    d.longitude    || '',
       ticket_price: d.ticket_price || '',
       open_hours:   d.open_hours   || '',
       description:  d.description  || '',
@@ -59,16 +63,23 @@ export default function AdminWisata() {
   };
 
   const submitForm = async () => {
-    if (!form.name || !form.category || !form.location) {
-      showToast('Nama, kategori, dan lokasi wajib diisi'); return;
+    if (!form.name || !form.category || !form.location || !form.latitude || !form.longitude) {
+      showToast('Nama, kategori, lokasi, latitude, dan longitude wajib diisi'); return;
     }
     try {
       const payload = {
-        name: form.name, category: form.category, location: form.location,
-        ticket_price: form.ticket_price, open_hours: form.open_hours,
-        description: form.description, address: form.address,
-        contact: form.contact, social_media: form.social_media,
-        is_active: true,
+        name:         form.name,
+        category:     form.category,
+        location:     form.location,
+        latitude:     form.latitude,
+        longitude:    form.longitude,
+        ticket_price: form.ticket_price,
+        open_hours:   form.open_hours,
+        description:  form.description,
+        address:      form.address,
+        contact:      form.contact,
+        social_media: form.social_media,
+        is_active:    true,
       };
       if (editData) {
         await api.put(`/admin/destinations/${editData.id}`, payload);
@@ -138,6 +149,17 @@ export default function AdminWisata() {
             <div className="fg">
               <label>Alamat</label>
               <input value={form.address} onChange={set('address')} placeholder="Alamat Lengkap" />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="fg">
+              <label>Latitude *</label>
+              <input value={form.latitude} onChange={set('latitude')} placeholder="Contoh: -7.983908" />
+            </div>
+            <div className="fg">
+              <label>Longitude *</label>
+              <input value={form.longitude} onChange={set('longitude')} placeholder="Contoh: 112.621391" />
             </div>
           </div>
 
