@@ -24,6 +24,7 @@ export default function Home() {
 
   useEffect(() => {
     setLoading(true);
+    setSortBy('semua');
     const params = cat !== 'Semua' ? { category: cat } : {};
     api.get('/destinations', { params })
       .then(res => setDestinations(res.data))
@@ -50,7 +51,8 @@ export default function Home() {
       });
     }
     if (sortBy === 'terpopuler') {
-      return [...destinations].sort((a, b) => b.rating - a.rating);
+      return [...destinations].sort((a, b) =>
+        b.rating - a.rating || b.review_count - a.review_count);
     }
     return destinations;
   };
@@ -147,9 +149,15 @@ export default function Home() {
           <strong style={{ color: 'var(--text)' }}>{CAT_ICONS[cat] || '📍'} {cat}</strong> — Menampilkan semua destinasi {cat.toLowerCase()}
         </div>
         <div className="sort-tabs">
-          <button className={'sort-btn' + (sortBy === 'semua' ? ' active' : '')} onClick={() => setSortBy('semua')}>Semua</button>
-          <button className={'sort-btn' + (sortBy === 'terdekat' ? ' active' : '')} onClick={() => setSortBy('terdekat')}>Terdekat</button>
-          <button className={'sort-btn' + (sortBy === 'terpopuler' ? ' active' : '')} onClick={() => setSortBy('terpopuler')}>Terpopuler</button>
+          {['semua', 'terdekat', 'terpopuler'].map(s => (
+            <button
+              key={s}
+              className={'sort-btn' + (sortBy === s ? ' active' : '')}
+              onClick={() => setSortBy(s)}
+            >
+              {s.charAt(0).toUpperCase() + s.slice(1)}
+            </button>
+          ))}
         </div>
         {getSortedDestinations().map(listHtml)}
       </>
@@ -162,7 +170,7 @@ export default function Home() {
       <div className="hero">
         <div className="hero-inner">
           <div className="hero-eyebrow">🗺️ Wisata Kota Malang · Jawa Timur</div>
-          <h1 className="hero-title">EKSPLOR KOTA MALANG</h1>
+          <h1 className="hero-title">EKSPLOR MALANG</h1>
           <p className="hero-sub">Temukan Destinasi Terbaik di Kota Malang — dari taman kota yang asri hingga kampung budaya yang memukau.</p>
         </div>
       </div>
