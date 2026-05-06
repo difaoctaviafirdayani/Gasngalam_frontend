@@ -59,20 +59,20 @@ export default function Klaim() {
         <div className="form-card">
           <div className="form-row">
             <div className="fg">
-              <label>Nama Lengkap</label>
+              <label>Nama Lengkap <span style={{color:'#e74c3c'}}>*</span></label>
               <input value={form.nama} onChange={e => setForm({ ...form, nama: e.target.value })} placeholder="Masukkan nama lengkap" />
             </div>
             <div className="fg">
-              <label>Email</label>
+              <label>Email <span style={{color:'#e74c3c'}}>*</span></label>
               <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="nama@gmail.com" />
             </div>
           </div>
           <div className="fg">
-            <label>Nomor Telepon</label>
+            <label>Nomor Telepon <span style={{color:'#e74c3c'}}>*</span></label>
             <input value={form.hp} onChange={e => setForm({ ...form, hp: e.target.value })} placeholder="08XXXXXXXXXX" />
           </div>
           <div className="fg">
-            <label>Keterangan</label>
+            <label>Keterangan <span style={{color:'#e74c3c'}}>*</span></label>
             <textarea value={form.ket} onChange={e => setForm({ ...form, ket: e.target.value })} placeholder="Jelaskan hubungan Anda dengan destinasi ini dan apa yang ingin diubah..." />
           </div>
 
