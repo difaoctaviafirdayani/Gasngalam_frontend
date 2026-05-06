@@ -18,6 +18,7 @@ export default function Home() {
   const [destinations, setDestinations] = useState([]);
   const [categories, setCategories]     = useState(['Semua']);
   const [loading, setLoading]           = useState(true);
+  const [sortBy, setSortBy]             =useState('semua');
   const { favs, toggleFav }             = useApp();
   const navigate                        = useNavigate();
 
