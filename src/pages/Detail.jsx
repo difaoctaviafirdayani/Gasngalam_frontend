@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Topbar from '../components/Topbar';
+import Footer from '../components/Footer';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
 
@@ -50,10 +51,17 @@ export default function Detail() {
     ? hitungJarak(userCoords.lat, userCoords.lng, d.latitude, d.longitude).toFixed(1) + ' km'
     : d.distance || '-';
 
+  const getMapsUrl = (address) => {
+    if (!address || address === '-') return null;
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  };
+
+  const mapsUrl = getMapsUrl(d.address);
+
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Topbar />
-      <div className="content">
+      <div className="content" style={{ flex: 1 }}>
         <button className="back-btn" onClick={() => navigate(-1)}>← Kembali</button>
         <div className="detail-hero" style={{ background: gradForColor() }}>
           <div className="detail-hero-emoji">{d.emoji || '📍'}</div>
@@ -120,22 +128,37 @@ export default function Detail() {
           <div>
             <div className="info-card">
               <div className="info-card-title">Info Destinasi</div>
-              {[
-                ['Alamat',          d.address],
-                ['Contact Person',  d.contact],
-                ['Jam Operasional', d.open_hours],
-                ['HTM',             d.ticket_price, 'price'],
-                ['Sosial Media',    d.social_media],
-              ].map(([label, val, cls]) => (
-                <div key={label} className="info-row">
-                  <div className="info-label">{label}</div>
-                  <div className={'info-val' + (cls ? ' ' + cls : '')} style={{ fontSize: 12 }}>{val || '-'}</div>
+
+              {/* Alamat + Tombol Google Maps */}
+              <div className="info-row">
+                <div className="info-label">Alamat</div>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                  <div className="info-val" style={{ fontSize: 12, flex: 1 }}>{d.address || '-'}</div>
+               {mapsUrl && (
+                    <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="maps-btn" title="Lihat di Google Maps">
+                      📍 Maps
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Info rows lainnya */}
+           {[
+                { label: 'Contact Person',  val: d.contact },
+                { label: 'Jam Operasional', val: d.open_hours },
+                { label: 'HTM',             val: d.ticket_price, cls: 'price' },
+                { label: 'Sosial Media',    val: d.social_media },
+              ].map((item) => (
+                <div key={item.label} className="info-row">
+                  <div className="info-label">{item.label}</div>
+                  <div className={'info-val' + (item.cls ? ' ' + item.cls : '')} style={{ fontSize: 12 }}>{item.val || '-'}</div>
                 </div>
               ))}
             </div>
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

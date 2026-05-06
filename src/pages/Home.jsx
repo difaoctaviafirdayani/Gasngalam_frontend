@@ -8,7 +8,7 @@ const CAT_ORDER = [
   'Wisata Budaya',
   'Taman Kota',
   'Wisata Edukasi',
-  'Kuliner & Belanja',
+  'Kuliner Legendaris',
   'Wisata Hiburan',
   'Wisata Alam',
 ];
@@ -18,7 +18,7 @@ const CAT_ICONS = {
   'Wisata Budaya':     '🏛️',
   'Taman Kota':        '🌳',
   'Wisata Edukasi':    '📚',
-  'Kuliner & Belanja': '🍜',
+  'Kuliner Legendaris':'🍜',
   'Wisata Hiburan':    '✨',
   'Wisata Alam':       '🏞️',
 };
@@ -48,12 +48,19 @@ export default function Home() {
     setLoading(true);
     const params = {};
     if (cat !== 'Semua') params.category = cat;
-    if (sortMode === 'popular') { params.sort = 'review_count'; params.dir = 'desc'; }
-    if (sortMode === 'nearest' && userCoords) {
-      params.sort = 'nearest';
-      params.lat  = userCoords.lat;
-      params.lng  = userCoords.lng;
+
+    if (cat !== 'Semua') {
+      if (sortMode === 'popular') {
+        params.sort = 'review_count';
+        params.dir  = 'desc';
+      }
+      if (sortMode === 'nearest' && userCoords) {
+        params.sort = 'nearest';
+        params.lat  = userCoords.lat;
+        params.lng  = userCoords.lng;
+      }
     }
+
     api.get('/destinations', { params })
       .then(res => setDestinations(res.data))
       .catch(() => setDestinations([]))
@@ -70,6 +77,11 @@ export default function Home() {
       })
       .catch(() => {});
   }, []);
+
+  const handleCatChange = (c) => {
+    setCat(c);
+    setSortMode('default');
+  };
 
   const handleNearest = () => {
     if (sortMode === 'nearest') { setSortMode('default'); return; }
@@ -88,7 +100,7 @@ export default function Home() {
     );
   };
 
-  const thumbEl = (d, height = 120) => {
+  const thumbEl = (d) => {
     if (d.photo_full_url) {
       return (
         <img
@@ -166,7 +178,7 @@ export default function Home() {
       </div>
     );
 
-    if (cat === 'Semua' && sortMode === 'default') {
+    if (cat === 'Semua') {
       const catOrder  = CAT_ORDER.filter(c => destinations.some(d => d.category === c));
       const otherCats = [...new Set(destinations.map(d => d.category))].filter(c => !CAT_ORDER.includes(c));
       const allCats   = [...catOrder, ...otherCats];
@@ -191,15 +203,18 @@ export default function Home() {
     return (
       <>
         <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 14 }}>
-          {cat !== 'Semua'
-            ? <><strong style={{ color: 'var(--text)' }}>{getCatIcon(cat)} {cat}</strong> — {destinations.length} destinasi</>
-            : <strong style={{ color: 'var(--text)' }}>🌏 Semua Destinasi — {destinations.length} hasil</strong>
-          }
+          <strong style={{ color: 'var(--text)' }}>{getCatIcon(cat)} {cat}</strong>
+          {' — '}
+          {sortMode === 'nearest'  && '📍 Terdekat · '}
+          {sortMode === 'popular'  && '🔥 Terpopuler · '}
+          {destinations.length} destinasi
         </div>
         {destinations.map(listHtml)}
       </>
     );
   };
+
+  const showSortBar = cat !== 'Semua';
 
   return (
     <div>
@@ -218,7 +233,7 @@ export default function Home() {
             <button
               key={c}
               className={'cat-btn' + (cat === c ? ' active' : '')}
-              onClick={() => { setCat(c); setSortMode('default'); }}
+              onClick={() => handleCatChange(c)}
             >
               <span>{getCatIcon(c)}</span> {c}
             </button>
@@ -226,17 +241,19 @@ export default function Home() {
         </div>
       </div>
 
-      <div style={{ background: 'var(--white)', borderBottom: '1px solid var(--border)', padding: '8px 20px' }}>
-        <div style={{ maxWidth: 1020, margin: '0 auto', display: 'flex', gap: 8 }}>
-          <button className={'sort-btn' + (sortMode === 'default' ? ' active' : '')} onClick={() => setSortMode('default')}>Semua</button>
-          <button className={'sort-btn' + (sortMode === 'nearest' ? ' active' : '')} onClick={handleNearest} disabled={geoLoading}>
-            {geoLoading ? '📍...' : '📍 Terdekat'}
-          </button>
-          <button className={'sort-btn' + (sortMode === 'popular' ? ' active' : '')} onClick={() => setSortMode(sortMode === 'popular' ? 'default' : 'popular')}>
-            🔥 Terpopuler
-          </button>
+      {showSortBar && (
+        <div style={{ background: 'var(--white)', borderBottom: '1px solid var(--border)', padding: '8px 20px' }}>
+          <div style={{ maxWidth: 1020, margin: '0 auto', display: 'flex', gap: 8 }}>
+            <button className={'sort-btn' + (sortMode === 'default' ? ' active' : '')} onClick={() => setSortMode('default')}>Semua</button>
+            <button className={'sort-btn' + (sortMode === 'nearest' ? ' active' : '')} onClick={handleNearest} disabled={geoLoading}>
+              {geoLoading ? '📍...' : '📍 Terdekat'}
+            </button>
+            <button className={'sort-btn' + (sortMode === 'popular' ? ' active' : '')} onClick={() => setSortMode(sortMode === 'popular' ? 'default' : 'popular')}>
+              🔥 Terpopuler
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="content">{renderContent()}</div>
     </div>
