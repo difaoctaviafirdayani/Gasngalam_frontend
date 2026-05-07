@@ -47,8 +47,8 @@ export default function Detail() {
     return 'linear-gradient(135deg,#3498db,#2980b9)';
   };
 
-  const jarakKm = (userCoords && d.latitude && d.longitude)
-    ? hitungJarak(userCoords.lat, userCoords.lng, d.latitude, d.longitude).toFixed(1) + ' km'
+  const jarakKm = (userCoords && d.lat && d.lng)
+    ? hitungJarak(userCoords.lat, userCoords.lng, d.lat, d.lng).toFixed(1) + ' km'
     : d.distance || '-';
 
   const getMapsUrl = (address) => {

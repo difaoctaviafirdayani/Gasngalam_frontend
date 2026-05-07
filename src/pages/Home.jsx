@@ -32,7 +32,7 @@ export default function Home() {
   const [loading, setLoading]           = useState(true);
   const [userCoords, setUserCoords]     = useState(null);
   const [geoLoading, setGeoLoading]     = useState(false);
-  const { favs, toggleFav }             = useApp();
+  const { favs, toggleFav, hitungJarak } = useApp();
   const navigate                        = useNavigate();
 
   useEffect(() => {
@@ -62,7 +62,14 @@ export default function Home() {
     }
 
     api.get('/destinations', { params })
-      .then(res => setDestinations(res.data))
+      .then(res => {
+        let data = res.data;
+        // Frontend sort sebagai fallback supaya hasilnya pasti terurut
+        if (sortMode === 'popular') {
+          data = [...data].sort((a, b) => b.review_count - a.review_count);
+        }
+        setDestinations(data);
+      })
       .catch(() => setDestinations([]))
       .finally(() => setLoading(false));
   }, [cat, sortMode, userCoords]);
@@ -138,30 +145,40 @@ export default function Home() {
     </div>
   );
 
-  const listHtml = (d) => (
-    <div key={d.id} className="list-item" onClick={() => navigate('/destination/' + d.id)}>
-      <div className="list-thumb" style={{ overflow: 'hidden', borderRadius: 'var(--r-sm)' }}>
-        {d.photo_full_url
-          ? <img src={d.photo_full_url} alt={d.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--r-sm)' }} />
-          : <div style={{ width: '100%', height: '100%', background: d.gradient || (d.color ? `linear-gradient(135deg,${d.color},${d.color}cc)` : 'linear-gradient(135deg,#3498db,#2980b9)'), display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, borderRadius: 'var(--r-sm)' }}>{d.emoji || getCatIcon(d.category)}</div>
-        }
-      </div>
-      <div className="list-info">
-        <div className="list-name">{d.name}</div>
-        <div className="list-loc">{d.location}</div>
-        <div className="list-meta">
-          <div className="list-rating">★ {d.rating} ({d.review_count})</div>
-          <div className="list-cat">{getCatIcon(d.category)} {d.category}</div>
+  const getJarak = (d) => {
+    if (d.distance_km) return d.distance_km + ' km';
+    if (userCoords && d.lat && d.lng)
+      return hitungJarak(userCoords.lat, userCoords.lng, d.lat, d.lng).toFixed(1) + ' km';
+    return null;
+  };
+
+  const listHtml = (d) => {
+    const jarak = getJarak(d);
+    return (
+      <div key={d.id} className="list-item" onClick={() => navigate('/destination/' + d.id)}>
+        <div className="list-thumb" style={{ overflow: 'hidden', borderRadius: 'var(--r-sm)' }}>
+          {d.photo_full_url
+            ? <img src={d.photo_full_url} alt={d.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--r-sm)' }} />
+            : <div style={{ width: '100%', height: '100%', background: d.gradient || (d.color ? `linear-gradient(135deg,${d.color},${d.color}cc)` : 'linear-gradient(135deg,#3498db,#2980b9)'), display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, borderRadius: 'var(--r-sm)' }}>{d.emoji || getCatIcon(d.category)}</div>
+          }
+        </div>
+        <div className="list-info">
+          <div className="list-name">{d.name}</div>
+          <div className="list-loc">{d.location}</div>
+          <div className="list-meta">
+            <div className="list-rating">★ {d.rating} ({d.review_count})</div>
+            <div className="list-cat">{getCatIcon(d.category)} {d.category}</div>
+          </div>
+        </div>
+        <div className="list-right">
+          {jarak && <div style={{ fontSize: 11, color: 'var(--text4)' }}>{jarak} 🗺️</div>}
+          <button className="fav-list-btn" onClick={e => { e.stopPropagation(); toggleFav(d.id); }}>
+            {favs.has(d.id) ? '❤️' : '🤍'}
+          </button>
         </div>
       </div>
-      <div className="list-right">
-        {d.distance && <div style={{ fontSize: 11, color: 'var(--text4)' }}>{d.distance} 🗺️</div>}
-        <button className="fav-list-btn" onClick={e => { e.stopPropagation(); toggleFav(d.id); }}>
-          {favs.has(d.id) ? '❤️' : '🤍'}
-        </button>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderContent = () => {
     if (loading) return (
