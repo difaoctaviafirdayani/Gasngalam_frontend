@@ -66,7 +66,7 @@ export default function Home() {
         let data = res.data;
         // Frontend sort sebagai fallback supaya hasilnya pasti terurut
         if (sortMode === 'popular') {
-          data = [...data].sort((a, b) => b.review_count - a.review_count);
+          data = [...data].sort((a, b) => b.rating - a.rating);
         }
         setDestinations(data);
       })
