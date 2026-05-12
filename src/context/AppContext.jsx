@@ -3,6 +3,15 @@ import api from '../services/api';
 
 const AppContext = createContext(null);
 
+// Base URL untuk foto — sesuaikan jika beda
+const BACKEND_URL = 'http://127.0.0.1:8000';
+
+function resolvePhotoUrl(url) {
+  if (!url) return null;
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return BACKEND_URL + (url.startsWith('/') ? '' : '/') + url;
+}
+
 export function AppProvider({ children }) {
   const [user, setUser]             = useState(null);
   const [role, setRole]             = useState(null);
@@ -59,8 +68,6 @@ export function AppProvider({ children }) {
 
   const closeLoginModal = () => setLoginModal({ open: false, msg: '' });
 
-  /* ─── AUTH ─────────────────────────────────────────────── */
-
   const login = async (email, password) => {
     if (!email || !password) { showToast('Email dan password harus diisi'); return null; }
     try {
@@ -115,8 +122,6 @@ export function AppProvider({ children }) {
     showToast('Sampai jumpa!');
   };
 
-  /* ─── FAVORIT ───────────────────────────────────────────── */
-
   const toggleFav = async (id) => {
     if (!requireLogin('Login dulu untuk menyimpan destinasi favorit.')) return;
     const isFav = favs.has(id);
@@ -135,8 +140,6 @@ export function AppProvider({ children }) {
     }
   };
 
-  /* ─── KOMENTAR ──────────────────────────────────────────── */
-
   const fetchComments = async (destId) => {
     try {
       const res = await api.get(`/destinations/${destId}/reviews`);
@@ -147,7 +150,7 @@ export function AppProvider({ children }) {
         text:           r.comment,
         rating:         r.rating,
         is_reported:    r.is_reported || false,
-        photo_full_url: r.photo_full_url || null,
+        photo_full_url: resolvePhotoUrl(r.photo_full_url || r.photo_url || r.photo || null),
       }));
       setComments(prev => ({ ...prev, [destId]: formatted }));
     } catch {}
@@ -181,8 +184,6 @@ export function AppProvider({ children }) {
       return false;
     }
   };
-
-  /* ─── KLAIM ─────────────────────────────────────────────── */
 
   const addKlaim = async ({ destination_id, nama, email, hp, ket, file }) => {
     if (!requireLogin('Login dulu untuk mengajukan klaim bisnis.')) return false;

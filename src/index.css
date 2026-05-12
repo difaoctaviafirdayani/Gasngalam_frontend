@@ -309,3 +309,12 @@ table.tbl tr:hover td{background:var(--bg2)}
   .footer-inner{grid-template-columns:1fr;gap:20px}
   .footer-bottom-inner{flex-direction:column;align-items:flex-start;gap:8px}
 }
+/* Override admin-stats jadi 4 kolom sejajar */
+.admin-stats {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+@media (max-width: 640px) {
+  .admin-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}

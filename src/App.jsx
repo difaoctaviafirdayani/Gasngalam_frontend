@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useApp } from './context/AppContext';
 import LoginModal from './components/LoginModal';
+import LandingPage from './pages/LandingPage';
 import Home from './pages/Home';
 import Detail from './pages/Detail';
 import Rating from './pages/Rating';
@@ -21,12 +22,17 @@ function AdminRoute({ children }) {
   return children;
 }
 
+function HomeOrLanding() {
+  const { user } = useApp();
+  return user ? <Home /> : <LandingPage />;
+}
+
 function AppInner() {
   const { toast, loginModal, closeLoginModal } = useApp();
   return (
     <>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<HomeOrLanding />} />
         <Route path="/search" element={<Search />} />
         <Route path="/destination/:id" element={<Detail />} />
         <Route path="/destination/:id/rating" element={<Rating />} />

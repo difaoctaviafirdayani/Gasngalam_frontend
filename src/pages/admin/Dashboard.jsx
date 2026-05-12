@@ -19,32 +19,42 @@ export default function AdminDashboard() {
       .catch(() => {});
   }, []);
 
+  const cards = [
+    { icon: '🗺️', num: stats.total_destinations, label: 'Total Wisata',   path: '/admin/wisata', color: '#3B82F6' },
+    { icon: '👥', num: stats.total_users,         label: 'Total User',     path: null,            color: '#10B981' },
+    { icon: '💬', num: stats.total_reviews,        label: 'Total Ulasan',  path: '/admin/ulasan', color: '#8B5CF6' },
+    { icon: '📋', num: stats.pending_claims,       label: 'Klaim Pending', path: '/admin/klaim',  color: '#F59E0B' },
+  ];
+
   return (
     <AdminLayout active="Dashboard">
       <div className="admin-page-title">Hi, Admin! 👋</div>
       <div className="admin-page-sub">Selamat datang di panel admin GasNgalam</div>
 
-      <div className="admin-stats">
-        <div className="stat-card">
-          <div className="stat-icon">🗺️</div>
-          <div className="stat-num">{stats.total_destinations}</div>
-          <div className="stat-label">Total Wisata</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon">👥</div>
-          <div className="stat-num">{stats.total_users}</div>
-          <div className="stat-label">Total User</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon">💬</div>
-          <div className="stat-num">{stats.total_reviews}</div>
-          <div className="stat-label">Total Ulasan</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon">📋</div>
-          <div className="stat-num">{stats.pending_claims}</div>
-          <div className="stat-label">Klaim Pending</div>
-        </div>
+      {/* 4 card sejajar + clickable */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 22 }}>
+        {cards.map(({ icon, num, label, path, color }) => (
+          <div
+            key={label}
+            onClick={() => path && navigate(path)}
+            style={{
+              background: 'var(--white)', borderRadius: 'var(--r)',
+              padding: '18px 16px', border: '1px solid var(--border)',
+              boxShadow: 'var(--shadow-xs)',
+              cursor: path ? 'pointer' : 'default',
+              transition: 'transform .15s, box-shadow .15s',
+              position: 'relative', overflow: 'hidden',
+            }}
+            onMouseEnter={e => { if (path) { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,.10)'; }}}
+            onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = 'var(--shadow-xs)'; }}
+          >
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: color, borderRadius: '12px 12px 0 0' }} />
+            <div style={{ fontSize: 26, marginBottom: 6 }}>{icon}</div>
+            <div style={{ fontSize: 32, fontWeight: 800, color, lineHeight: 1 }}>{num}</div>
+            <div style={{ fontSize: 11.5, color: 'var(--text3)', marginTop: 5, fontWeight: 500 }}>{label}</div>
+            {path && <div style={{ fontSize: 10, color, marginTop: 8, fontWeight: 600, opacity: .7 }}>Lihat detail →</div>}
+          </div>
+        ))}
       </div>
 
       <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 11 }}>
