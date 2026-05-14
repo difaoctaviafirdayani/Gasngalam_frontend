@@ -92,8 +92,12 @@ export default function AdminWisata() {
     try {
       const fd = new FormData();
       Object.entries(form).forEach(([k, v]) => {
-        if (v !== '' && v !== null && v !== undefined) fd.append(k, v);
-      });
+  if (k === 'is_active') {
+    fd.append(k, v ? '1' : '0');
+  } else if (v !== '' && v !== null && v !== undefined) {
+    fd.append(k, v);
+  }
+});
       if (photo) fd.append('photo', photo);
 
       if (editData) {

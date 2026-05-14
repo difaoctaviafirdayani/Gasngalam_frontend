@@ -29,7 +29,7 @@ export default function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif", background: '#0A0B14', minHeight: '100vh', overflowX: 'hidden' }}>
+    <div style={{ fontFamily: "'Inter', sans-serif", background: '#11121b', minHeight: '100vh', overflowX: 'hidden' }}>
 
       {/* NAVBAR */}
       <nav style={{
@@ -80,7 +80,7 @@ export default function LandingPage() {
           borderRadius: 99, padding: '5px 14px', marginBottom: 28,
           fontSize: 12, fontWeight: 600, color: '#F59E0B', letterSpacing: '.5px',
         }}>
-          🗺️ Panduan Wisata Kota Malang · Jawa Timur
+           Panduan Wisata Kota Malang · Jawa Timur
         </div>
 
         <h1 style={{
