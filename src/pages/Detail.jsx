@@ -11,6 +11,7 @@ export default function Detail() {
   const { favs, toggleFav, comments, fetchComments, requireLogin, userCoords, hitungJarak } = useApp();
   const [d, setD]               = useState(null);
   const [loading, setLoading]   = useState(true);
+  const [shareToast, setShareToast] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -20,6 +21,31 @@ export default function Detail() {
       .finally(() => setLoading(false));
     fetchComments(id);
   }, [id]);
+
+  const handleShare = async () => {
+    const shareUrl  = window.location.href;
+    const shareData = {
+      title: d?.name || 'GasNgalam - Wisata Malang',
+      text:  `Lihat destinasi wisata ${d?.name} di GasNgalam!`,
+      url:   shareUrl,
+    };
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try { await navigator.share(shareData); } catch (e) { /* user cancelled */ }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      setShareToast(true);
+      setTimeout(() => setShareToast(false), 2200);
+    }
+  };
 
   if (loading) return (
     <div><Topbar />
@@ -89,6 +115,43 @@ export default function Detail() {
               <button className="btn-action" onClick={() => {
                 if (requireLogin('Anda perlu login untuk mengajukan klaim bisnis.')) navigate('/klaim/' + d.id);
               }}>📋 Ajukan Klaim Bisnis</button>
+
+              {/* ── SHARE BUTTON ── */}
+              <div style={{ position: 'relative', display: 'inline-flex' }}>
+                <button
+                  className="btn-action"
+                  onClick={handleShare}
+                  title="Bagikan destinasi ini"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                >
+                  <svg
+                    width="14" height="14" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" strokeWidth="2.2"
+                    strokeLinecap="round" strokeLinejoin="round"
+                    style={{ flexShrink: 0 }}
+                  >
+                    <circle cx="18" cy="5"  r="3"/>
+                    <circle cx="6"  cy="12" r="3"/>
+                    <circle cx="18" cy="19" r="3"/>
+                    <line x1="8.59"  y1="13.51" x2="15.42" y2="17.49"/>
+                    <line x1="15.41" y1="6.51"  x2="8.59"  y2="10.49"/>
+                  </svg>
+                  Bagikan
+                </button>
+                {shareToast && (
+                  <div style={{
+                    position: 'absolute', bottom: 'calc(100% + 8px)', left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: 'var(--text)', color: '#fff',
+                    fontSize: 11.5, fontWeight: 500,
+                    padding: '5px 12px', borderRadius: 99,
+                    whiteSpace: 'nowrap', boxShadow: 'var(--shadow-sm)',
+                    pointerEvents: 'none',
+                  }}>
+                    ✓ Link disalin!
+                  </div>
+                )}
+              </div>
             </div>
             <div className="rating-wrap">
               <div style={{ display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -128,22 +191,18 @@ export default function Detail() {
           <div>
             <div className="info-card">
               <div className="info-card-title">Info Destinasi</div>
-
-              {/* Alamat + Tombol Google Maps */}
               <div className="info-row">
                 <div className="info-label">Alamat</div>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                   <div className="info-val" style={{ fontSize: 12, flex: 1 }}>{d.address || '-'}</div>
-               {mapsUrl && (
+                  {mapsUrl && (
                     <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="maps-btn" title="Lihat di Google Maps">
                       📍 Maps
                     </a>
                   )}
                 </div>
               </div>
-
-              {/* Info rows lainnya */}
-           {[
+              {[
                 { label: 'Contact Person',  val: d.contact },
                 { label: 'Jam Operasional', val: d.open_hours },
                 { label: 'HTM',             val: d.ticket_price, cls: 'price' },
