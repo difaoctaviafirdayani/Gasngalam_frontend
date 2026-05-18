@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import logo from '../assets/logo gasngalam.svg';
 
 export default function Footer() {
   const navigate = useNavigate();
@@ -10,9 +11,7 @@ export default function Footer() {
 
         {/* Brand + Deskripsi */}
         <div className="footer-brand-col">
-          <div className="footer-logo">
-            Gas<span>Ngalam</span>
-          </div>
+          <img src={logo} alt="GasNgalam" style={{ height: 28, objectFit: 'contain',  }} />
           <p className="footer-tagline">
             Temukan destinasi wisata terbaik di Kota Malang.<br />
             Dari budaya, kuliner, hingga hiburan — semua ada di sini.
