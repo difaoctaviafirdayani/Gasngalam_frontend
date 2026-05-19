@@ -74,7 +74,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .logout-item:hover{background:rgba(255,255,255,.12);color:rgba(255,180,180,1)}
 
 /* HERO */
-.hero{background:var(--white);border-bottom:1px solid var(--border);padding:32px 20px 28px}
+.hero{border-bottom:1px solid var(--border)}
 .hero-inner{max-width:1020px;margin:0 auto}
 .hero-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--brand);margin-bottom:6px}
 .hero-title{font-size:30px;font-weight:800;color:var(--text);letter-spacing:-.5px;line-height:1.15;margin-bottom:6px}
@@ -326,4 +326,7 @@ table.tbl tr:hover td{background:var(--bg2)}
   50% {
     opacity: .45;
   }
+}
+main {
+  padding-top: 0 !important;
 }

@@ -445,7 +445,7 @@ export default function LandingPage() {
             flexWrap: 'wrap', gap: 12,
           }}>
             <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)' }}>
-              © 2025 GasNgalam. Semua hak cipta dilindungi.
+              © 2026 GasNgalam Semua hak cipta dilindungi.
             </span>
             <div style={{ display: 'flex', gap: 20 }}>
               {['Kebijakan Privasi', 'Syarat & Ketentuan'].map(item => (
