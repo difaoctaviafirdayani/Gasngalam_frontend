@@ -198,11 +198,78 @@ export default function Detail() {
               <div className="info-card-title">Info Destinasi</div>
               <div className="info-row">
                 <div className="info-label">Alamat</div>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                  <div className="info-val" style={{ fontSize: 12, flex: 1 }}>{d.address || '-'}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
+                  <div className="info-val" style={{ fontSize: 12 }}>{d.address || '-'}</div>
                   {mapsUrl && (
-                    <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="maps-btn" title="Lihat di Google Maps">
-                      📍 Maps
+                    <a
+                      href={mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Klik untuk melihat di Google Maps"
+                      style={{ display: 'block', textDecoration: 'none' }}
+                    >
+                      <div style={{
+                        position: 'relative',
+                        borderRadius: 10,
+                        overflow: 'hidden',
+                        border: '1.5px solid var(--border)',
+                        background: '#e8f0fe',
+                        height: 100,
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                        transition: 'box-shadow 0.2s',
+                      }}
+                        onMouseEnter={e => e.currentTarget.style.boxShadow='0 4px 16px rgba(66,133,244,0.25)'}
+                        onMouseLeave={e => e.currentTarget.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'}
+                      >
+                        {/* Map grid background illustration */}
+                        <svg width="100%" height="100%" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', top: 0, left: 0 }}>
+                          {/* Road grid */}
+                          <rect width="300" height="100" fill="#e8f0fe"/>
+                          <rect x="0" y="0" width="300" height="100" fill="url(#grid)"/>
+                          <defs>
+                            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#c5d8f8" strokeWidth="0.8"/>
+                            </pattern>
+                          </defs>
+                          {/* Horizontal road */}
+                          <rect x="0" y="44" width="300" height="12" fill="#fff" opacity="0.7"/>
+                          {/* Vertical road */}
+                          <rect x="130" y="0" width="12" height="100" fill="#fff" opacity="0.7"/>
+                          {/* Road dash lines */}
+                          <line x1="0" y1="50" x2="125" y2="50" stroke="#bbb" strokeWidth="1" strokeDasharray="6,6"/>
+                          <line x1="147" y1="50" x2="300" y2="50" stroke="#bbb" strokeWidth="1" strokeDasharray="6,6"/>
+                          <line x1="136" y1="0" x2="136" y2="40" stroke="#bbb" strokeWidth="1" strokeDasharray="6,6"/>
+                          <line x1="136" y1="56" x2="136" y2="100" stroke="#bbb" strokeWidth="1" strokeDasharray="6,6"/>
+                          {/* Buildings */}
+                          <rect x="20" y="12" width="30" height="22" rx="3" fill="#b8d4f8" opacity="0.8"/>
+                          <rect x="60" y="18" width="22" height="16" rx="3" fill="#a8c8f0" opacity="0.8"/>
+                          <rect x="160" y="10" width="38" height="25" rx="3" fill="#b8d4f8" opacity="0.8"/>
+                          <rect x="210" y="16" width="25" height="18" rx="3" fill="#a0bce8" opacity="0.8"/>
+                          <rect x="20" y="62" width="25" height="20" rx="3" fill="#b8d4f8" opacity="0.8"/>
+                          <rect x="55" y="58" width="35" height="28" rx="3" fill="#a8c8f0" opacity="0.8"/>
+                          <rect x="165" y="64" width="28" height="22" rx="3" fill="#b8d4f8" opacity="0.8"/>
+                          <rect x="205" y="60" width="32" height="26" rx="3" fill="#a0bce8" opacity="0.8"/>
+                          {/* Pin marker */}
+                          <circle cx="136" cy="50" r="12" fill="#4285F4" opacity="0.9"/>
+                          <circle cx="136" cy="50" r="7" fill="#fff"/>
+                          <circle cx="136" cy="50" r="4" fill="#4285F4"/>
+                          <polygon points="136,38 142,46 130,46" fill="#4285F4" opacity="0.9"/>
+                        </svg>
+                        {/* Overlay label */}
+                        <div style={{
+                          position: 'absolute', bottom: 0, left: 0, right: 0,
+                          background: 'linear-gradient(transparent, rgba(66,133,244,0.85))',
+                          padding: '14px 10px 7px',
+                          display: 'flex', alignItems: 'center', gap: 5,
+                          color: '#fff', fontSize: 11.5, fontWeight: 600,
+                        }}>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                          </svg>
+                          Klik untuk melihat di Google Maps
+                        </div>
+                      </div>
                     </a>
                   )}
                 </div>
