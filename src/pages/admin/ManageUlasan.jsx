@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
+import ConfirmDialog from '../../components/ConfirmDialog';
 import { useApp } from '../../context/AppContext';
 import api from '../../services/api';
 
 export default function AdminUlasan() {
-  const { showToast }       = useApp();
+  const { showToast } = useApp();
+
   const [filter, setFilter] = useState('semua');
   const [ulasan, setUlasan] = useState([]);
+  const [confirmHapus, setConfirmHapus] = useState(null);
 
   const fetchUlasan = () => {
     api.get('/admin/reviews')
@@ -14,16 +17,25 @@ export default function AdminUlasan() {
       .catch(() => {});
   };
 
-  useEffect(() => { fetchUlasan(); }, []);
+  useEffect(() => {
+    fetchUlasan();
+  }, []);
 
-  const hapusUlasan = async (id) => {
-    if (!window.confirm('Hapus ulasan ini?')) return;
+  // buka dialog hapus
+  const hapusUlasan = (id) => {
+    setConfirmHapus(id);
+  };
+
+  // proses hapus
+  const doHapus = async () => {
     try {
-      await api.delete(`/admin/reviews/${id}`);
+      await api.delete(`/admin/reviews/${confirmHapus}`);
       showToast('Ulasan berhasil dihapus!');
       fetchUlasan();
     } catch (err) {
       showToast(err.message || 'Gagal menghapus ulasan');
+    } finally {
+      setConfirmHapus(null);
     }
   };
 
@@ -37,32 +49,57 @@ export default function AdminUlasan() {
     }
   };
 
-  const list = filter === 'dilaporkan'
-    ? ulasan.filter(u => u.is_reported)
-    : ulasan;
+  const list =
+    filter === 'dilaporkan'
+      ? ulasan.filter(u => u.is_reported)
+      : ulasan;
 
   const reportedCount = ulasan.filter(u => u.is_reported).length;
 
   return (
     <AdminLayout active="Kelola Ulasan">
       <div className="admin-page-title">Daftar Ulasan</div>
-      <div className="admin-page-sub">Moderasi komentar dan rating dari wisatawan</div>
+      <div className="admin-page-sub">
+        Moderasi komentar dan rating dari wisatawan
+      </div>
 
       <div style={{ display: 'flex', gap: 8, margin: '14px 0' }}>
         <button
-          className={'tab-pill' + (filter === 'semua' ? ' active' : '')}
+          className={
+            'tab-pill' + (filter === 'semua' ? ' active' : '')
+          }
           onClick={() => setFilter('semua')}
         >
           Semua ({ulasan.length})
         </button>
+
         <button
-          className={'tab-pill' + (filter === 'dilaporkan' ? ' active' : '')}
+          className={
+            'tab-pill' + (filter === 'dilaporkan' ? ' active' : '')
+          }
           onClick={() => setFilter('dilaporkan')}
-          style={reportedCount > 0 && filter !== 'dilaporkan' ? { borderColor: 'var(--red)', color: 'var(--red)' } : {}}
+          style={
+            reportedCount > 0 && filter !== 'dilaporkan'
+              ? {
+                  borderColor: 'var(--red)',
+                  color: 'var(--red)'
+                }
+              : {}
+          }
         >
           ⚑ Dilaporkan
+
           {reportedCount > 0 && (
-            <span style={{ background: 'var(--red)', color: '#fff', borderRadius: 99, padding: '1px 7px', fontSize: 11, marginLeft: 5 }}>
+            <span
+              style={{
+                background: 'var(--red)',
+                color: '#fff',
+                borderRadius: 99,
+                padding: '1px 7px',
+                fontSize: 11,
+                marginLeft: 5
+              }}
+            >
               {reportedCount}
             </span>
           )}
@@ -83,60 +120,163 @@ export default function AdminUlasan() {
               <th>Aksi</th>
             </tr>
           </thead>
+
           <tbody>
             {list.length === 0 ? (
               <tr>
-                <td colSpan={8} style={{ textAlign: 'center', padding: 22, color: 'var(--text4)' }}>
-                  {filter === 'dilaporkan' ? 'Tidak ada ulasan yang dilaporkan.' : 'Tidak ada ulasan.'}
+                <td
+                  colSpan={8}
+                  style={{
+                    textAlign: 'center',
+                    padding: 22,
+                    color: 'var(--text4)'
+                  }}
+                >
+                  {filter === 'dilaporkan'
+                    ? 'Tidak ada ulasan yang dilaporkan.'
+                    : 'Tidak ada ulasan.'}
                 </td>
               </tr>
-            ) : list.map((c) => (
-              <tr key={c.id} style={c.is_reported ? { background: '#fff8f8' } : {}}>
-                <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                    <div className="comment-avatar" style={{ width: 26, height: 26, fontSize: 10 }}>
-                      {(c.user?.name || 'A')[0].toUpperCase()}
-                    </div>
-                    {c.user?.name || 'Anonim'}
-                  </div>
-                </td>
-                <td style={{ fontSize: 12 }}>{c.destination?.name}</td>
-                <td>⭐ {c.rating}</td>
-                <td style={{ maxWidth: 180, fontSize: 12, color: 'var(--text2)' }}>
-                  {c.comment?.substring(0, 70)}{c.comment?.length > 70 ? '...' : ''}
-                </td>
-                <td>
-                  {c.photo_full_url
-                    ? <img src={c.photo_full_url} alt="foto" style={{ width: 44, height: 36, objectFit: 'cover', borderRadius: 5, border: '1px solid var(--border)' }} />
-                    : <span style={{ fontSize: 11, color: 'var(--text4)' }}>–</span>
-                  }
-                </td>
-                <td style={{ fontSize: 12, whiteSpace: 'nowrap' }}>
-                  {new Date(c.created_at).toLocaleDateString('id-ID')}
-                </td>
-                <td>
-                  {c.is_reported
-                    ? <span className="badge badge-red" style={{ fontSize: 11 }}>⚑ Dilaporkan</span>
-                    : <span className="badge badge-green" style={{ fontSize: 11 }}>OK</span>
-                  }
-                </td>
-                <td style={{ whiteSpace: 'nowrap' }}>
-                  {c.is_reported && (
-                    <button
-                      className="action-btn"
-                      onClick={() => tinjauLaporan(c.id)}
-                      style={{ background: '#fff3cd', color: '#856404', borderColor: '#ffc107' }}
+            ) : (
+              list.map((c) => (
+                <tr
+                  key={c.id}
+                  style={c.is_reported ? { background: '#fff8f8' } : {}}
+                >
+                  <td>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 7
+                      }}
                     >
-                      ✓ Tinjau
+                      <div
+                        className="comment-avatar"
+                        style={{
+                          width: 26,
+                          height: 26,
+                          fontSize: 10
+                        }}
+                      >
+                        {(c.user?.name || 'A')[0].toUpperCase()}
+                      </div>
+
+                      {c.user?.name || 'Anonim'}
+                    </div>
+                  </td>
+
+                  <td style={{ fontSize: 12 }}>
+                    {c.destination?.name}
+                  </td>
+
+                  <td>⭐ {c.rating}</td>
+
+                  <td
+                    style={{
+                      maxWidth: 180,
+                      fontSize: 12,
+                      color: 'var(--text2)'
+                    }}
+                  >
+                    {c.comment?.substring(0, 70)}
+                    {c.comment?.length > 70 ? '...' : ''}
+                  </td>
+
+                  <td>
+                    {c.photo_full_url ? (
+                      <img
+                        src={c.photo_full_url}
+                        alt="foto"
+                        style={{
+                          width: 44,
+                          height: 36,
+                          objectFit: 'cover',
+                          borderRadius: 5,
+                          border: '1px solid var(--border)'
+                        }}
+                      />
+                    ) : (
+                      <span
+                        style={{
+                          fontSize: 11,
+                          color: 'var(--text4)'
+                        }}
+                      >
+                        –
+                      </span>
+                    )}
+                  </td>
+
+                  <td
+                    style={{
+                      fontSize: 12,
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {new Date(c.created_at).toLocaleDateString(
+                      'id-ID'
+                    )}
+                  </td>
+
+                  <td>
+                    {c.is_reported ? (
+                      <span
+                        className="badge badge-red"
+                        style={{ fontSize: 11 }}
+                      >
+                        ⚑ Dilaporkan
+                      </span>
+                    ) : (
+                      <span
+                        className="badge badge-green"
+                        style={{ fontSize: 11 }}
+                      >
+                        OK
+                      </span>
+                    )}
+                  </td>
+
+                  <td style={{ whiteSpace: 'nowrap' }}>
+                    {c.is_reported && (
+                      <button
+                        className="action-btn"
+                        onClick={() => tinjauLaporan(c.id)}
+                        style={{
+                          background: '#fff3cd',
+                          color: '#856404',
+                          borderColor: '#ffc107'
+                        }}
+                      >
+                        ✓ Tinjau
+                      </button>
+                    )}
+
+                    <button
+                      className="action-btn red"
+                      onClick={() => hapusUlasan(c.id)}
+                    >
+                      Hapus
                     </button>
-                  )}
-                  <button className="action-btn red" onClick={() => hapusUlasan(c.id)}>Hapus</button>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        open={!!confirmHapus}
+        icon="🗑️"
+        title="Hapus Ulasan?"
+        message="Ulasan ini akan dihapus permanen."
+        confirmLabel="Ya, Hapus"
+        confirmClass="btn-primary"
+        onConfirm={doHapus}
+        onCancel={() => setConfirmHapus(null)}
+      />
     </AdminLayout>
   );
 }

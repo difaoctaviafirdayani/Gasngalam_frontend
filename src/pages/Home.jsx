@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
+import { SkeletonCard, SkeletonList } from '../components/SkeletonCard';
 
 const CAT_ORDER = [
   'Wisata Budaya',
@@ -179,12 +180,25 @@ export default function Home() {
   };
 
   const renderContent = () => {
-    if (loading) return (
-      <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text3)' }}>
-        <div style={{ fontSize: 32, marginBottom: 10 }}>⏳</div>
-        <p>Memuat destinasi...</p>
+    if (loading) {
+  if (cat === 'Semua') {
+    return (
+      <div className="cards-grid">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
       </div>
     );
+  }
+
+  return (
+    <>
+      {Array.from({ length: 6 }).map((_, i) => (
+        <SkeletonList key={i} />
+      ))}
+    </>
+  );
+}
 
     if (destinations.length === 0) return (
       <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text3)' }}>

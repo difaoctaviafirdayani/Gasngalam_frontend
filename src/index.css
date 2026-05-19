@@ -318,3 +318,12 @@ table.tbl tr:hover td{background:var(--bg2)}
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .45;
+  }
+}
