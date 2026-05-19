@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Topbar from '../components/Topbar';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
 
@@ -12,7 +11,6 @@ export default function Favorites() {
 
   useEffect(() => {
     if (favs.size === 0) { setFavDests([]); setLoading(false); return; }
-    // Ambil semua destinasi lalu filter berdasarkan favs
     api.get('/destinations')
       .then(res => {
         const all = res.data;
@@ -30,7 +28,6 @@ export default function Favorites() {
 
   return (
     <div>
-      <Topbar />
       <div className="content">
         <button className="back-btn" onClick={() => navigate(-1)}>← Kembali</button>
         <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)', marginBottom: 4 }}>Destinasi Tersimpan</h2>

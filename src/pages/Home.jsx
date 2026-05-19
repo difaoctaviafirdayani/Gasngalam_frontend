@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Topbar from '../components/Topbar';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
 
@@ -64,7 +63,6 @@ export default function Home() {
     api.get('/destinations', { params })
       .then(res => {
         let data = res.data;
-        // Frontend sort sebagai fallback supaya hasilnya pasti terurut
         if (sortMode === 'popular') {
           data = [...data].sort((a, b) => b.rating - a.rating);
         }
@@ -235,7 +233,6 @@ export default function Home() {
 
   return (
     <div>
-      <Topbar />
       <div className="hero">
         <div className="hero-inner">
           <div className="hero-eyebrow">🗺️ Wisata Kota Malang · Jawa Timur</div>
@@ -244,7 +241,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="cat-section">
+      <div className="cat-section" style={{ position: 'sticky', top: 0, zIndex: 100, background: 'var(--white)' }}>
         <div className="cat-inner">
           {categories.map(c => (
             <button
@@ -259,7 +256,7 @@ export default function Home() {
       </div>
 
       {showSortBar && (
-        <div style={{ background: 'var(--white)', borderBottom: '1px solid var(--border)', padding: '8px 20px' }}>
+        <div style={{ background: 'var(--white)', borderBottom: '1px solid var(--border)', padding: '8px 20px', position: 'sticky', top: 44, zIndex: 99 }}>
           <div style={{ maxWidth: 1020, margin: '0 auto', display: 'flex', gap: 8 }}>
             <button className={'sort-btn' + (sortMode === 'default' ? ' active' : '')} onClick={() => setSortMode('default')}>Semua</button>
             <button className={'sort-btn' + (sortMode === 'nearest' ? ' active' : '')} onClick={handleNearest} disabled={geoLoading}>

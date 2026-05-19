@@ -1,49 +1,58 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 
 export default function Sidebar({ open, onClose }) {
   const { user, role, logout } = useApp();
   const navigate = useNavigate();
+  const location = useLocation();
   const go = (path) => { navigate(path); onClose(); };
 
   return (
-    <>
-      <div className={'sidebar-overlay' + (open ? ' open' : '')} onClick={onClose}></div>
-      <div className={'sidebar' + (open ? ' open' : '')}>
-        <div className="sidebar-head">
-          <div className="sidebar-brand">Gas<span>Ngalam</span></div>
-          <button className="sidebar-close" onClick={onClose}>✕</button>
-        </div>
-        <div className="sidebar-body">
+    <div style={{
+      width: open ? 220 : 0,
+      minWidth: open ? 220 : 0,
+      overflow: 'hidden',
+      background: 'var(--brand)',
+      flexShrink: 0,
+      position: 'sticky',
+      top: 56,
+      height: 'calc(100vh - 56px)',
+      transition: 'width .26s cubic-bezier(.4,0,.2,1), min-width .26s cubic-bezier(.4,0,.2,1)',
+      display: 'flex',
+      flexDirection: 'column',
+      zIndex: 100,
+    }}>
+      <div style={{ width: 220, display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <div style={{ padding: '16px 10px 10px', flex: 1 }}>
+          <div style={{
+            fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
+            letterSpacing: '1.2px', color: 'rgba(255,255,255,.4)',
+            padding: '6px 10px', marginBottom: 4,
+          }}>Menu</div>
           {role === 'admin' ? (
             <>
-              <div className="sidebar-section">Admin Panel</div>
-              <button className="sidebar-item" onClick={() => go('/admin')}>🏠 Dashboard</button>
-              <button className="sidebar-item" onClick={() => go('/admin/wisata')}>🗺️ Kelola Wisata</button>
-              <button className="sidebar-item" onClick={() => go('/admin/klaim')}>📋 Pengajuan Klaim</button>
-              <button className="sidebar-item" onClick={() => go('/admin/ulasan')}>💬 Kelola Ulasan</button>
+              <button className={'sidebar-item' + (location.pathname === '/admin' ? ' active' : '')} onClick={() => go('/admin')} style={{ whiteSpace: 'nowrap' }}>🏠 Dashboard</button>
+              <button className={'sidebar-item' + (location.pathname === '/admin/wisata' ? ' active' : '')} onClick={() => go('/admin/wisata')} style={{ whiteSpace: 'nowrap' }}>🗺️ Kelola Wisata</button>
+              <button className={'sidebar-item' + (location.pathname === '/admin/klaim' ? ' active' : '')} onClick={() => go('/admin/klaim')} style={{ whiteSpace: 'nowrap' }}>📋 Pengajuan Klaim</button>
+              <button className={'sidebar-item' + (location.pathname === '/admin/ulasan' ? ' active' : '')} onClick={() => go('/admin/ulasan')} style={{ whiteSpace: 'nowrap' }}>💬 Kelola Ulasan</button>
             </>
           ) : user ? (
             <>
-              <div className="sidebar-section">Menu</div>
-              <button className="sidebar-item" onClick={() => go('/')}>🏠 Dashboard</button>
-              <button className="sidebar-item" onClick={() => go('/favorites')}>❤️ Destinasi Tersimpan</button>
+              <button className={'sidebar-item' + (location.pathname === '/' ? ' active' : '')} onClick={() => go('/')} style={{ whiteSpace: 'nowrap' }}>🏠 Dashboard</button>
+              <button className={'sidebar-item' + (location.pathname === '/favorites' ? ' active' : '')} onClick={() => go('/favorites')} style={{ whiteSpace: 'nowrap' }}>❤️ Destinasi Tersimpan</button>
             </>
           ) : (
-            <>
-              <div className="sidebar-section">Menu</div>
-              <button className="sidebar-item" onClick={() => go('/')}>🏠 Dashboard</button>
-            </>
+            <button className={'sidebar-item' + (location.pathname === '/' ? ' active' : '')} onClick={() => go('/')} style={{ whiteSpace: 'nowrap' }}>🏠 Dashboard</button>
           )}
         </div>
-        <div className="sidebar-foot">
+        <div style={{ padding: '12px 10px', borderTop: '1px solid rgba(255,255,255,.1)' }}>
           {user ? (
-            <button className="logout-item" onClick={() => { logout(); onClose(); navigate('/'); }}>← Logout</button>
+            <button className="logout-item" onClick={() => { logout(); onClose(); navigate('/'); }} style={{ whiteSpace: 'nowrap' }}>🚪 Logout</button>
           ) : (
-            <button className="sidebar-item" onClick={() => go('/login')} style={{color:'rgba(255,255,255,.8)'}}>👤 Login</button>
+            <button className="sidebar-item" onClick={() => go('/login')} style={{ color: 'rgba(255,255,255,.8)', whiteSpace: 'nowrap' }}>👤 Login</button>
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

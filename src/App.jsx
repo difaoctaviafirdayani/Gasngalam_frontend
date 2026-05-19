@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useApp } from './context/AppContext';
 import LoginModal from './components/LoginModal';
+import UserLayout from './pages/UserLayout';
 import LandingPage from './pages/LandingPage';
 import Home from './pages/Home';
 import Detail from './pages/Detail';
@@ -24,7 +25,9 @@ function AdminRoute({ children }) {
 
 function HomeOrLanding() {
   const { user } = useApp();
-  return user ? <Home /> : <LandingPage />;
+  return user ? (
+    <UserLayout><Home /></UserLayout>
+  ) : <LandingPage />;
 }
 
 function AppInner() {
@@ -33,13 +36,13 @@ function AppInner() {
     <>
       <Routes>
         <Route path="/" element={<HomeOrLanding />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/destination/:id" element={<Detail />} />
-        <Route path="/destination/:id/rating" element={<Rating />} />
+        <Route path="/search" element={<UserLayout><Search /></UserLayout>} />
+        <Route path="/destination/:id" element={<UserLayout><Detail /></UserLayout>} />
+        <Route path="/destination/:id/rating" element={<UserLayout><Rating /></UserLayout>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/favorites" element={<Favorites />} />
-        <Route path="/klaim/:id" element={<Klaim />} />
+        <Route path="/favorites" element={<UserLayout><Favorites /></UserLayout>} />
+        <Route path="/klaim/:id" element={<UserLayout><Klaim /></UserLayout>} />
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         <Route path="/admin/wisata" element={<AdminRoute><AdminWisata /></AdminRoute>} />
         <Route path="/admin/klaim" element={<AdminRoute><AdminKlaim /></AdminRoute>} />

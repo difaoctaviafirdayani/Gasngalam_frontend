@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Topbar from '../components/Topbar';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
 
@@ -25,7 +24,7 @@ export default function Rating() {
   }, [id]);
 
   if (!d) return (
-    <div><Topbar />
+    <div>
       <div className="content" style={{ textAlign: 'center', paddingTop: 60 }}>
         <div style={{ fontSize: 32 }}>⏳</div><p>Memuat...</p>
       </div>
@@ -88,7 +87,6 @@ export default function Rating() {
 
   return (
     <div>
-      <Topbar />
       <div className="content">
         <button className="back-btn" onClick={() => navigate(-1)}>← Kembali</button>
         <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', marginBottom: 4 }}>Rating dan Komentar</h2>

@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Topbar from '../components/Topbar';
 import { useApp } from '../context/AppContext';
 
 export default function Klaim() {
@@ -54,7 +53,6 @@ export default function Klaim() {
 
   return (
     <div>
-      <Topbar />
       <div className="content">
         <button className="back-btn" onClick={() => navigate(-1)}>← Kembali</button>
 

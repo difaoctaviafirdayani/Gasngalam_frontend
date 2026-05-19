@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import Topbar from '../components/Topbar';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
 
@@ -37,7 +36,6 @@ export default function Search() {
 
   return (
     <div>
-      <Topbar />
       <div className="content">
         <button className="back-btn" onClick={() => navigate(-1)}>← Kembali</button>
         <div className="search-heading">Hasil Pencarian</div>

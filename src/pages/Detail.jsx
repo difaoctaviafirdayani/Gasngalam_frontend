@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
@@ -48,7 +47,7 @@ export default function Detail() {
   };
 
   if (loading) return (
-    <div><Topbar />
+    <div>
       <div className="content" style={{ textAlign: 'center', paddingTop: 60 }}>
         <div style={{ fontSize: 32 }}>⏳</div><p>Memuat...</p>
       </div>
@@ -56,7 +55,7 @@ export default function Detail() {
   );
 
   if (!d) return (
-    <div><Topbar />
+    <div>
       <div className="content"><p>Destinasi tidak ditemukan.</p></div>
     </div>
   );
@@ -86,7 +85,6 @@ export default function Detail() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Topbar />
       <div className="content" style={{ flex: 1 }}>
         <button className="back-btn" onClick={() => navigate(-1)}>← Kembali</button>
         <div className="detail-hero" style={{ background: gradForColor() }}>
