@@ -181,6 +181,13 @@ export default function Detail() {
                       <div className="comment-rating">★ {c.rating}</div>
                     </div>
                     <div className="comment-text">{c.text}</div>
+                    {c.photo_full_url && (
+                      <img
+                        src={c.photo_full_url}
+                        alt="Foto ulasan"
+                        style={{ marginTop: 10, maxWidth: 260, maxHeight: 200, borderRadius: 8, objectFit: 'cover', border: '1px solid var(--border)' }}
+                      />
+                    )}
                   </div>
                 ))}
               </div>
