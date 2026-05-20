@@ -6,13 +6,11 @@ import logo from '../assets/logo-gasngalam.svg';
 
 export default function UserLayout({ children }) {
   const navigate = useNavigate();
-  const { user } = useApp();
+  const { user, theme, toggleTheme } = useApp(); // ✅ tambah theme, toggleTheme
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
-
-      {/* TOPBAR — baris sendiri, full width, tidak ikut flex row sidebar */}
       <header style={{
         display: 'flex', alignItems: 'center', gap: 14,
         padding: '0 20px', height: 56, flexShrink: 0,
@@ -42,6 +40,10 @@ export default function UserLayout({ children }) {
           />
         </div>
         <div className="topbar-right">
+          {/* ✅ Tombol toggle */}
+          <button className="theme-toggle-btn" onClick={toggleTheme} title="Ganti tema">
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
           {!user ? (
             <button className="nav-btn" onClick={() => navigate('/login')}>Login</button>
           ) : (
@@ -53,14 +55,12 @@ export default function UserLayout({ children }) {
         </div>
       </header>
 
-      {/* BODY — flex row: sidebar + main */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <main style={{ flex: 1, overflowY: 'auto', background: 'var(--bg)', minWidth: 0 }}>
           {children}
         </main>
       </div>
-
     </div>
   );
 }

@@ -5,7 +5,7 @@ import Sidebar from './Sidebar';
 import logo from '../assets/logo gasngalam.svg';
 
 export default function Topbar() {
-  const { user, logout } = useApp();
+  const { user, theme, toggleTheme } = useApp();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -27,17 +27,22 @@ export default function Topbar() {
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>
             </svg>
-          <input
-            className="searchbar"
-            type="text"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Cari Destinasi Wisata"
-            onKeyDown={e => e.key === 'Enter' && doSearch()}
-          />
+            <input
+              className="searchbar"
+              type="text"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Cari Destinasi Wisata"
+              onKeyDown={e => e.key === 'Enter' && doSearch()}
+            />
           </div>
         </div>
         <div className="topbar-right">
+          {/* Tombol dark/light mode */}
+          <button className="theme-toggle-btn" onClick={toggleTheme} title="Ganti tema">
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
+
           {!user ? (
             <button className="nav-btn" onClick={() => navigate('/login')}>Login</button>
           ) : (

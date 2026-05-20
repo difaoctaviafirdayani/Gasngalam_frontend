@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-:root{
+:root[data-theme="light"] {
   --brand:#2D3142;
   --brand-dark:#1e2231;
   --brand-gold:#F5A623;
@@ -29,6 +29,36 @@
   --r-sm:7px;
   --r-xs:5px;
 }
+:root[data-theme="dark"] {
+  --brand:#4a5280;
+  --brand-dark:#2a3052;
+  --brand-gold:#F5A623;
+  --brand-gold-dark:#d4891a;
+  --brand-gold-pale:#2a2210;
+  --brand-pale:#1e2235;
+  --brand-pale2:#252a3d;
+  --white:#1e1e2e;
+  --bg:#121220;
+  --bg2:#181826;
+  --border:#2e2e42;
+  --border2:#252535;
+  --text:#e8e8f0;
+  --text2:#b0b0c8;
+  --text3:#7878a0;
+  --text4:#555570;
+  --green:#2ecc71;
+  --green-bg:#0d2b1a;
+  --orange:#e67e22;
+  --orange-bg:#2a1a08;
+  --gold:#F5A623;
+  --shadow-xs:0 1px 3px rgba(0,0,0,.3);
+  --shadow-sm:0 2px 8px rgba(0,0,0,.35);
+  --shadow-md:0 4px 16px rgba(0,0,0,.4);
+  --r:10px;
+  --r-sm:7px;
+  --r-xs:5px;
+}
+
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;font-size:14px}
@@ -329,4 +359,22 @@ table.tbl tr:hover td{background:var(--bg2)}
 }
 main {
   padding-top: 0 !important;
+}
+.theme-toggle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: .15s;
+  flex-shrink: 0;
+}
+.theme-toggle-btn:hover {
+  border-color: var(--brand-gold);
+  background: var(--brand-gold-pale);
 }

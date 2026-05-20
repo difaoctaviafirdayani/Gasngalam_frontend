@@ -20,6 +20,12 @@ export function AppProvider({ children }) {
   const [toast, setToast]           = useState({ msg: '', show: false });
   const [loginModal, setLoginModal] = useState({ open: false, msg: '' });
   const [userCoords, setUserCoords] = useState(null);
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
   useEffect(() => {
     const savedUser  = localStorage.getItem('user');
@@ -206,13 +212,14 @@ export function AppProvider({ children }) {
     }
   };
 
-  return (
+ return (
     <AppContext.Provider value={{
       user, role, favs, comments, toast, loginModal,
       userCoords, hitungJarak,
       login, register, logout, toggleFav,
       addComment, fetchComments, addKlaim, reportComment,
       requireLogin, closeLoginModal, showToast,
+      theme, toggleTheme,
     }}>
       {children}
     </AppContext.Provider>
