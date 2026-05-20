@@ -1,7 +1,9 @@
+// src/pages/admin/ManageWisata.jsx
 import { useState, useEffect, useRef } from 'react';
 import AdminLayout from './AdminLayout';
 import { useApp } from '../../context/AppContext';
 import api from '../../services/api';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 const CATEGORIES = [
   'Wisata Budaya',
@@ -31,6 +33,9 @@ export default function AdminWisata() {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [submitting, setSubmitting]     = useState(false);
   const fileRef                         = useRef();
+
+  // ── state untuk ConfirmDialog ──────────────────────────────
+  const [confirmHapus, setConfirmHapus] = useState(null); // { id, name } | null
 
   const fetchDestinations = () => {
     api.get('/destinations')
@@ -81,7 +86,7 @@ export default function AdminWisata() {
     setPhotoPreview(URL.createObjectURL(f));
   };
 
-  const set  = k => e => setForm(prev => ({ ...prev, [k]: e.target.value }));
+  const set      = k => e => setForm(prev => ({ ...prev, [k]: e.target.value }));
   const setCheck = k => e => setForm(prev => ({ ...prev, [k]: e.target.checked }));
 
   const submitForm = async () => {
@@ -92,12 +97,12 @@ export default function AdminWisata() {
     try {
       const fd = new FormData();
       Object.entries(form).forEach(([k, v]) => {
-  if (k === 'is_active') {
-    fd.append(k, v ? '1' : '0');
-  } else if (v !== '' && v !== null && v !== undefined) {
-    fd.append(k, v);
-  }
-});
+        if (k === 'is_active') {
+          fd.append(k, v ? '1' : '0');
+        } else if (v !== '' && v !== null && v !== undefined) {
+          fd.append(k, v);
+        }
+      });
       if (photo) fd.append('photo', photo);
 
       if (editData) {
@@ -120,14 +125,18 @@ export default function AdminWisata() {
     }
   };
 
-  const hapus = async (id, name) => {
-    if (!window.confirm(`Hapus destinasi "${name}"?`)) return;
+  // ── hapus: buka dialog dulu, eksekusi di doHapus ──────────
+  const hapus   = (id, name) => setConfirmHapus({ id, name });
+
+  const doHapus = async () => {
     try {
-      await api.delete(`/admin/destinations/${id}`);
+      await api.delete(`/admin/destinations/${confirmHapus.id}`);
       showToast('Destinasi berhasil dihapus!');
       fetchDestinations();
     } catch (err) {
       showToast(err.message || 'Gagal menghapus destinasi');
+    } finally {
+      setConfirmHapus(null);
     }
   };
 
@@ -321,6 +330,18 @@ export default function AdminWisata() {
           </tbody>
         </table>
       </div>
+
+      {/* ── Confirm Dialog Hapus ── */}
+      <ConfirmDialog
+        open={!!confirmHapus}
+        icon="🗑️"
+        title="Hapus Destinasi?"
+        message={`Destinasi "${confirmHapus?.name}" akan dihapus permanen dan tidak bisa dikembalikan.`}
+        confirmLabel="Ya, Hapus"
+        confirmClass="btn-primary"
+        onConfirm={doHapus}
+        onCancel={() => setConfirmHapus(null)}
+      />
     </AdminLayout>
   );
 }

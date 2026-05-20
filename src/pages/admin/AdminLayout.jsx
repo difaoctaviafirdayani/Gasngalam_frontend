@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
-import logo from '../../assets/logo gasngalam.svg';
+import logo from "../../assets/logo-gasngalam.svg";
 
 export default function AdminLayout({ children, active }) {
   const navigate = useNavigate();

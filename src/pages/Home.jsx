@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
+import { SkeletonCard, SkeletonList } from '../components/SkeletonCard';
+import tuguImg from '../assets/Tugu-malang.png.png';
 
 const CAT_ORDER = [
   'Wisata Budaya',
@@ -47,25 +49,14 @@ export default function Home() {
     setLoading(true);
     const params = {};
     if (cat !== 'Semua') params.category = cat;
-
     if (cat !== 'Semua') {
-      if (sortMode === 'popular') {
-        params.sort = 'review_count';
-        params.dir  = 'desc';
-      }
-      if (sortMode === 'nearest' && userCoords) {
-        params.sort = 'nearest';
-        params.lat  = userCoords.lat;
-        params.lng  = userCoords.lng;
-      }
+      if (sortMode === 'popular') { params.sort = 'review_count'; params.dir = 'desc'; }
+      if (sortMode === 'nearest' && userCoords) { params.sort = 'nearest'; params.lat = userCoords.lat; params.lng = userCoords.lng; }
     }
-
     api.get('/destinations', { params })
       .then(res => {
         let data = res.data;
-        if (sortMode === 'popular') {
-          data = [...data].sort((a, b) => b.rating - a.rating);
-        }
+        if (sortMode === 'popular') data = [...data].sort((a, b) => b.rating - a.rating);
         setDestinations(data);
       })
       .catch(() => setDestinations([]))
@@ -83,44 +74,22 @@ export default function Home() {
       .catch(() => {});
   }, []);
 
-  const handleCatChange = (c) => {
-    setCat(c);
-    setSortMode('default');
-  };
+  const handleCatChange = (c) => { setCat(c); setSortMode('default'); };
 
   const handleNearest = () => {
     if (sortMode === 'nearest') { setSortMode('default'); return; }
     if (userCoords) { setSortMode('nearest'); return; }
     setGeoLoading(true);
     navigator.geolocation?.getCurrentPosition(
-      (pos) => {
-        setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        setSortMode('nearest');
-        setGeoLoading(false);
-      },
-      () => {
-        alert('Izin lokasi ditolak. Aktifkan lokasi di browser untuk fitur ini.');
-        setGeoLoading(false);
-      }
+      (pos) => { setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }); setSortMode('nearest'); setGeoLoading(false); },
+      () => { alert('Izin lokasi ditolak.'); setGeoLoading(false); }
     );
   };
 
   const thumbEl = (d) => {
-    if (d.photo_full_url) {
-      return (
-        <img
-          src={d.photo_full_url}
-          alt={d.name}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        />
-      );
-    }
+    if (d.photo_full_url) return <img src={d.photo_full_url} alt={d.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
     const bg = d.gradient || (d.color ? `linear-gradient(135deg,${d.color},${d.color}cc)` : 'linear-gradient(135deg,#3498db,#2980b9)');
-    return (
-      <div style={{ width: '100%', height: '100%', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>
-        {d.emoji || getCatIcon(d.category)}
-      </div>
-    );
+    return <div style={{ width: '100%', height: '100%', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>{d.emoji || getCatIcon(d.category)}</div>;
   };
 
   const cardHtml = (d) => (
@@ -145,8 +114,7 @@ export default function Home() {
 
   const getJarak = (d) => {
     if (d.distance_km) return d.distance_km + ' km';
-    if (userCoords && d.lat && d.lng)
-      return hitungJarak(userCoords.lat, userCoords.lng, d.lat, d.lng).toFixed(1) + ' km';
+    if (userCoords && d.lat && d.lng) return hitungJarak(userCoords.lat, userCoords.lng, d.lat, d.lng).toFixed(1) + ' km';
     return null;
   };
 
@@ -157,7 +125,7 @@ export default function Home() {
         <div className="list-thumb" style={{ overflow: 'hidden', borderRadius: 'var(--r-sm)' }}>
           {d.photo_full_url
             ? <img src={d.photo_full_url} alt={d.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--r-sm)' }} />
-            : <div style={{ width: '100%', height: '100%', background: d.gradient || (d.color ? `linear-gradient(135deg,${d.color},${d.color}cc)` : 'linear-gradient(135deg,#3498db,#2980b9)'), display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, borderRadius: 'var(--r-sm)' }}>{d.emoji || getCatIcon(d.category)}</div>
+            : <div style={{ width: '100%', height: '100%', background: d.gradient || 'linear-gradient(135deg,#3498db,#2980b9)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, borderRadius: 'var(--r-sm)' }}>{d.emoji || getCatIcon(d.category)}</div>
           }
         </div>
         <div className="list-info">
@@ -179,12 +147,16 @@ export default function Home() {
   };
 
   const renderContent = () => {
-    if (loading) return (
-      <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text3)' }}>
-        <div style={{ fontSize: 32, marginBottom: 10 }}>⏳</div>
-        <p>Memuat destinasi...</p>
-      </div>
-    );
+    if (loading) {
+      if (cat === 'Semua') {
+        return (
+          <div className="cards-grid">
+            {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
+          </div>
+        );
+      }
+      return <>{Array.from({ length: 6 }).map((_, i) => <SkeletonList key={i} />)}</>;
+    }
 
     if (destinations.length === 0) return (
       <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text3)' }}>
@@ -196,9 +168,7 @@ export default function Home() {
     if (cat === 'Semua') {
       const catOrder  = CAT_ORDER.filter(c => destinations.some(d => d.category === c));
       const otherCats = [...new Set(destinations.map(d => d.category))].filter(c => !CAT_ORDER.includes(c));
-      const allCats   = [...catOrder, ...otherCats];
-
-      return allCats.map(c => {
+      return [...catOrder, ...otherCats].map(c => {
         const dests = destinations.filter(d => d.category === c);
         if (dests.length === 0) return null;
         return (
@@ -220,8 +190,8 @@ export default function Home() {
         <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 14 }}>
           <strong style={{ color: 'var(--text)' }}>{getCatIcon(cat)} {cat}</strong>
           {' — '}
-          {sortMode === 'nearest'  && '📍 Terdekat · '}
-          {sortMode === 'popular'  && '🔥 Terpopuler · '}
+          {sortMode === 'nearest' && '📍 Terdekat · '}
+          {sortMode === 'popular' && '🔥 Terpopuler · '}
           {destinations.length} destinasi
         </div>
         {destinations.map(listHtml)}
@@ -233,14 +203,72 @@ export default function Home() {
 
   return (
     <div>
-      <div className="hero">
-        <div className="hero-inner">
-          <div className="hero-eyebrow">🗺️ Wisata Kota Malang · Jawa Timur</div>
-          <h1 className="hero-title">EKSPLOR KOTA MALANG</h1>
-          <p className="hero-sub">Temukan Destinasi Terbaik di Kota Malang — dari taman kota yang asri hingga kampung budaya yang memukau.</p>
+      {/* ═══ HERO BANNER ═══ */}
+      <div style={{
+        display: 'flex',
+        height: 420,
+        overflow: 'hidden',
+        borderBottom: '1px solid #e0e0e0',
+      }}>
+        {/* Kiri: teks */}
+        <div style={{
+          flexShrink: 0,
+          width: 380,
+          background: '#ffffff',
+          padding: '0 48px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}>
+          <div style={{
+            fontSize: 10, fontWeight: 700, color: '#aaa',
+            letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 14,
+          }}>
+            Wisata Kota Malang · Jawa Timur
+          </div>
+          <h1 style={{
+            margin: 0, lineHeight: 1.05, fontWeight: 900, color: '#111',
+            fontSize: 42, letterSpacing: '-1px',
+          }}>
+            EKSPLOR<br />
+            <span style={{ color: '#f5a623' }}>KOTA MALANG</span>
+          </h1>
+          <p style={{
+            margin: '18px 0 0', fontSize: 14, color: '#666',
+            lineHeight: 1.75,
+          }}>
+            Temukan Destinasi Terbaik di Kota Malang — dari taman kota yang asri hingga kampung budaya yang memukau.
+          </p>
+        </div>
+
+        {/* Kanan: foto */}
+        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+          <img
+            src={tuguImg}
+            alt="Tugu Malang"
+            style={{
+              position: 'absolute', inset: 0,
+              width: '100%', height: '100%',
+              objectFit: 'cover', objectPosition: 'center 30%',
+            }}
+          />
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to right, #fff 0%, transparent 12%)',
+          }} />
+          <div style={{
+            position: 'absolute', bottom: 14, right: 14,
+            background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)',
+            color: '#fff', fontSize: 11, fontWeight: 600,
+            padding: '5px 12px', borderRadius: 6,
+            display: 'flex', alignItems: 'center', gap: 5,
+          }}>
+            📍 Tugu Malang
+          </div>
         </div>
       </div>
 
+      {/* ═══ KATEGORI ═══ */}
       <div className="cat-section" style={{ position: 'sticky', top: 0, zIndex: 100, background: 'var(--white)' }}>
         <div className="cat-inner">
           {categories.map(c => (
