@@ -2,8 +2,6 @@ import { createContext, useContext, useState, useCallback, useEffect } from 'rea
 import api from '../services/api';
 
 const AppContext = createContext(null);
-
-// Base URL untuk foto — sesuaikan jika beda
 const BACKEND_URL = 'http://127.0.0.1:8000';
 
 function resolvePhotoUrl(url) {
@@ -14,18 +12,37 @@ function resolvePhotoUrl(url) {
 
 export function AppProvider({ children }) {
   const [user, setUser]             = useState(null);
+  const [userId, setUserId]         = useState(null);
+  const [userDetail, setUserDetail] = useState(null); // {id, name, email, avatar_url, role}
   const [role, setRole]             = useState(null);
   const [favs, setFavs]             = useState(new Set());
   const [comments, setComments]     = useState({});
   const [toast, setToast]           = useState({ msg: '', show: false });
   const [loginModal, setLoginModal] = useState({ open: false, msg: '' });
   const [userCoords, setUserCoords] = useState(null);
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+  const [theme, setTheme]           = useState(() => localStorage.getItem('theme') || 'light');
+  const [notifCount, setNotifCount] = useState(0);
+
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
   const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
+
+  const fetchNotifCount = useCallback(async () => {
+    try {
+      const res = await api.get('/notifications/unread-count');
+      setNotifCount(res.data.count || 0);
+    } catch {}
+  }, []);
+
+  const fetchMe = useCallback(async () => {
+    try {
+      const res = await api.get('/me');
+      setUserDetail(res.data);
+      setUserId(res.data.id);
+    } catch {}
+  }, []);
 
   useEffect(() => {
     const savedUser  = localStorage.getItem('user');
@@ -34,11 +51,18 @@ export function AppProvider({ children }) {
     if (savedUser && savedToken) {
       setUser(savedUser);
       setRole(savedRole);
-      api.get('/favorites/ids')
-        .then(res => setFavs(new Set(res.data)))
-        .catch(() => {});
+      api.get('/favorites/ids').then(res => setFavs(new Set(res.data))).catch(() => {});
+      fetchMe();
+      fetchNotifCount();
     }
   }, []);
+
+  // Poll notif count setiap 30 detik kalau user login
+  useEffect(() => {
+    if (!user) return;
+    const interval = setInterval(fetchNotifCount, 30000);
+    return () => clearInterval(interval);
+  }, [user, fetchNotifCount]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -65,13 +89,9 @@ export function AppProvider({ children }) {
   }, []);
 
   const requireLogin = (msg) => {
-    if (!user) {
-      setLoginModal({ open: true, msg: msg || 'Silakan login terlebih dahulu.' });
-      return false;
-    }
+    if (!user) { setLoginModal({ open: true, msg: msg || 'Silakan login terlebih dahulu.' }); return false; }
     return true;
   };
-
   const closeLoginModal = () => setLoginModal({ open: false, msg: '' });
 
   const login = async (email, password) => {
@@ -84,11 +104,14 @@ export function AppProvider({ children }) {
       localStorage.setItem('role',  data.user.role);
       setUser(data.user.name);
       setRole(data.user.role);
+      setUserId(data.user.id);
+      setUserDetail(data.user);
       showToast(data.user.role === 'admin'
         ? 'Login sebagai Admin berhasil!'
         : `Selamat datang, ${data.user.name}!`
       );
       api.get('/favorites/ids').then(r => setFavs(new Set(r.data))).catch(() => {});
+      fetchNotifCount();
       return data.user.role;
     } catch (err) {
       showToast(err.message || 'Email atau password salah');
@@ -98,16 +121,15 @@ export function AppProvider({ children }) {
 
   const register = async (name, email, phone, password, passwordConfirmation) => {
     try {
-      const res  = await api.post('/register', {
-        name, email, phone, password,
-        password_confirmation: passwordConfirmation,
-      });
+      const res  = await api.post('/register', { name, email, phone, password, password_confirmation: passwordConfirmation });
       const data = res.data;
       localStorage.setItem('token', data.token);
       localStorage.setItem('user',  data.user.name);
       localStorage.setItem('role',  data.user.role);
       setUser(data.user.name);
       setRole(data.user.role);
+      setUserId(data.user.id);
+      setUserDetail(data.user);
       showToast('Akun berhasil dibuat! Selamat datang, ' + data.user.name + '!');
       return true;
     } catch (err) {
@@ -121,10 +143,8 @@ export function AppProvider({ children }) {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('role');
-    setUser(null);
-    setRole(null);
-    setFavs(new Set());
-    setComments({});
+    setUser(null); setRole(null); setUserId(null); setUserDetail(null);
+    setFavs(new Set()); setComments({}); setNotifCount(0);
     showToast('Sampai jumpa!');
   };
 
@@ -141,9 +161,7 @@ export function AppProvider({ children }) {
         setFavs(prev => new Set([...prev, id]));
         showToast('Berhasil ditambahkan ke favorit!');
       }
-    } catch (err) {
-      showToast(err.message || 'Gagal update favorit');
-    }
+    } catch (err) { showToast(err.message || 'Gagal update favorit'); }
   };
 
   const fetchComments = async (destId) => {
@@ -169,14 +187,10 @@ export function AppProvider({ children }) {
       formData.append('rating',  rating);
       formData.append('comment', text);
       if (photo) formData.append('photo', photo);
-      await api.post(`/destinations/${destId}/reviews`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      await api.post(`/destinations/${destId}/reviews`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       showToast('Ulasan berhasil ditambahkan!');
       await fetchComments(destId);
-    } catch (err) {
-      showToast(err.message || 'Gagal mengirim ulasan');
-    }
+    } catch (err) { showToast(err.message || 'Gagal mengirim ulasan'); }
   };
 
   const reportComment = async (reviewId) => {
@@ -185,10 +199,7 @@ export function AppProvider({ children }) {
       await api.post(`/reviews/${reviewId}/report`);
       showToast('Ulasan berhasil dilaporkan. Admin akan meninjau.');
       return true;
-    } catch (err) {
-      showToast(err.message || 'Gagal melaporkan ulasan');
-      return false;
-    }
+    } catch (err) { showToast(err.message || 'Gagal melaporkan ulasan'); return false; }
   };
 
   const addKlaim = async ({ destination_id, nama, email, hp, ket, file }) => {
@@ -201,25 +212,24 @@ export function AppProvider({ children }) {
       formData.append('phone',          hp);
       formData.append('description',    ket);
       if (file) formData.append('document', file);
-      await api.post('/claims', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      await api.post('/claims', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       showToast('Klaim berhasil dikirim! Menunggu verifikasi admin.');
+      fetchNotifCount();
       return true;
-    } catch (err) {
-      showToast(err.message || 'Gagal mengirim klaim');
-      return false;
-    }
+    } catch (err) { showToast(err.message || 'Gagal mengirim klaim'); return false; }
   };
 
- return (
+  return (
     <AppContext.Provider value={{
-      user, role, favs, comments, toast, loginModal,
+      user, userId, userDetail, role,
+      favs, comments, toast, loginModal,
       userCoords, hitungJarak,
       login, register, logout, toggleFav,
       addComment, fetchComments, addKlaim, reportComment,
       requireLogin, closeLoginModal, showToast,
       theme, toggleTheme,
+      notifCount, setNotifCount, fetchNotifCount, fetchMe,
+      resolvePhotoUrl,
     }}>
       {children}
     </AppContext.Provider>
