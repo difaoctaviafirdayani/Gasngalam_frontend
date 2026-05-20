@@ -9,7 +9,7 @@ export default function AdminDetailWisata() {
   const navigate                    = useNavigate();
   const { comments, fetchComments } = useApp();
 
-  const [d, setD]           = useState(null);
+  const [d, setD]             = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,9 +23,10 @@ export default function AdminDetailWisata() {
 
   const destComments = comments[id] || [];
 
-  const stars = (r) => [1,2,3,4,5].map(s => (
-    <span key={s} style={{ color: r >= s ? '#f5a623' : '#ddd', fontSize: 18 }}>★</span>
-  ));
+  const stars = (r) =>
+    [1, 2, 3, 4, 5].map(s => (
+      <span key={s} style={{ color: r >= s ? '#f5a623' : '#ddd', fontSize: 18 }}>★</span>
+    ));
 
   const mapsUrl = d?.address
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.address)}`
@@ -33,13 +34,22 @@ export default function AdminDetailWisata() {
 
   return (
     <AdminLayout active="Kelola Ulasan">
+
+      {/* ── TOPBAR BACK BUTTON ── */}
       <button
         onClick={() => navigate('/admin/ulasan')}
         style={{
-          background: 'none', border: '1px solid var(--border)',
-          borderRadius: 8, padding: '6px 16px', cursor: 'pointer',
-          fontSize: 13, color: 'var(--text2)', marginBottom: 20,
-          display: 'flex', alignItems: 'center', gap: 6,
+          background: 'none',
+          border: '1px solid var(--border)',
+          borderRadius: 8,
+          padding: '6px 16px',
+          cursor: 'pointer',
+          fontSize: 13,
+          color: 'var(--text2)',
+          marginBottom: 20,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 6,
         }}
       >
         ← Kembali ke Kelola Ulasan
@@ -58,60 +68,155 @@ export default function AdminDetailWisata() {
       )}
 
       {!loading && d && (
-        // grid dua kolom: kiri (konten utama) | kanan (info card)
-        // persis seperti layout Detail.jsx user
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 28, alignItems: 'start' }}>
+        <div>
 
-          {/* ── KOLOM KIRI ── */}
-          <div>
-            <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)', marginBottom: 10 }}>
-              {d.name}
-            </h1>
-
-            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 16, fontSize: 13, color: 'var(--text3)', alignItems: 'center' }}>
-              <span>📍 {d.location}</span>
-              <span style={{ color: '#f5a623', fontWeight: 700 }}>
-                ★ {d.rating}
-                <span style={{ fontWeight: 400, color: 'var(--text3)' }}> ({d.review_count} ulasan)</span>
-              </span>
-              <span style={{ background: 'var(--bg2)', padding: '3px 12px', borderRadius: 99, fontSize: 12 }}>
-                {d.category}
-              </span>
-            </div>
-
-            {d.description && (
-              <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.75, marginBottom: 20 }}>
-                {d.description}
-              </p>
+          {/* ── HERO BANNER ── */}
+          <div style={{
+            position: 'relative',
+            width: '100%',
+            height: 280,
+            borderRadius: 16,
+            overflow: 'hidden',
+            marginBottom: 24,
+            background: d.photo_url
+              ? 'transparent'
+              : 'linear-gradient(135deg, #3b1fa8 0%, #6b35d9 50%, #9b59d9 100%)',
+          }}>
+            {d.photo_url ? (
+              <img
+                src={d.photo_url}
+                alt={d.name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                onError={e => { e.target.style.display = 'none'; }}
+              />
+            ) : (
+              <div style={{
+                width: '100%', height: '100%',
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center',
+                gap: 10, color: 'rgba(255,255,255,0.4)',
+              }}>
+                <span style={{ fontSize: 52 }}>🖼️</span>
+                <span style={{ fontSize: 13 }}>Belum ada foto utama</span>
+              </div>
             )}
 
-            {/* Rating summary — identik dengan Detail.jsx */}
-            <div className="rating-wrap">
-              <div style={{ display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap' }}>
-                <div style={{ textAlign: 'center', flexShrink: 0 }}>
-                  <div className="rating-big-num">{d.rating}</div>
-                  <div className="star-display">{stars(d.rating)}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text4)', marginTop: 3 }}>{d.review_count} ulasan</div>
+            {/* Overlay gradient bawah supaya badge terbaca */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 60%)',
+              pointerEvents: 'none',
+            }} />
+
+            {/* Badge kategori */}
+            {d.category && (
+              <span style={{
+                position: 'absolute', top: 16, left: 16,
+                background: '#e8a020', color: '#fff',
+                fontSize: 12, padding: '4px 14px',
+                borderRadius: 999, fontWeight: 500,
+              }}>
+                {d.category}
+              </span>
+            )}
+          </div>
+
+          {/* ── GRID DUA KOLOM ── */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 300px',
+            gap: 28,
+            alignItems: 'start',
+          }}>
+
+            {/* ── KOLOM KIRI ── */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+              {/* Judul & meta */}
+              <div style={{
+                background: 'var(--bg)',
+                border: '1px solid var(--border)',
+                borderRadius: 14,
+                padding: '20px 24px',
+              }}>
+                <h1 style={{ fontSize: 26, fontWeight: 700, color: 'var(--text)', marginBottom: 10 }}>
+                  {d.name}
+                </h1>
+                <div style={{
+                  display: 'flex', gap: 16, flexWrap: 'wrap',
+                  marginBottom: 14, fontSize: 13,
+                  color: 'var(--text3)', alignItems: 'center',
+                }}>
+                  <span>📍 {d.location}</span>
+                  <span style={{ color: '#f5a623', fontWeight: 700 }}>
+                    ★ {d.rating}
+                    <span style={{ fontWeight: 400, color: 'var(--text3)' }}>
+                      {' '}({d.review_count} ulasan)
+                    </span>
+                  </span>
+                  <span style={{
+                    background: 'var(--bg2)', padding: '3px 12px',
+                    borderRadius: 99, fontSize: 12,
+                  }}>
+                    {d.category}
+                  </span>
                 </div>
-                <div style={{ flex: 1, minWidth: 160 }}>
-                  {[5, 4, 3].map(s => (
-                    <div key={s} className="bar-row">
-                      <span>★{s}</span>
-                      <div className="bar-track">
-                        <div className="bar-fill" style={{ width: (s === 5 ? 70 : s === 4 ? 20 : 10) + '%' }}></div>
-                      </div>
-                      <span style={{ width: 26, textAlign: 'right', fontSize: 11 }}>
-                        {s === 5 ? 70 : s === 4 ? 20 : 10}%
-                      </span>
+                {d.description && (
+                  <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.75, margin: 0 }}>
+                    {d.description}
+                  </p>
+                )}
+              </div>
+
+              {/* Rating summary */}
+              <div className="rating-wrap">
+                <div style={{ display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <div style={{ textAlign: 'center', flexShrink: 0 }}>
+                    <div className="rating-big-num">{d.rating}</div>
+                    <div className="star-display">{stars(d.rating)}</div>
+                    <div style={{ fontSize: 11, color: 'var(--text4)', marginTop: 3 }}>
+                      {d.review_count} ulasan
                     </div>
-                  ))}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 160 }}>
+                    {[5, 4, 3].map(s => (
+                      <div key={s} className="bar-row">
+                        <span>★{s}</span>
+                        <div className="bar-track">
+                          <div
+                            className="bar-fill"
+                            style={{ width: (s === 5 ? 70 : s === 4 ? 20 : 10) + '%' }}
+                          />
+                        </div>
+                        <span style={{ width: 26, textAlign: 'right', fontSize: 11 }}>
+                          {s === 5 ? 70 : s === 4 ? 20 : 10}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Semua komentar — identik dengan Detail.jsx */}
-            {destComments.length > 0 && (
-              <div style={{ marginTop: 14 }}>
+              {/* Daftar komentar */}
+              <div style={{
+                background: 'var(--bg)',
+                border: '1px solid var(--border)',
+                borderRadius: 14,
+                padding: '20px 24px',
+              }}>
+                <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 16 }}>
+                  Ulasan Pengguna
+                </div>
+
+                {destComments.length === 0 && (
+                  <div style={{
+                    textAlign: 'center', padding: '30px 0',
+                    color: 'var(--text4)', fontSize: 13,
+                  }}>
+                    Belum ada ulasan untuk destinasi ini.
+                  </div>
+                )}
+
                 {destComments.map((c, i) => (
                   <div key={i} className="comment-item">
                     <div className="comment-head">
@@ -124,7 +229,9 @@ export default function AdminDetailWisata() {
                       </div>
                       <div className="comment-rating">★ {c.rating}</div>
                     </div>
+
                     <div className="comment-text">{c.text}</div>
+
                     {c.photo_full_url && (
                       <img
                         src={c.photo_full_url}
@@ -140,46 +247,70 @@ export default function AdminDetailWisata() {
                   </div>
                 ))}
               </div>
-            )}
+            </div>
 
-            {destComments.length === 0 && (
-              <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--text4)', fontSize: 13 }}>
-                Belum ada ulasan untuk destinasi ini.
-              </div>
-            )}
-          </div>
+            {/* ── KOLOM KANAN ── */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, position: 'sticky', top: 20 }}>
 
-          {/* ── KOLOM KANAN: Info Card — identik dengan Detail.jsx ── */}
-          <div>
-            <div className="info-card">
-              <div className="info-card-title">Info Destinasi</div>
-              <div className="info-row">
-                <div className="info-label">Alamat</div>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                  <div className="info-val" style={{ fontSize: 12, flex: 1 }}>{d.address || '-'}</div>
+              {/* Info Card */}
+              <div className="info-card">
+                <div className="info-card-title">Info Destinasi</div>
+
+                {/* Alamat + mini map */}
+                <div className="info-row">
+                  <div className="info-label">Alamat</div>
+                  <div className="info-val" style={{ fontSize: 12 }}>{d.address || '-'}</div>
                   {mapsUrl && (
-                    <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="maps-btn" title="Lihat di Google Maps">
-                      📍 Maps
+                    <a
+                      href={mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 6,
+                        marginTop: 10,
+                        height: 120,
+                        borderRadius: 10,
+                        border: '1px solid var(--border)',
+                        background: 'var(--bg2)',
+                        color: 'var(--text3)',
+                        fontSize: 12,
+                        textDecoration: 'none',
+                        cursor: 'pointer',
+                        transition: 'background 0.15s',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'var(--bg3)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'var(--bg2)'}
+                    >
+                      <span style={{ fontSize: 28 }}>🗺️</span>
+                      <span>Klik untuk lihat di Google Maps</span>
                     </a>
                   )}
                 </div>
-              </div>
-              {[
-                { label: 'Contact Person',  val: d.contact },
-                { label: 'Jam Operasional', val: d.open_hours },
-                { label: 'HTM',             val: d.ticket_price, cls: 'price' },
-                { label: 'Sosial Media',    val: d.social_media },
-              ].map(item => (
-                <div key={item.label} className="info-row">
-                  <div className="info-label">{item.label}</div>
-                  <div className={'info-val' + (item.cls ? ' ' + item.cls : '')} style={{ fontSize: 12 }}>
-                    {item.val || '-'}
+
+                {/* Baris info lainnya */}
+                {[
+                  { label: 'Contact Person',  val: d.contact },
+                  { label: 'Jam Operasional', val: d.open_hours },
+                  { label: 'HTM',             val: d.ticket_price, cls: 'price' },
+                  { label: 'Sosial Media',    val: d.social_media },
+                ].map(item => (
+                  <div key={item.label} className="info-row">
+                    <div className="info-label">{item.label}</div>
+                    <div className={`info-val${item.cls ? ' ' + item.cls : ''}`} style={{ fontSize: 12 }}>
+                      {item.val || '-'}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
+
+
             </div>
           </div>
-
         </div>
       )}
     </AdminLayout>
