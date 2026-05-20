@@ -15,6 +15,7 @@ import AdminDashboard from './pages/admin/Dashboard';
 import AdminWisata from './pages/admin/ManageWisata';
 import AdminKlaim from './pages/admin/ManageKlaim';
 import AdminUlasan from './pages/admin/ManageUlasan';
+import AdminDetailWisata from './pages/admin/AdminDetailWisata';
 
 function AdminRoute({ children }) {
   const { user, role } = useApp();
@@ -47,6 +48,7 @@ function AppInner() {
         <Route path="/admin/wisata" element={<AdminRoute><AdminWisata /></AdminRoute>} />
         <Route path="/admin/klaim" element={<AdminRoute><AdminKlaim /></AdminRoute>} />
         <Route path="/admin/ulasan" element={<AdminRoute><AdminUlasan /></AdminRoute>} />
+        <Route path="/admin/destination/:id" element={<AdminRoute><AdminDetailWisata /></AdminRoute>} />
       </Routes>
       <div className={'toast-bar' + (toast.show ? ' show' : '')}>{toast.msg}</div>
       {loginModal.open && <LoginModal msg={loginModal.msg} onClose={closeLoginModal} />}
