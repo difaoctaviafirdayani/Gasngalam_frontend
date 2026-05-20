@@ -5,13 +5,11 @@ import api from '../services/api';
 import { SkeletonCard, SkeletonList } from '../components/SkeletonCard';
 import tuguImg from '../assets/Tugu-malang.png.png';
 
-const CAT_ORDER = ['Wisata Budaya','Taman Kota','Wisata Edukasi','Kuliner Legendaris','Wisata Hiburan','Wisata Alam'];
-const CAT_ICONS = {
-  'Semua':'🌏','Wisata Budaya':'🏛️','Taman Kota':'🌳',
-  'Wisata Edukasi':'📚','Kuliner Legendaris':'🍜','Wisata Hiburan':'✨','Wisata Alam':'🏞️',
-};
+const CAT_ORDER = ['Wisata Budaya','Taman Kota','Wisata Edukasi','Kuliner & Belanja','Wisata Hiburan','Wisata Alam'];
+const CAT_ICONS = { 'Semua': '🌏', 'Wisata Budaya': '🏛️', 'Taman Kota': '🌳', 'Wisata Edukasi': '📚', 'Kuliner & Belanja': '🍜', 'Wisata Hiburan': '✨', 'Wisata Alam': '🏞️' };
 const getCatIcon = (c) => CAT_ICONS[c] || '📍';
 
+// Peta semua destinasi menggunakan Leaflet
 function DestinationsMap({ destinations, onSelectDest }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
@@ -25,20 +23,28 @@ function DestinationsMap({ destinations, onSelectDest }) {
       link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
       document.head.appendChild(link);
     }
+
     const initMap = (L) => {
       if (mapInstanceRef.current) return;
       const map = L.map(mapRef.current).setView([-7.9797, 112.6304], 13);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+      }).addTo(map);
       mapInstanceRef.current = map;
     };
-    if (window.L) { initMap(window.L); }
-    else {
+
+    if (window.L) {
+      initMap(window.L);
+    } else {
       const s = document.createElement('script');
       s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
       s.onload = () => initMap(window.L);
       document.head.appendChild(s);
     }
-    return () => { if (mapInstanceRef.current) { mapInstanceRef.current.remove(); mapInstanceRef.current = null; } };
+
+    return () => {
+      if (mapInstanceRef.current) { mapInstanceRef.current.remove(); mapInstanceRef.current = null; }
+    };
   }, []);
 
   useEffect(() => {
@@ -46,10 +52,12 @@ function DestinationsMap({ destinations, onSelectDest }) {
     const L = window.L;
     markersRef.current.forEach(m => m.remove());
     markersRef.current = [];
+
     destinations.forEach(d => {
       if (!d.lat || !d.lng) return;
       const marker = L.circleMarker([d.lat, d.lng], {
-        radius: 8, fillColor: '#3498db', color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.9,
+        radius: 8, fillColor: '#3498db', color: '#fff',
+        weight: 2, opacity: 1, fillOpacity: 0.9,
       }).addTo(mapInstanceRef.current);
       marker.bindPopup(`
         <div style="font-family:sans-serif;min-width:140px">
@@ -59,6 +67,7 @@ function DestinationsMap({ destinations, onSelectDest }) {
           <button onclick="window.__goToDestination('${d.id}')" style="margin-top:6px;background:#3498db;color:#fff;border:none;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;width:100%">Lihat Detail</button>
         </div>
       `);
+      marker.on('click', () => marker.openPopup());
       markersRef.current.push(marker);
     });
   }, [destinations]);
@@ -72,7 +81,7 @@ function DestinationsMap({ destinations, onSelectDest }) {
     <div>
       <div ref={mapRef} style={{ width: '100%', height: 500, borderRadius: 12, border: '1.5px solid var(--border)' }} />
       <div style={{ marginTop: 8, fontSize: 12, color: 'var(--text3)', textAlign: 'center' }}>
-        🗺️ {destinations.filter(d => d.lat && d.lng).length} destinasi di peta · Klik marker untuk detail
+        🗺️ {destinations.filter(d => d.lat && d.lng).length} destinasi ditampilkan di peta · Klik marker untuk detail
       </div>
     </div>
   );
@@ -88,7 +97,7 @@ export default function Home() {
   const [userCoords, setUserCoords]     = useState(null);
   const [geoLoading, setGeoLoading]     = useState(false);
   const { favs, toggleFav, hitungJarak } = useApp();
-  const navigate = useNavigate();
+  const navigate                        = useNavigate();
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -130,6 +139,7 @@ export default function Home() {
   }, []);
 
   const handleCatChange = (c) => { setCat(c); setSortMode('default'); };
+
   const handleNearest = () => {
     if (sortMode === 'nearest') { setSortMode('default'); return; }
     if (userCoords) { setSortMode('nearest'); return; }
@@ -210,7 +220,6 @@ export default function Home() {
       if (cat === 'Semua') return <div className="cards-grid">{Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}</div>;
       return <>{Array.from({ length: 6 }).map((_, i) => <SkeletonList key={i} />)}</>;
     }
-
     if (destinations.length === 0) return (
       <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text3)' }}>
         <div style={{ fontSize: 40, marginBottom: 10 }}>🔍</div>
@@ -235,7 +244,7 @@ export default function Home() {
       );
     }
 
-    // Card grid per kategori (tampilan Semua)
+    // card / default Semua — kelompokkan per kategori
     const catOrder  = CAT_ORDER.filter(c => destinations.some(d => d.category === c));
     const otherCats = [...new Set(destinations.map(d => d.category))].filter(c => !CAT_ORDER.includes(c));
     return [...catOrder, ...otherCats].map(c => {
@@ -260,9 +269,7 @@ export default function Home() {
       {/* HERO BANNER */}
       <div style={{ display: 'flex', height: 420, overflow: 'hidden', borderBottom: '1px solid #e0e0e0' }}>
         <div style={{ flexShrink: 0, width: 380, background: '#ffffff', padding: '0 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: '#aaa', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 14 }}>
-            Wisata Kota Malang · Jawa Timur
-          </div>
+          <div style={{ fontSize: 10, fontWeight: 700, color: '#aaa', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 14 }}>Wisata Kota Malang · Jawa Timur</div>
           <h1 style={{ margin: 0, lineHeight: 1.05, fontWeight: 900, color: '#111', fontSize: 42, letterSpacing: '-1px' }}>
             EKSPLOR<br /><span style={{ color: '#f5a623' }}>KOTA MALANG</span>
           </h1>
@@ -293,27 +300,38 @@ export default function Home() {
       {/* SORT + VIEW MODE BAR */}
       <div style={{ background: 'var(--white)', borderBottom: '1px solid var(--border)', padding: '8px 20px', position: 'sticky', top: 44, zIndex: 99 }}>
         <div style={{ maxWidth: 1020, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+          {/* Sort buttons — selalu tampil */}
           <div style={{ display: 'flex', gap: 6 }}>
-            {cat !== 'Semua' && (
-              <>
-                <button className={'sort-btn' + (sortMode === 'default' ? ' active' : '')} onClick={() => setSortMode('default')}>Semua</button>
-                <button className={'sort-btn' + (sortMode === 'nearest' ? ' active' : '')} onClick={handleNearest} disabled={geoLoading}>
-                  {geoLoading ? '📍...' : '📍 Terdekat'}
-                </button>
-              </>
-            )}
-            <button className={'sort-btn' + (sortMode === 'popular' ? ' active' : '')} onClick={() => setSortMode(sortMode === 'popular' ? 'default' : 'popular')}>
+            <button
+              className={'sort-btn' + (sortMode === 'nearest' ? ' active' : '')}
+              onClick={handleNearest}
+              disabled={geoLoading}
+            >
+              {geoLoading ? '📍...' : '📍 Terdekat'}
+            </button>
+            <button
+              className={'sort-btn' + (sortMode === 'popular' ? ' active' : '')}
+              onClick={() => setSortMode(sortMode === 'popular' ? 'default' : 'popular')}
+            >
               🔥 Terpopuler
             </button>
+            {sortMode !== 'default' && (
+              <button className="sort-btn" onClick={() => setSortMode('default')}>✕ Reset</button>
+            )}
           </div>
+
           {/* View mode toggle */}
           <div style={{ display: 'flex', gap: 4, background: 'var(--bg)', borderRadius: 8, padding: 3 }}>
-            {[['card','⊞'],['list','☰'],['map','🗺️']].map(([mode, icon]) => (
-              <button key={mode} onClick={() => setViewMode(mode)}
+            {[['card', '⊞'], ['list', '☰'], ['map', '🗺️']].map(([mode, icon]) => (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                title={mode === 'card' ? 'Tampilan Grid' : mode === 'list' ? 'Tampilan List' : 'Tampilan Peta'}
                 style={{
                   padding: '4px 10px', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 14,
                   background: viewMode === mode ? 'var(--white)' : 'transparent',
                   boxShadow: viewMode === mode ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                  transition: 'all .2s',
                 }}
               >{icon}</button>
             ))}
