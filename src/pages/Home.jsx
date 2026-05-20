@@ -45,18 +45,27 @@ export default function Home() {
     }
   }, []);
 
-  useEffect(() => {
+ useEffect(() => {
     setLoading(true);
     const params = {};
     if (cat !== 'Semua') params.category = cat;
-    if (cat !== 'Semua') {
-      if (sortMode === 'popular') { params.sort = 'review_count'; params.dir = 'desc'; }
-      if (sortMode === 'nearest' && userCoords) { params.sort = 'nearest'; params.lat = userCoords.lat; params.lng = userCoords.lng; }
-    }
+
     api.get('/destinations', { params })
       .then(res => {
         let data = res.data;
-        if (sortMode === 'popular') data = [...data].sort((a, b) => b.rating - a.rating);
+
+        if (sortMode === 'popular') {
+          data = [...data].sort((a, b) => (b.review_count ?? 0) - (a.review_count ?? 0));
+        }
+
+        if (sortMode === 'nearest' && userCoords) {
+          data = [...data].sort((a, b) => {
+            const jarakA = (a.lat && a.lng) ? hitungJarak(userCoords.lat, userCoords.lng, a.lat, a.lng) : 99999;
+            const jarakB = (b.lat && b.lng) ? hitungJarak(userCoords.lat, userCoords.lng, b.lat, b.lng) : 99999;
+            return jarakA - jarakB;
+          });
+        }
+
         setDestinations(data);
       })
       .catch(() => setDestinations([]))
@@ -81,8 +90,15 @@ export default function Home() {
     if (userCoords) { setSortMode('nearest'); return; }
     setGeoLoading(true);
     navigator.geolocation?.getCurrentPosition(
-      (pos) => { setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }); setSortMode('nearest'); setGeoLoading(false); },
-      () => { alert('Izin lokasi ditolak.'); setGeoLoading(false); }
+      (pos) => {
+        setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setSortMode('nearest');
+        setGeoLoading(false);
+      },
+      () => {
+        alert('Izin lokasi ditolak. Aktifkan lokasi di browser untuk fitur ini.');
+        setGeoLoading(false);
+      }
     );
   };
 
@@ -287,9 +303,11 @@ export default function Home() {
         <div style={{ background: 'var(--white)', borderBottom: '1px solid var(--border)', padding: '8px 20px', position: 'sticky', top: 44, zIndex: 99 }}>
           <div style={{ maxWidth: 1020, margin: '0 auto', display: 'flex', gap: 8 }}>
             <button className={'sort-btn' + (sortMode === 'default' ? ' active' : '')} onClick={() => setSortMode('default')}>Semua</button>
-            <button className={'sort-btn' + (sortMode === 'nearest' ? ' active' : '')} onClick={handleNearest} disabled={geoLoading}>
-              {geoLoading ? '📍...' : '📍 Terdekat'}
-            </button>
+            {cat !== 'Semua' && (
+              <button className={'sort-btn' + (sortMode === 'nearest' ? ' active' : '')} onClick={handleNearest} disabled={geoLoading}>
+                {geoLoading ? '📍...' : '📍 Terdekat'}
+              </button>
+            )}
             <button className={'sort-btn' + (sortMode === 'popular' ? ' active' : '')} onClick={() => setSortMode(sortMode === 'popular' ? 'default' : 'popular')}>
               🔥 Terpopuler
             </button>
