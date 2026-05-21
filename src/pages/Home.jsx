@@ -1,15 +1,46 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
-import api from '../services/api';
-import { SkeletonCard, SkeletonList } from '../components/SkeletonCard';
-import tuguImg from '../assets/Tugu-malang.png.png';
+import {
+  FaGlobeAsia,
+  FaLandmark,
+  FaTree,
+  FaBook,
+  FaUtensils,
+  FaStar,
+  FaMountain,
+  FaMapMarkerAlt,
+  FaFire,
+  FaSearch,
+  FaHeart,
+  FaRegHeart,
+  FaMap,
+  FaThLarge,
+  FaBars,
+  FaTimes
+} from "react-icons/fa";
 
-const CAT_ORDER = ['Wisata Budaya','Taman Kota','Wisata Edukasi','Kuliner & Belanja','Wisata Hiburan','Wisata Alam'];
-const CAT_ICONS = { 'Semua': '🌏', 'Wisata Budaya': '🏛️', 'Taman Kota': '🌳', 'Wisata Edukasi': '📚', 'Kuliner & Belanja': '🍜', 'Wisata Hiburan': '✨', 'Wisata Alam': '🏞️' };
-const getCatIcon = (c) => CAT_ICONS[c] || '📍';
+const CAT_ORDER = [
+  'Wisata Budaya',
+  'Taman Kota',
+  'Wisata Edukasi',
+  'Kuliner & Belanja',
+  'Wisata Hiburan',
+  'Wisata Alam'
+];
 
-// Peta semua destinasi menggunakan Leaflet
+const CAT_ICONS = {
+  'Semua': FaGlobeAsia,
+  'Wisata Budaya': FaLandmark,
+  'Taman Kota': FaTree,
+  'Wisata Edukasi': FaBook,
+  'Kuliner & Belanja': FaUtensils,
+  'Wisata Hiburan': FaStar,
+  'Wisata Alam': FaMountain
+};
+
+const getCatIcon = (c) => {
+  const Icon = CAT_ICONS[c] || FaMapMarkerAlt;
+  return <Icon />;
+};
+
 function DestinationsMap({ destinations, onSelectDest }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
@@ -62,8 +93,17 @@ function DestinationsMap({ destinations, onSelectDest }) {
       marker.bindPopup(`
         <div style="font-family:sans-serif;min-width:140px">
           <div style="font-weight:700;font-size:13px">${d.name}</div>
-          <div style="font-size:11px;color:#666;margin-top:2px">📍 ${d.location}</div>
-          <div style="font-size:11px;color:#f5a623;margin-top:2px">★ ${d.rating}</div>
+          <div className="card-loc">
+  <FaMapMarkerAlt style={{ marginRight: 4 }} />
+  {d.location}
+</div>
+          <div className="card-rating">
+  <FaStar style={{ marginRight: 4 }} />
+  {d.rating}
+  <span style={{ fontWeight: 400, color: 'var(--text4)' }}>
+    ({d.review_count})
+  </span>
+</div>
           <button onclick="window.__goToDestination('${d.id}')" style="margin-top:6px;background:#3498db;color:#fff;border:none;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;width:100%">Lihat Detail</button>
         </div>
       `);
@@ -162,14 +202,22 @@ export default function Home() {
         {thumbEl(d)}
         <span className="card-cat-badge">{d.category}</span>
         <button className="card-fav" onClick={e => { e.stopPropagation(); toggleFav(d.id); }}>
-          {favs.has(d.id) ? '❤️' : '🤍'}
+          {favs.has(d.id)
+  ? <FaHeart />
+  : <FaRegHeart />
+}
         </button>
       </div>
       <div className="card-body">
         <div className="card-name">{d.name}</div>
-        <div className="card-loc">📍 {d.location}</div>
+        <div className="card-loc">
+  <FaMapMarkerAlt style={{ marginRight: 4 }} />
+  {d.location}
+</div>
         <div className="card-footer">
-          <div className="card-rating">★ {d.rating} <span style={{ fontWeight: 400, color: 'var(--text4)' }}>({d.review_count})</span></div>
+          <div className="card-rating">
+  <FaStar style={{ marginRight: 4 }} />
+  {d.rating} <span style={{ fontWeight: 400, color: 'var(--text4)' }}>({d.review_count})</span></div>
           {d.distance && <div className="card-dist">{d.distance}</div>}
         </div>
       </div>
@@ -196,14 +244,24 @@ export default function Home() {
           <div className="list-name">{d.name}</div>
           <div className="list-loc">{d.location}</div>
           <div className="list-meta">
-            <div className="list-rating">★ {d.rating} ({d.review_count})</div>
+            <div className="list-rating">
+  <FaStar style={{ marginRight: 4 }} />
+  {d.rating} ({d.review_count})
+</div>
             <div className="list-cat">{getCatIcon(d.category)} {d.category}</div>
           </div>
         </div>
         <div className="list-right">
-          {jarak && <div style={{ fontSize: 11, color: 'var(--text4)' }}>{jarak} 🗺️</div>}
+          {jarak && (
+  <div style={{ fontSize: 11, color: 'var(--text4)' }}>
+    {jarak} <FaMap />
+  </div>
+)}
           <button className="fav-list-btn" onClick={e => { e.stopPropagation(); toggleFav(d.id); }}>
-            {favs.has(d.id) ? '❤️' : '🤍'}
+            {favs.has(d.id)
+  ? <FaHeart />
+  : <FaRegHeart />
+}
           </button>
         </div>
       </div>
@@ -234,8 +292,16 @@ export default function Home() {
             <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 14 }}>
               <strong style={{ color: 'var(--text)' }}>{getCatIcon(cat)} {cat}</strong>
               {' — '}
-              {sortMode === 'nearest' && '📍 Terdekat · '}
-              {sortMode === 'popular' && '🔥 Terpopuler · '}
+              {sortMode === 'nearest' && (
+  <>
+    <FaMapMarkerAlt style={{ marginRight: 4 }} />
+    Terdekat ·
+  </>
+)}
+              <>
+  <FaFire style={{ marginRight: 4 }} />
+  Terpopuler
+</>
               {destinations.length} destinasi
             </div>
           )}
@@ -281,7 +347,7 @@ export default function Home() {
           <img src={tuguImg} alt="Tugu Malang" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }} />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, #fff 0%, transparent 12%)' }} />
           <div style={{ position: 'absolute', bottom: 14, right: 14, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)', color: '#fff', fontSize: 11, fontWeight: 600, padding: '5px 12px', borderRadius: 6, display: 'flex', alignItems: 'center', gap: 5 }}>
-            📍 Tugu Malang
+            <><FaMapMarkerAlt /> Tugu Malang</>
           </div>
         </div>
       </div>
@@ -307,22 +373,35 @@ export default function Home() {
               onClick={handleNearest}
               disabled={geoLoading}
             >
-              {geoLoading ? '📍...' : '📍 Terdekat'}
+              <>
+  <FaMapMarkerAlt style={{ marginRight: 4 }} />
+  {geoLoading ? 'Loading...' : 'Terdekat'}
+</>
             </button>
             <button
               className={'sort-btn' + (sortMode === 'popular' ? ' active' : '')}
               onClick={() => setSortMode(sortMode === 'popular' ? 'default' : 'popular')}
             >
-              🔥 Terpopuler
+             <>
+  <FaFire style={{ marginRight: 4 }} />
+  Terpopuler
+</>
             </button>
             {sortMode !== 'default' && (
-              <button className="sort-btn" onClick={() => setSortMode('default')}>✕ Reset</button>
+              <button className="sort-btn" onClick={() => setSortMode('default')}>
+  <FaTimes style={{ marginRight: 4 }} />
+  Reset
+</button>
             )}
           </div>
 
           {/* View mode toggle */}
           <div style={{ display: 'flex', gap: 4, background: 'var(--bg)', borderRadius: 8, padding: 3 }}>
-            {[['card', '⊞'], ['list', '☰'], ['map', '🗺️']].map(([mode, icon]) => (
+            {[
+  ['card', <FaThLarge />],
+  ['list', <FaBars />],
+  ['map', <FaMap />]
+].map(([mode, icon]) => (
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
