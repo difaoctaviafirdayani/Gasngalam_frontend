@@ -208,7 +208,7 @@ export default function Home() {
     }).catch(() => {});
   }, []);
 
-  const handleCatChange = (c) => { setCat(c); setSortMode('default'); };
+ const handleCatChange = (c) => { setCat(c); setSortMode('default'); setViewMode('card'); };
 
   const handleNearest = () => {
     if (sortMode === 'nearest') { setSortMode('default'); return; }
@@ -305,9 +305,9 @@ export default function Home() {
     }
 
     if (loading) {
-      if (cat === 'Semua') return <div className="cards-grid">{Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}</div>;
-      return <>{Array.from({ length: 6 }).map((_, i) => <SkeletonList key={i} />)}</>;
+      return <div className="cards-grid">{Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}</div>;
     }
+
     if (destinations.length === 0) return (
       <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text3)' }}>
         <div style={{ fontSize: 40, marginBottom: 10 }}>🔍</div>
@@ -315,32 +315,25 @@ export default function Home() {
       </div>
     );
 
-    if (viewMode === 'list' || cat !== 'Semua') {
+    if (viewMode === 'list') {
+      return <>{destinations.map(listHtml)}</>;
+    }
+
+    if (cat !== 'Semua') {
       return (
         <>
-          {cat !== 'Semua' && (
-            <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 14 }}>
-              <strong style={{ color: 'var(--text)' }}>{getCatIcon(cat)} {cat}</strong>
-              {' — '}
-              {sortMode === 'nearest' && (
-  <>
-    <FaMapMarkerAlt style={{ marginRight: 4 }} />
-    Terdekat ·
-  </>
-)}
-              <>
-  <FaFire style={{ marginRight: 4 }} />
-  Terpopuler
-</>
-              {destinations.length} destinasi
-            </div>
-          )}
-          {destinations.map(listHtml)}
+          <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 14 }}>
+            <strong style={{ color: 'var(--text)' }}>{getCatIcon(cat)} {cat}</strong>
+            {' — '}
+            {sortMode === 'nearest' && <><FaMapMarkerAlt style={{ marginRight: 4 }} />Terdekat · </>}
+            {sortMode === 'popular' && <><FaFire style={{ marginRight: 4 }} />Terpopuler · </>}
+            {destinations.length} destinasi
+          </div>
+          <div className="cards-grid">{destinations.map(cardHtml)}</div>
         </>
       );
     }
 
-    // card / default Semua — kelompokkan per kategori
     const catOrder  = CAT_ORDER.filter(c => destinations.some(d => d.category === c));
     const otherCats = [...new Set(destinations.map(d => d.category))].filter(c => !CAT_ORDER.includes(c));
     return [...catOrder, ...otherCats].map(c => {
