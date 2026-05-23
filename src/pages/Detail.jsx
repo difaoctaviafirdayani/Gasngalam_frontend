@@ -305,10 +305,7 @@ ${d.photo_full_url ? `<img class="hero" src="${d.photo_full_url}" alt="${d.name}
               <button className="btn-action" onClick={() => navigate('/destination/' + d.id + '/rating')}>💬 Rating dan Komentar</button>
               <button className="btn-action" onClick={() => { if (requireLogin('Anda perlu login untuk mengajukan klaim bisnis.')) navigate('/klaim/' + d.id); }}>📋 Ajukan Klaim Bisnis</button>
 
-              {/* Export PDF */}
-              <button className="btn-action" onClick={handleExportPdf} disabled={exportingPdf} title="Download sebagai PDF">
-                {exportingPdf ? '⏳ ...' : '📄 Unduh PDF'}
-              </button>
+        
 
               {/* Share */}
               <div style={{ position: 'relative', display: 'inline-flex' }}>
