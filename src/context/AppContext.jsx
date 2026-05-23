@@ -36,11 +36,13 @@ export function AppProvider({ children }) {
     } catch {}
   }, []);
 
-  const fetchMe = useCallback(async () => {
+ const fetchMe = useCallback(async () => {
     try {
       const res = await api.get('/me');
       setUserDetail(res.data);
       setUserId(res.data.id);
+      setUser(res.data.name);
+      localStorage.setItem('user', res.data.name);
     } catch {}
   }, []);
 

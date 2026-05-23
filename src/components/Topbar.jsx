@@ -81,7 +81,7 @@ function NotifDropdown({ onClose }) {
 }
 
 export default function Topbar() {
-  const { user, theme, toggleTheme, notifCount } = useApp();
+ const { user, userDetail, theme, toggleTheme, notifCount, fetchNotifCount } = useApp();
   const navigate = useNavigate();
   const [search, setSearch]           = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -167,10 +167,19 @@ export default function Topbar() {
           {!user ? (
             <button className="nav-btn" onClick={() => navigate('/login')}>Login</button>
           ) : (
-            <div className="user-chip" onClick={() => setSidebarOpen(true)}>
-              <div className="user-avatar">{user[0].toUpperCase()}</div>
-              <span>{user}</span>
-            </div>
+          <div className="user-chip" onClick={() => setSidebarOpen(true)}>
+      {userDetail?.avatar_url
+        ? <img
+            src={userDetail.avatar_url}
+            alt="avatar"
+            style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border)' }}
+          />
+        : <div className="user-avatar">
+            {(userDetail?.name || user || 'U')[0].toUpperCase()}
+          </div>
+      }
+      <span>{userDetail?.name || user}</span>
+    </div>
           )}
         </div>
       </nav>

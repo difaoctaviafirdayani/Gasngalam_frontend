@@ -1,3 +1,8 @@
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
+import api from '../services/api';
+import tuguImg from '../assets/Tugu-malang.png.png';
 import {
   FaGlobeAsia,
   FaLandmark,
@@ -8,7 +13,6 @@ import {
   FaMountain,
   FaMapMarkerAlt,
   FaFire,
-  FaSearch,
   FaHeart,
   FaRegHeart,
   FaMap,
@@ -40,6 +44,32 @@ const getCatIcon = (c) => {
   const Icon = CAT_ICONS[c] || FaMapMarkerAlt;
   return <Icon />;
 };
+
+function SkeletonCard() {
+  return (
+    <div className="dest-card" style={{ pointerEvents: 'none' }}>
+      <div className="card-img" style={{ background: 'var(--border)', borderRadius: 'var(--r-sm)' }} />
+      <div className="card-body">
+        <div style={{ height: 14, width: '70%', background: 'var(--border)', borderRadius: 6, marginBottom: 8 }} />
+        <div style={{ height: 11, width: '50%', background: 'var(--border)', borderRadius: 6, marginBottom: 8 }} />
+        <div style={{ height: 11, width: '40%', background: 'var(--border)', borderRadius: 6 }} />
+      </div>
+    </div>
+  );
+}
+
+function SkeletonList() {
+  return (
+    <div className="list-item" style={{ pointerEvents: 'none' }}>
+      <div className="list-thumb" style={{ background: 'var(--border)', borderRadius: 'var(--r-sm)', flexShrink: 0 }} />
+      <div className="list-info" style={{ flex: 1 }}>
+        <div style={{ height: 14, width: '60%', background: 'var(--border)', borderRadius: 6, marginBottom: 8 }} />
+        <div style={{ height: 11, width: '40%', background: 'var(--border)', borderRadius: 6, marginBottom: 8 }} />
+        <div style={{ height: 11, width: '30%', background: 'var(--border)', borderRadius: 6 }} />
+      </div>
+    </div>
+  );
+}
 
 function DestinationsMap({ destinations, onSelectDest }) {
   const mapRef = useRef(null);

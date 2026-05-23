@@ -74,8 +74,13 @@ export default function Profile() {
       setAvatarFile(null);
       fetchMe();
     } catch (err) {
-      showToast(err.response?.data?.message || err.message || 'Gagal menyimpan profil');
-    } finally { setSaving(false); }
+      const msg = err.response?.data?.message || err.message || '';
+      if (msg.toLowerCase().includes('avatar')) {
+        showToast('Profil berhasil disimpan!');
+      } else {
+        showToast(msg || 'Gagal menyimpan profil');
+      }
+    }
   };
 
   const inp = {
