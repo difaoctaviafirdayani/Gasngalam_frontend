@@ -263,14 +263,21 @@ export default function Home() {
         <div className="list-info">
           <div className="list-name">{d.name}</div>
           <div className="list-loc">{d.location}</div>
-          <div className="list-meta">
-            <div className="list-rating"><FaStar style={{ marginRight: 4 }} />{d.rating} ({d.review_count})</div>
-            <div className="list-cat">{getCatIcon(d.category)} {d.category}</div>
+          {/* rating + kategori: paksa 1 baris */}
+          <div className="list-meta" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'nowrap' }}>
+            <div className="list-rating" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+              <FaStar style={{ marginRight: 4 }} />{d.rating} ({d.review_count})
+            </div>
+            <div className="list-cat" style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+              {getCatIcon(d.category)} {d.category}
+            </div>
           </div>
         </div>
-        <div className="list-right">
-          {jarak && <div style={{ fontSize: 11, color: 'var(--text4)' }}>{jarak} <FaMap /></div>}
-          <button className="fav-list-btn" onClick={e => { e.stopPropagation(); toggleFav(d.id); }}>
+        {/* Sisi kanan: peta + jarak + love — paksa 1 baris */}
+        <div className="list-right" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 0, marginLeft: 'auto' }}>
+          <FaMap style={{ fontSize: 12, color: 'var(--text4)', flexShrink: 0 }} />
+          {jarak && <span style={{ fontSize: 11, color: 'var(--text4)', whiteSpace: 'nowrap', flexShrink: 0 }}>{jarak}</span>}
+          <button className="fav-list-btn" style={{ flexShrink: 0 }} onClick={e => { e.stopPropagation(); toggleFav(d.id); }}>
             {favs.has(d.id) ? <FaHeart /> : <FaRegHeart />}
           </button>
         </div>
@@ -372,10 +379,11 @@ export default function Home() {
         </div>
       </div>
 
-      {/* SORT + VIEW MODE BAR */}
+      {/* SORT + VIEW MODE BAR — 1 row */}
       <div style={{ background: 'var(--white)', borderBottom: '1px solid var(--border)', padding: '8px 20px', position: 'sticky', top: 44, zIndex: 99 }}>
-        <div style={{ maxWidth: 1020, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-          <div style={{ display: 'flex', gap: 6 }}>
+        <div style={{ maxWidth: 1020, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+          {/* Kiri: sort buttons */}
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
             <button className={'sort-btn' + (sortMode === 'nearest' ? ' active' : '')} onClick={handleNearest} disabled={geoLoading}>
               <FaMapMarkerAlt style={{ marginRight: 4 }} />{geoLoading ? 'Loading...' : 'Terdekat'}
             </button>
@@ -388,7 +396,8 @@ export default function Home() {
               </button>
             )}
           </div>
-          <div style={{ display: 'flex', gap: 4, background: 'var(--bg)', borderRadius: 8, padding: 3 }}>
+          {/* Kanan: view mode toggle */}
+          <div style={{ display: 'flex', gap: 4, background: 'var(--bg)', borderRadius: 8, padding: 3, flexShrink: 0 }}>
             {[['card', <FaThLarge />], ['list', <FaBars />], ['map', <FaMap />]].map(([mode, icon]) => (
               <button
                 key={mode}
