@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import logo from "../../assets/logo-gasngalam.svg";
+import { FaMoon, FaSun } from 'react-icons/fa';
 
 export default function AdminLayout({ children, active }) {
   const navigate = useNavigate();
-  const { logout } = useApp();
+  const { logout, theme, toggleTheme } = useApp();
   const [sidebarOpen, setSidebarOpen] = useState(true); // default muncul
 
   const nav = [
@@ -30,9 +31,12 @@ export default function AdminLayout({ children, active }) {
         <a className="logo-wrap" onClick={() => navigate('/admin')} style={{ cursor: 'pointer' }}>
           <img src={logo} alt="GasNgalam" style={{ height: 28, width: 'auto' }} />
         </a>
-        <div style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text3)', fontWeight: 500 }}>
-          Admin Panel
-        </div>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
+  <button className="theme-toggle-btn" onClick={toggleTheme} title="Ganti tema">
+    {theme === 'light' ? <FaMoon /> : <FaSun />}
+  </button>
+  <span style={{ fontSize: 13, color: 'var(--text3)', fontWeight: 500 }}>Admin Panel</span>
+</div>
       </div>
 
       {/* LAYOUT BODY */}
