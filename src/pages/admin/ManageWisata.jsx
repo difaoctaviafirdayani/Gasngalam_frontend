@@ -34,8 +34,7 @@ export default function AdminWisata() {
   const [submitting, setSubmitting]     = useState(false);
   const fileRef                         = useRef();
 
-  // ── state untuk ConfirmDialog ──────────────────────────────
-  const [confirmHapus, setConfirmHapus] = useState(null); // { id, name } | null
+  const [confirmHapus, setConfirmHapus] = useState(null);
 
   const fetchDestinations = () => {
     api.get('/destinations')
@@ -125,7 +124,6 @@ export default function AdminWisata() {
     }
   };
 
-  // ── hapus: buka dialog dulu, eksekusi di doHapus ──────────
   const hapus   = (id, name) => setConfirmHapus({ id, name });
 
   const doHapus = async () => {
@@ -171,7 +169,6 @@ export default function AdminWisata() {
             {editData ? '✏️ Edit Destinasi' : '➕ Tambah Destinasi Baru'}
           </div>
 
-          {/* Nama & Kategori */}
           <div className="form-row">
             <div className="fg">
               <Lbl required>Nama Wisata</Lbl>
@@ -186,7 +183,6 @@ export default function AdminWisata() {
             </div>
           </div>
 
-          {/* Lokasi & Status */}
           <div className="form-row">
             <div className="fg">
               <Lbl required>Lokasi</Lbl>
@@ -200,7 +196,6 @@ export default function AdminWisata() {
             </div>
           </div>
 
-          {/* Harga & Jam */}
           <div className="form-row">
             <div className="fg">
               <Lbl>Harga Tiket</Lbl>
@@ -212,7 +207,6 @@ export default function AdminWisata() {
             </div>
           </div>
 
-          {/* Contact & Sosmed */}
           <div className="form-row">
             <div className="fg">
               <Lbl>Contact Person</Lbl>
@@ -224,13 +218,11 @@ export default function AdminWisata() {
             </div>
           </div>
 
-          {/* Alamat */}
           <div className="fg" style={{ marginBottom: 12 }}>
             <Lbl>Alamat Lengkap</Lbl>
             <input style={inp} value={form.address} onChange={set('address')} placeholder="Jl. Nama Jalan No. X, Kelurahan, Kecamatan, Kota Malang" />
           </div>
 
-          {/* Koordinat GPS */}
           <div className="form-row">
             <div className="fg">
               <Lbl>Latitude <span style={{ fontWeight: 400, color: 'var(--text4)', fontSize: 11 }}>(untuk fitur Terdekat)</span></Lbl>
@@ -242,7 +234,6 @@ export default function AdminWisata() {
             </div>
           </div>
 
-          {/* Deskripsi */}
           <div className="fg" style={{ marginBottom: 12 }}>
             <Lbl>Deskripsi</Lbl>
             <textarea
@@ -254,19 +245,23 @@ export default function AdminWisata() {
             />
           </div>
 
-          {/* Upload Foto */}
+          {/* Upload Foto — kosong jika belum diisi, bisa ditambahkan kapan saja */}
           <div className="fg" style={{ marginBottom: 14 }}>
             <Lbl>Foto Utama <span style={{ fontWeight: 400, color: 'var(--text4)', fontSize: 11 }}>(JPG/PNG/WebP, maks. 5MB)</span></Lbl>
             <input ref={fileRef} type="file" accept=".jpg,.jpeg,.png,.webp" style={{ display: 'none' }} onChange={handlePhoto} />
             <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-              {photoPreview && (
+              {photoPreview ? (
                 <img src={photoPreview} alt="preview" style={{ height: 72, width: 110, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)' }} />
+              ) : (
+                <div style={{ height: 72, width: 110, background: 'var(--bg2)', borderRadius: 8, border: '1px dashed var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: 10, color: 'var(--text4)', fontStyle: 'italic', textAlign: 'center', lineHeight: 1.4 }}>Belum ada<br/>foto</span>
+                </div>
               )}
               <button
                 onClick={() => fileRef.current.click()}
                 style={{ padding: '8px 18px', border: '1.5px dashed var(--border)', borderRadius: 8, background: 'var(--bg)', cursor: 'pointer', fontSize: 12, color: 'var(--text2)', fontFamily: 'Inter,sans-serif' }}
               >
-                {photoPreview ? ' Ganti Foto' : ' Upload Foto'}
+                {photoPreview ? 'Ganti Foto' : 'Upload Foto'}
               </button>
               {photoPreview && (
                 <button
@@ -309,7 +304,9 @@ export default function AdminWisata() {
                 <td>
                   {d.photo_full_url
                     ? <img src={d.photo_full_url} alt={d.name} style={{ width: 52, height: 40, objectFit: 'cover', borderRadius: 6, border: '1px solid var(--border)' }} />
-                    : <div style={{ width: 52, height: 40, background: d.gradient || d.color || '#e0e0e0', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>{d.emoji || '📍'}</div>
+                    : <div style={{ width: 52, height: 40, background: 'var(--bg2)', borderRadius: 6, border: '1px dashed var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: 9, color: 'var(--text4)', fontStyle: 'italic', textAlign: 'center', lineHeight: 1.3 }}>Belum<br/>ada foto</span>
+                      </div>
                   }
                 </td>
                 <td><strong>{d.name}</strong></td>
@@ -331,7 +328,6 @@ export default function AdminWisata() {
         </table>
       </div>
 
-      {/* ── Confirm Dialog Hapus ── */}
       <ConfirmDialog
         open={!!confirmHapus}
         icon=""

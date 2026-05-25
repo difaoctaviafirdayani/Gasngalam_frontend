@@ -123,17 +123,8 @@ function DestinationsMap({ destinations, onSelectDest }) {
       marker.bindPopup(`
         <div style="font-family:sans-serif;min-width:140px">
           <div style="font-weight:700;font-size:13px">${d.name}</div>
-          <div className="card-loc">
-  <FaMapMarkerAlt style={{ marginRight: 4 }} />
-  {d.location}
-</div>
-          <div className="card-rating">
-  <FaStar style={{ marginRight: 4 }} />
-  {d.rating}
-  <span style={{ fontWeight: 400, color: 'var(--text4)' }}>
-    ({d.review_count})
-  </span>
-</div>
+          <div style="font-size:11px;color:#666;margin:3px 0">${d.location}</div>
+          <div style="font-size:11px">⭐ ${d.rating} (${d.review_count})</div>
           <button onclick="window.__goToDestination('${d.id}')" style="margin-top:6px;background:#3498db;color:#fff;border:none;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;width:100%">Lihat Detail</button>
         </div>
       `);
@@ -208,7 +199,7 @@ export default function Home() {
     }).catch(() => {});
   }, []);
 
- const handleCatChange = (c) => { setCat(c); setSortMode('default'); setViewMode('card'); };
+  const handleCatChange = (c) => { setCat(c); setSortMode('default'); setViewMode('card'); };
 
   const handleNearest = () => {
     if (sortMode === 'nearest') { setSortMode('default'); return; }
@@ -220,10 +211,14 @@ export default function Home() {
     );
   };
 
+  // ── FOTO: jika belum ada foto, tampilkan kotak kosong (bisa diisi via admin)
   const thumbEl = (d) => {
     if (d.photo_full_url) return <img src={d.photo_full_url} alt={d.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
-    const bg = d.gradient || (d.color ? `linear-gradient(135deg,${d.color},${d.color}cc)` : 'linear-gradient(135deg,#3498db,#2980b9)');
-    return <div style={{ width: '100%', height: '100%', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>{d.emoji || getCatIcon(d.category)}</div>;
+    return (
+      <div style={{ width: '100%', height: '100%', background: 'var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ fontSize: 11, color: 'var(--text4)', fontStyle: 'italic' }}>Belum ada foto</span>
+      </div>
+    );
   };
 
   const cardHtml = (d) => (
@@ -232,22 +227,14 @@ export default function Home() {
         {thumbEl(d)}
         <span className="card-cat-badge">{d.category}</span>
         <button className="card-fav" onClick={e => { e.stopPropagation(); toggleFav(d.id); }}>
-          {favs.has(d.id)
-  ? <FaHeart />
-  : <FaRegHeart />
-}
+          {favs.has(d.id) ? <FaHeart /> : <FaRegHeart />}
         </button>
       </div>
       <div className="card-body">
         <div className="card-name">{d.name}</div>
-        <div className="card-loc">
-  <FaMapMarkerAlt style={{ marginRight: 4 }} />
-  {d.location}
-</div>
+        <div className="card-loc"><FaMapMarkerAlt style={{ marginRight: 4 }} />{d.location}</div>
         <div className="card-footer">
-          <div className="card-rating">
-  <FaStar style={{ marginRight: 4 }} />
-  {d.rating} <span style={{ fontWeight: 400, color: 'var(--text4)' }}>({d.review_count})</span></div>
+          <div className="card-rating"><FaStar style={{ marginRight: 4 }} />{d.rating} <span style={{ fontWeight: 400, color: 'var(--text4)' }}>({d.review_count})</span></div>
           {d.distance && <div className="card-dist">{d.distance}</div>}
         </div>
       </div>
@@ -267,31 +254,23 @@ export default function Home() {
         <div className="list-thumb" style={{ overflow: 'hidden', borderRadius: 'var(--r-sm)' }}>
           {d.photo_full_url
             ? <img src={d.photo_full_url} alt={d.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--r-sm)' }} />
-            : <div style={{ width: '100%', height: '100%', background: d.gradient || 'linear-gradient(135deg,#3498db,#2980b9)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, borderRadius: 'var(--r-sm)' }}>{d.emoji || getCatIcon(d.category)}</div>
+            : <div style={{ width: '100%', height: '100%', background: 'var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--r-sm)' }}>
+                <span style={{ fontSize: 10, color: 'var(--text4)', fontStyle: 'italic' }}>Belum ada foto</span>
+              </div>
           }
         </div>
         <div className="list-info">
           <div className="list-name">{d.name}</div>
           <div className="list-loc">{d.location}</div>
           <div className="list-meta">
-            <div className="list-rating">
-  <FaStar style={{ marginRight: 4 }} />
-  {d.rating} ({d.review_count})
-</div>
+            <div className="list-rating"><FaStar style={{ marginRight: 4 }} />{d.rating} ({d.review_count})</div>
             <div className="list-cat">{getCatIcon(d.category)} {d.category}</div>
           </div>
         </div>
         <div className="list-right">
-          {jarak && (
-  <div style={{ fontSize: 11, color: 'var(--text4)' }}>
-    {jarak} <FaMap />
-  </div>
-)}
+          {jarak && <div style={{ fontSize: 11, color: 'var(--text4)' }}>{jarak} <FaMap /></div>}
           <button className="fav-list-btn" onClick={e => { e.stopPropagation(); toggleFav(d.id); }}>
-            {favs.has(d.id)
-  ? <FaHeart />
-  : <FaRegHeart />
-}
+            {favs.has(d.id) ? <FaHeart /> : <FaRegHeart />}
           </button>
         </div>
       </div>
@@ -357,23 +336,24 @@ export default function Home() {
     <div>
       {/* HERO BANNER */}
       <div style={{ display: 'flex', height: 420, overflow: 'hidden', borderBottom: '1px solid var(--border)' }}>
-  <div style={{ flexShrink: 0, width: 380, background: 'var(--white)', padding: '0 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-    <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text2)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 14 }}>Wisata Kota Malang · Jawa Timur</div>
-    <h1 style={{ margin: 0, lineHeight: 1.05, fontWeight: 900, color: 'var(--text)', fontSize: 42, letterSpacing: '-1px' }}>
-      EKSPLOR<br /><span style={{ color: '#f5a623' }}>KOTA MALANG</span>
-    </h1>
-    <p className="hero-desc" style={{ margin: '18px 0 0', fontSize: 14, color: 'var(--text2)', lineHeight: 1.75 }}>
-      Temukan Destinasi Terbaik di Kota Malang — dari taman kota yang asri hingga kampung budaya yang memukau.
-    </p>
-  </div>
-  <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-    <img src={tuguImg} alt="Tugu Malang" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }} />
-    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, var(--white) 0%, transparent 12%)' }} />
-    <div style={{ position: 'absolute', bottom: 14, right: 14, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)', color: '#fff', fontSize: 11, fontWeight: 600, padding: '5px 12px', borderRadius: 6, display: 'flex', alignItems: 'center', gap: 5 }}>
-      <><FaMapMarkerAlt /> Tugu Malang</>
-    </div>
-  </div>
-</div>
+        <div style={{ flexShrink: 0, width: 380, background: 'var(--white)', padding: '0 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text2)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 14 }}>Wisata Kota Malang · Jawa Timur</div>
+          <h1 style={{ margin: 0, lineHeight: 1.05, fontWeight: 900, color: 'var(--text)', fontSize: 42, letterSpacing: '-1px' }}>
+            EKSPLOR<br /><span style={{ color: '#f5a623' }}>KOTA MALANG</span>
+          </h1>
+          <p className="hero-desc" style={{ margin: '18px 0 0', fontSize: 14, color: 'var(--text2)', lineHeight: 1.75 }}>
+            Temukan Destinasi Terbaik di Kota Malang — dari taman kota yang asri hingga kampung budaya yang memukau.
+          </p>
+        </div>
+        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+          <img src={tuguImg} alt="Tugu Malang" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, var(--white) 0%, transparent 12%)' }} />
+          <div style={{ position: 'absolute', bottom: 14, right: 14, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)', color: '#fff', fontSize: 11, fontWeight: 600, padding: '5px 12px', borderRadius: 6, display: 'flex', alignItems: 'center', gap: 5 }}>
+            <FaMapMarkerAlt /> Tugu Malang
+          </div>
+        </div>
+      </div>
+
       {/* KATEGORI */}
       <div className="cat-section" style={{ position: 'sticky', top: 0, zIndex: 100, background: 'var(--white)' }}>
         <div className="cat-inner">
@@ -388,42 +368,21 @@ export default function Home() {
       {/* SORT + VIEW MODE BAR */}
       <div style={{ background: 'var(--white)', borderBottom: '1px solid var(--border)', padding: '8px 20px', position: 'sticky', top: 44, zIndex: 99 }}>
         <div style={{ maxWidth: 1020, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-          {/* Sort buttons — selalu tampil */}
           <div style={{ display: 'flex', gap: 6 }}>
-            <button
-              className={'sort-btn' + (sortMode === 'nearest' ? ' active' : '')}
-              onClick={handleNearest}
-              disabled={geoLoading}
-            >
-              <>
-  <FaMapMarkerAlt style={{ marginRight: 4 }} />
-  {geoLoading ? 'Loading...' : 'Terdekat'}
-</>
+            <button className={'sort-btn' + (sortMode === 'nearest' ? ' active' : '')} onClick={handleNearest} disabled={geoLoading}>
+              <FaMapMarkerAlt style={{ marginRight: 4 }} />{geoLoading ? 'Loading...' : 'Terdekat'}
             </button>
-            <button
-              className={'sort-btn' + (sortMode === 'popular' ? ' active' : '')}
-              onClick={() => setSortMode(sortMode === 'popular' ? 'default' : 'popular')}
-            >
-             <>
-  <FaFire style={{ marginRight: 4 }} />
-  Terpopuler
-</>
+            <button className={'sort-btn' + (sortMode === 'popular' ? ' active' : '')} onClick={() => setSortMode(sortMode === 'popular' ? 'default' : 'popular')}>
+              <FaFire style={{ marginRight: 4 }} />Terpopuler
             </button>
             {sortMode !== 'default' && (
               <button className="sort-btn" onClick={() => setSortMode('default')}>
-  <FaTimes style={{ marginRight: 4 }} />
-  Reset
-</button>
+                <FaTimes style={{ marginRight: 4 }} />Reset
+              </button>
             )}
           </div>
-
-          {/* View mode toggle */}
           <div style={{ display: 'flex', gap: 4, background: 'var(--bg)', borderRadius: 8, padding: 3 }}>
-            {[
-  ['card', <FaThLarge />],
-  ['list', <FaBars />],
-  ['map', <FaMap />]
-].map(([mode, icon]) => (
+            {[['card', <FaThLarge />], ['list', <FaBars />], ['map', <FaMap />]].map(([mode, icon]) => (
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
