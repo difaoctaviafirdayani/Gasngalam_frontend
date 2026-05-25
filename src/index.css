@@ -416,3 +416,232 @@ main {
   color: var(--text2) !important;
   border-color: var(--border) !important;
 }
+/* ===== RESPONSIVE MOBILE (tambah di bawah sendiri) ===== */
+
+/* Topbar */
+@media (max-width: 640px) {
+  .topbar {
+    padding: 0 12px;
+    gap: 8px;
+  }
+  .search-wrap {
+    max-width: 100%;
+    flex: 1;
+  }
+  .nav-btn span {
+    display: none;
+  }
+  .nav-btn {
+    padding: 7px 10px;
+    min-width: 36px;
+    justify-content: center;
+  }
+  .logo-text {
+    font-size: 15px;
+  }
+  .user-chip span {
+    display: none;
+  }
+  .user-chip {
+    padding: 5px;
+    border-radius: 50%;
+  }
+}
+
+/* Hero section */
+@media (max-width: 640px) {
+  .hero-inner {
+    padding: 16px 14px;
+  }
+  .hero-title {
+    font-size: 20px;
+  }
+  .hero-sub {
+    font-size: 12.5px;
+  }
+}
+
+/* Category tabs */
+@media (max-width: 640px) {
+  .cat-section {
+    padding: 0 10px;
+    top: 56px;
+  }
+  .cat-btn {
+    padding: 12px 12px;
+    font-size: 12px;
+  }
+}
+
+/* Content area */
+@media (max-width: 640px) {
+  .content {
+    padding: 16px 12px;
+  }
+}
+
+/* Cards grid */
+@media (max-width: 480px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .card-img {
+    height: 100px;
+  }
+  .card-img-emoji {
+    font-size: 36px;
+  }
+  .card-body {
+    padding: 9px 10px;
+  }
+  .card-name {
+    font-size: 12px;
+  }
+}
+
+/* List item */
+@media (max-width: 480px) {
+  .list-thumb {
+    width: 56px;
+    height: 52px;
+    font-size: 22px;
+  }
+  .list-name {
+    font-size: 13px;
+  }
+}
+
+/* Detail page */
+@media (max-width: 640px) {
+  .detail-hero {
+    height: 160px;
+  }
+  .detail-hero-emoji {
+    font-size: 56px;
+  }
+  .detail-title {
+    font-size: 20px;
+  }
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .info-card {
+    position: static;
+  }
+  .detail-actions {
+    gap: 6px;
+  }
+  .btn-fav, .btn-action {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
+/* Form klaim */
+@media (max-width: 640px) {
+  .form-card {
+    padding: 16px;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  .klaim-header {
+    padding: 14px 16px;
+  }
+  .klaim-header h2 {
+    font-size: 17px;
+  }
+  .form-actions {
+    justify-content: stretch;
+    flex-direction: column;
+  }
+  .form-actions button {
+    width: 100%;
+  }
+}
+
+/* Admin */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    display: none;
+  }
+  .admin-content {
+    padding: 16px 14px;
+  }
+  .admin-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .tbl-wrap {
+    overflow-x: auto;
+  }
+  table.tbl {
+    min-width: 500px;
+  }
+}
+
+/* Auth / Login / Register */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 24px 18px;
+  }
+  .auth-title {
+    font-size: 19px;
+  }
+}
+
+/* Sort tabs */
+@media (max-width: 480px) {
+  .sort-tabs {
+    gap: 5px;
+  }
+  .sort-btn {
+    padding: 5px 12px;
+    font-size: 11.5px;
+  }
+}
+
+/* Section header */
+@media (max-width: 480px) {
+  .sec-title {
+    font-size: 14px;
+  }
+}
+
+/* Toast */
+@media (max-width: 480px) {
+  .toast-bar {
+    width: calc(100% - 32px);
+    text-align: center;
+    white-space: normal;
+    font-size: 12.5px;
+  }
+}
+
+/* Modal */
+@media (max-width: 480px) {
+  .modal-box {
+    width: calc(100% - 40px);
+    padding: 22px 18px;
+  }
+}
+
+/* Rating page */
+@media (max-width: 480px) {
+  .rating-big-num {
+    font-size: 38px;
+  }
+  .add-review-box {
+    padding: 14px;
+  }
+}
+
+/* Favorites empty state */
+@media (max-width: 480px) {
+  .fav-empty {
+    padding: 40px 16px;
+  }
+  .fav-empty-icon {
+    font-size: 40px;
+  }
+}
