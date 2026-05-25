@@ -411,3 +411,8 @@ main {
 [data-theme="dark"] .searchbar::placeholder {
   color: var(--brand-gold) !important;
 }
+[data-theme="dark"] .card-fav {
+  background: rgba(30, 30, 46, 0.92) !important;
+  color: var(--text2) !important;
+  border-color: var(--border) !important;
+}
