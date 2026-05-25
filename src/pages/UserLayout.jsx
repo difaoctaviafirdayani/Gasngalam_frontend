@@ -40,7 +40,11 @@ export default function UserLayout({ children }) {
           />
         </div>
         <div className="topbar-right">
-  {/* NOTIFIKASI */}
+          {/* ✅ Tombol toggle */}
+          <button className="theme-toggle-btn" onClick={toggleTheme} title="Ganti tema">
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
+          {/* NOTIFIKASI */}
   {user && (
     <button onClick={() => navigate('/notifications')} title="Notifikasi" style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 6px', borderRadius: 8, display: 'flex', alignItems: 'center' }}>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -49,10 +53,6 @@ export default function UserLayout({ children }) {
       </svg>
     </button>
   )}
-          {/* ✅ Tombol toggle */}
-          <button className="theme-toggle-btn" onClick={toggleTheme} title="Ganti tema">
-            {theme === 'light' ? '🌙' : '☀️'}
-          </button>
           {!user ? (
             <button className="nav-btn" onClick={() => navigate('/login')}>Login</button>
           ) : (
