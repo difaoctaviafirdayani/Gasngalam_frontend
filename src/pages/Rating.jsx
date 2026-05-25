@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
+import { FaArrowLeft, FaFlag, FaCheck, FaCamera, FaSpinner, FaCommentAlt, FaTimes } from 'react-icons/fa';
 
 export default function Rating() {
   const { id }     = useParams();
@@ -26,7 +27,8 @@ export default function Rating() {
   if (!d) return (
     <div>
       <div className="content" style={{ textAlign: 'center', paddingTop: 60 }}>
-        <div style={{ fontSize: 32 }}>⏳</div><p>Memuat...</p>
+        <FaSpinner style={{ fontSize: 32, animation: 'spin 1s linear infinite' }} />
+        <p>Memuat...</p>
       </div>
     </div>
   );
@@ -88,7 +90,9 @@ export default function Rating() {
   return (
     <div>
       <div className="content">
-        <button className="back-btn" onClick={() => navigate(-1)}>← Kembali</button>
+        <button className="back-btn" onClick={() => navigate(-1)}>
+          <FaArrowLeft /> Kembali
+        </button>
         <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', marginBottom: 4 }}>Rating dan Komentar</h2>
         <p style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 18 }}>{d.name}</p>
 
@@ -114,7 +118,7 @@ export default function Rating() {
         <div style={{ marginBottom: 22 }}>
           {destComments.length === 0 ? (
             <div className="fav-empty">
-              <div className="fav-empty-icon">💬</div>
+              <div className="fav-empty-icon"><FaCommentAlt style={{ fontSize: 32 }} /></div>
               <div className="fav-empty-title">Belum ada ulasan</div>
               <p style={{ fontSize: 13 }}>Jadilah yang pertama memberikan ulasan!</p>
             </div>
@@ -144,9 +148,15 @@ export default function Rating() {
                         color: reported.has(c.id) || c.is_reported ? 'var(--text4)' : 'var(--red)',
                         fontFamily: 'Inter, sans-serif',
                         transition: '.15s',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 4,
                       }}
                     >
-                      {reported.has(c.id) || c.is_reported ? '✓ Dilaporkan' : '⚑ Laporkan'}
+                      {reported.has(c.id) || c.is_reported
+                        ? <><FaCheck /> Dilaporkan</>
+                        : <><FaFlag /> Laporkan</>
+                      }
                     </button>
                   )}
                 </div>
@@ -180,8 +190,8 @@ export default function Rating() {
             placeholder="Tuliskan komentar Anda di sini... (minimal 5 karakter)"
           />
           <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 12, color: 'var(--text3)', marginBottom: 6, fontWeight: 600 }}>
-              📷 Foto <span style={{ fontWeight: 400, color: 'var(--text4)' }}>(opsional)</span>
+            <div style={{ fontSize: 12, color: 'var(--text3)', marginBottom: 6, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}>
+              <FaCamera /> Foto <span style={{ fontWeight: 400, color: 'var(--text4)' }}>(opsional)</span>
             </div>
             <input ref={fileRef} type="file" accept=".jpg,.jpeg,.png,.webp" style={{ display: 'none' }} onChange={handlePhoto} />
             {!photoPreview ? (
@@ -197,7 +207,9 @@ export default function Rating() {
                 <button
                   onClick={removePhoto}
                   style={{ position: 'absolute', top: -8, right: -8, width: 22, height: 22, borderRadius: '50%', background: 'var(--red)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >✕</button>
+                >
+                  <FaTimes />
+                </button>
               </div>
             )}
           </div>

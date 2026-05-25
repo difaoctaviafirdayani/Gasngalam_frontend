@@ -2,18 +2,28 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import logo from "../../assets/logo-gasngalam.svg";
-import { FaMoon, FaSun } from 'react-icons/fa';
+import {
+  FaMoon,
+  FaSun,
+  FaHome,
+  FaMapMarkedAlt,
+  FaClipboardList,
+  FaCommentAlt,
+  FaSignOutAlt,
+} from 'react-icons/fa';
 
 export default function AdminLayout({ children, active }) {
   const navigate = useNavigate();
   const { logout, theme, toggleTheme } = useApp();
-  const [sidebarOpen, setSidebarOpen] = useState(true); // default muncul
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const isDark = theme === 'dark';
 
   const nav = [
-    ['Dashboard',              '🏠', '/admin'],
-    ['Kelola Wisata',          '🗺️', '/admin/wisata'],
-    ['Kelola Pengajuan Klaim', '📋', '/admin/klaim'],
-    ['Kelola Ulasan',          '💬', '/admin/ulasan'],
+    { label: 'Dashboard',              icon: <FaHome />,          path: '/admin'        },
+    { label: 'Kelola Wisata',          icon: <FaMapMarkedAlt />,  path: '/admin/wisata' },
+    { label: 'Kelola Pengajuan Klaim', icon: <FaClipboardList />, path: '/admin/klaim'  },
+    { label: 'Kelola Ulasan',          icon: <FaCommentAlt />,    path: '/admin/ulasan' },
   ];
 
   return (
@@ -28,15 +38,27 @@ export default function AdminLayout({ children, active }) {
         >
           &#9776;
         </button>
+
+        {/* Logo — filter menyesuaikan dark/light mode seperti di LandingPage */}
         <a className="logo-wrap" onClick={() => navigate('/admin')} style={{ cursor: 'pointer' }}>
-          <img src={logo} alt="GasNgalam" style={{ height: 28, width: 'auto' }} />
+          <img
+            src={logo}
+            alt="GasNgalam"
+            style={{
+              height: 28,
+              width: 'auto',
+              filter: isDark ? 'brightness(0) invert(1)' : 'none',
+              transition: 'filter .3s',
+            }}
+          />
         </a>
+
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
-  <button className="theme-toggle-btn" onClick={toggleTheme} title="Ganti tema">
-    {theme === 'light' ? <FaMoon /> : <FaSun />}
-  </button>
-  <span style={{ fontSize: 13, color: 'var(--text3)', fontWeight: 500 }}>Admin Panel</span>
-</div>
+          <button className="theme-toggle-btn" onClick={toggleTheme} title="Ganti tema">
+            {isDark ? <FaSun /> : <FaMoon />}
+          </button>
+          <span style={{ fontSize: 13, color: 'var(--text3)', fontWeight: 500 }}>Admin Panel</span>
+        </div>
       </div>
 
       {/* LAYOUT BODY */}
@@ -63,25 +85,40 @@ export default function AdminLayout({ children, active }) {
                 fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
                 letterSpacing: '1.2px', color: 'rgba(255,255,255,.4)',
                 padding: '6px 10px', marginBottom: 4,
-              }}>Menu</div>
-              {nav.map(([label, icon, path]) => (
+              }}>
+                Menu
+              </div>
+              {nav.map(({ label, icon, path }) => (
                 <button
                   key={path}
                   className={'sidebar-item' + (active === label ? ' active' : '')}
                   onClick={() => navigate(path)}
-                  style={{ whiteSpace: 'nowrap' }}
+                  style={{
+                    whiteSpace: 'nowrap',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                  }}
                 >
-                  {icon} {label}
+                  <span style={{ fontSize: 14, display: 'flex', alignItems: 'center' }}>{icon}</span>
+                  {label}
                 </button>
               ))}
             </div>
+
             <div style={{ padding: '12px 10px', borderTop: '1px solid rgba(255,255,255,.1)' }}>
               <button
                 className="logout-item"
                 onClick={() => { logout(); navigate('/'); }}
-                style={{ whiteSpace: 'nowrap' }}
+                style={{
+                  whiteSpace: 'nowrap',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                }}
               >
-                🚪 Logout
+                <span style={{ fontSize: 14, display: 'flex', alignItems: 'center' }}><FaSignOutAlt /></span>
+                Logout
               </button>
             </div>
           </div>

@@ -2,6 +2,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from './AdminLayout';
 import api from '../../services/api';
+import {
+  FaMapMarkerAlt,
+  FaUsers,
+  FaStar,
+  FaClock,
+} from 'react-icons/fa';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -20,15 +26,15 @@ export default function AdminDashboard() {
   }, []);
 
   const cards = [
-    { icon: '', num: stats.total_destinations, label: 'Total Wisata',   path: '/admin/wisata', color: '#3B82F6' },
-    { icon: '', num: stats.total_users,         label: 'Total User',     path: null,            color: '#10B981' },
-    { icon: '', num: stats.total_reviews,        label: 'Total Ulasan',  path: '/admin/ulasan', color: '#8B5CF6' },
-    { icon: '', num: stats.pending_claims,       label: 'Klaim Pending', path: '/admin/klaim',  color: '#F59E0B' },
+    { icon: <FaMapMarkerAlt />, num: stats.total_destinations, label: 'Total Wisata',   path: '/admin/wisata', color: '#3B82F6' },
+    { icon: <FaUsers />,        num: stats.total_users,         label: 'Total User',     path: null,            color: '#10B981' },
+    { icon: <FaStar />,         num: stats.total_reviews,       label: 'Total Ulasan',   path: '/admin/ulasan', color: '#8B5CF6' },
+    { icon: <FaClock />,        num: stats.pending_claims,      label: 'Klaim Pending',  path: '/admin/klaim',  color: '#F59E0B' },
   ];
 
   return (
     <AdminLayout active="Dashboard">
-      <div className="admin-page-title">Hi, Admin! </div>
+      <div className="admin-page-title">Hi, Admin!</div>
       <div className="admin-page-sub">Selamat datang di panel admin GasNgalam</div>
 
       {/* 4 card sejajar + clickable */}
@@ -49,7 +55,15 @@ export default function AdminDashboard() {
             onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = 'var(--shadow-xs)'; }}
           >
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: color, borderRadius: '12px 12px 0 0' }} />
-            <div style={{ fontSize: 26, marginBottom: 6 }}>{icon}</div>
+            <div style={{
+              fontSize: 20, marginBottom: 8,
+              color: color,
+              width: 40, height: 40, borderRadius: 10,
+              background: color + '18',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              {icon}
+            </div>
             <div style={{ fontSize: 32, fontWeight: 800, color, lineHeight: 1 }}>{num}</div>
             <div style={{ fontSize: 11.5, color: 'var(--text3)', marginTop: 5, fontWeight: 500 }}>{label}</div>
             {path && <div style={{ fontSize: 10, color, marginTop: 8, fontWeight: 600, opacity: .7 }}>Lihat detail →</div>}

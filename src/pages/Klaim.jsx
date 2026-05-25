@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
+import { FaArrowLeft, FaMapMarkerAlt, FaPaperclip, FaFilePdf, FaImage, FaEye, FaSync, FaTimes } from 'react-icons/fa';
 
 export default function Klaim() {
   const { id }      = useParams();
@@ -63,12 +64,16 @@ export default function Klaim() {
   return (
     <div>
       <div className="content">
-        <button className="back-btn" onClick={() => navigate(-1)}>← Kembali</button>
+        <button className="back-btn" onClick={() => navigate(-1)}>
+          <FaArrowLeft /> Kembali
+        </button>
 
         <div className="klaim-header">
           <h2>Ajukan Klaim Bisnis</h2>
           <p>Kelola informasi destinasi wisata Anda secara resmi melalui GasNgalam</p>
-          <div className="klaim-dest-badge">📍 {destName || `Memuat...`}</div>
+          <div className="klaim-dest-badge">
+            <FaMapMarkerAlt /> {destName || `Memuat...`}
+          </div>
         </div>
 
         <p style={{ fontSize: 12, color: 'var(--text3)', marginBottom: 16 }}>
@@ -102,8 +107,8 @@ export default function Klaim() {
             <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: 'none' }} onChange={handleFile} />
 
             {!file && (
-              <div className="upload-zone" onClick={() => fileRef.current.click()} style={{ cursor: 'pointer' }}>
-                <div className="upload-zone-icon">📎</div>
+              <div className="upload-zone" onClick={() => fileRef.current.click()} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '20px' }}>
+                <FaPaperclip style={{ fontSize: 22, marginBottom: 8, color: 'var(--text3)' }} />
                 <div className="upload-zone-text">
                   Klik untuk upload bukti pendukung<br />
                   <span style={{ fontSize: 11, color: '#bbb' }}>PDF, JPG, PNG — maks. 10MB</span>
@@ -114,23 +119,27 @@ export default function Klaim() {
             {file && (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: 'var(--bg2)', borderRadius: 10, border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 20 }}>{file.type === 'application/pdf' ? '📄' : '🖼️'}</span>
+                  <span style={{ fontSize: 20 }}>
+                    {file.type === 'application/pdf' ? <FaFilePdf /> : <FaImage />}
+                  </span>
                   <div>
                     <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--text)' }}>{file.name}</div>
                     <div style={{ fontSize: 11, color: 'var(--text4)' }}>{(file.size / 1024).toFixed(0)} KB</div>
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 6 }}>
-                  <button onClick={openPreview} style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, cursor: 'pointer', padding: '4px 10px', fontSize: 12, color: 'var(--text2)', fontFamily: 'Inter, sans-serif' }}>
-                    👁 Lihat
+                  <button onClick={openPreview} style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, cursor: 'pointer', padding: '4px 10px', fontSize: 12, color: 'var(--text2)', fontFamily: 'Inter, sans-serif', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <FaEye /> Lihat
                   </button>
                   <button
                     onClick={() => fileRef.current.click()}
-                    style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, cursor: 'pointer', padding: '4px 10px', fontSize: 12, color: 'var(--text2)', fontFamily: 'Inter, sans-serif' }}
+                    style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, cursor: 'pointer', padding: '4px 10px', fontSize: 12, color: 'var(--text2)', fontFamily: 'Inter, sans-serif', display: 'flex', alignItems: 'center', gap: 4 }}
                   >
-                    🔄 Ganti
+                    <FaSync /> Ganti
                   </button>
-                  <button onClick={removeFile} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#e74c3c', fontSize: 18, padding: 4 }}>✕</button>
+                  <button onClick={removeFile} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#e74c3c', fontSize: 18, padding: 4 }}>
+                    <FaTimes />
+                  </button>
                 </div>
               </div>
             )}
@@ -149,10 +158,12 @@ export default function Klaim() {
         <div onClick={closePreview} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: 20 }}>
           <div onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: 12, padding: 20, maxWidth: '90vw', maxHeight: '90vh', overflow: 'auto', position: 'relative', boxShadow: '0 8px 40px rgba(0,0,0,0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-              <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>
-                {previewItem.type === 'application/pdf' ? '📄' : '🖼️'} {previewItem.name}
+              <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                {previewItem.type === 'application/pdf' ? <FaFilePdf /> : <FaImage />} {previewItem.name}
               </div>
-              <button onClick={closePreview} style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: '50%', width: 28, height: 28, cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
+              <button onClick={closePreview} style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: '50%', width: 28, height: 28, cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <FaTimes />
+              </button>
             </div>
             {previewItem.type === 'application/pdf'
               ? <iframe src={previewItem.url} style={{ width: '70vw', height: '75vh', border: 'none', borderRadius: 8 }} title="preview-pdf" />

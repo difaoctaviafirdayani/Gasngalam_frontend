@@ -25,6 +25,7 @@ const CAT_ORDER = [
   'Wisata Budaya',
   'Taman Kota',
   'Wisata Edukasi',
+  'Kuliner Legendaris',
   'Kuliner & Belanja',
   'Wisata Hiburan',
   'Wisata Alam'
@@ -35,6 +36,7 @@ const CAT_ICONS = {
   'Wisata Budaya': FaLandmark,
   'Taman Kota': FaTree,
   'Wisata Edukasi': FaBook,
+  'Kuliner Legendaris': FaUtensils,
   'Kuliner & Belanja': FaUtensils,
   'Wisata Hiburan': FaStar,
   'Wisata Alam': FaMountain
@@ -142,7 +144,7 @@ function DestinationsMap({ destinations, onSelectDest }) {
     <div>
       <div ref={mapRef} style={{ width: '100%', height: 500, borderRadius: 12, border: '1.5px solid var(--border)' }} />
       <div style={{ marginTop: 8, fontSize: 12, color: 'var(--text3)', textAlign: 'center' }}>
-        🗺️ {destinations.filter(d => d.lat && d.lng).length} destinasi ditampilkan di peta · Klik marker untuk detail
+        {destinations.filter(d => d.lat && d.lng).length} destinasi ditampilkan di peta · Klik marker untuk detail
       </div>
     </div>
   );
@@ -211,7 +213,6 @@ export default function Home() {
     );
   };
 
-  // ── FOTO: jika belum ada foto, tampilkan kotak kosong (bisa diisi via admin)
   const thumbEl = (d) => {
     if (d.photo_full_url) return <img src={d.photo_full_url} alt={d.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
     return (
@@ -279,7 +280,7 @@ export default function Home() {
 
   const renderContent = () => {
     if (viewMode === 'map') {
-      if (loading) return <div style={{ textAlign: 'center', padding: 60 }}>⏳ Memuat peta...</div>;
+      if (loading) return <div style={{ textAlign: 'center', padding: 60 }}>Memuat peta...</div>;
       return <DestinationsMap destinations={destinations} onSelectDest={(id) => navigate('/destination/' + id)} />;
     }
 
@@ -289,7 +290,9 @@ export default function Home() {
 
     if (destinations.length === 0) return (
       <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text3)' }}>
-        <div style={{ fontSize: 40, marginBottom: 10 }}>🔍</div>
+        <div style={{ fontSize: 40, marginBottom: 10 }}>
+          <FaMapMarkerAlt />
+        </div>
         <p>Tidak ada destinasi pada kategori ini.</p>
       </div>
     );
@@ -302,10 +305,12 @@ export default function Home() {
       return (
         <>
           <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 14 }}>
-            <strong style={{ color: 'var(--text)' }}>{getCatIcon(cat)} {cat}</strong>
+            <strong style={{ color: 'var(--text)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              {getCatIcon(cat)} {cat}
+            </strong>
             {' — '}
-            {sortMode === 'nearest' && <><FaMapMarkerAlt style={{ marginRight: 4 }} />Terdekat · </>}
-            {sortMode === 'popular' && <><FaFire style={{ marginRight: 4 }} />Terpopuler · </>}
+            {sortMode === 'nearest' && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><FaMapMarkerAlt />Terdekat · </span>}
+            {sortMode === 'popular' && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><FaFire />Terpopuler · </span>}
             {destinations.length} destinasi
           </div>
           <div className="cards-grid">{destinations.map(cardHtml)}</div>
@@ -322,7 +327,9 @@ export default function Home() {
         <div key={c}>
           <div className="sec-head">
             <div>
-              <div className="sec-title">{getCatIcon(c)} {c}</div>
+              <div className="sec-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                {getCatIcon(c)} {c}
+              </div>
               <div className="sec-sub">{dests.length} destinasi tersedia</div>
             </div>
           </div>
