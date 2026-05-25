@@ -100,7 +100,6 @@ export default function Profile() {
   const tabs = [
     { key: 'edit',      label: '✏️ Edit Profil' },
     { key: 'reviews',   label: '💬 Ulasan Saya' },
-    { key: 'favorites', label: '❤️ Favorit' },
     { key: 'claims',    label: '📋 Klaim Bisnis' },
   ];
 

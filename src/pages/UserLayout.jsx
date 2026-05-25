@@ -56,10 +56,10 @@ export default function UserLayout({ children }) {
           {!user ? (
             <button className="nav-btn" onClick={() => navigate('/login')}>Login</button>
           ) : (
-            <div className="user-chip" onClick={() => setSidebarOpen(o => !o)}>
-              <div className="user-avatar">{user[0].toUpperCase()}</div>
-              <span>{user}</span>
-            </div>
+           <div className="user-chip" onClick={() => navigate('/profile')}>
+  <div className="user-avatar">{user[0].toUpperCase()}</div>
+  <span>{user}</span>
+</div>
           )}
         </div>
       </header>

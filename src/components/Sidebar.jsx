@@ -1,8 +1,9 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { FaHome, FaHeart, FaSignOutAlt, FaTachometerAlt, FaMap, FaClipboardList, FaComments, FaSignInAlt } from 'react-icons/fa';
 
 export default function Sidebar({ open, onClose }) {
-  const { user, role, logout, notifCount } = useApp();
+  const { user, role, logout } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
   const go = (path) => { navigate(path); onClose(); };
@@ -22,27 +23,25 @@ export default function Sidebar({ open, onClose }) {
           </div>
           {role === 'admin' ? (
             <>
-              <button className={'sidebar-item' + (location.pathname === '/admin' ? ' active' : '')} onClick={() => go('/admin')} style={{ whiteSpace: 'nowrap' }}>🏠 Dashboard</button>
-              <button className={'sidebar-item' + (location.pathname === '/admin/wisata' ? ' active' : '')} onClick={() => go('/admin/wisata')} style={{ whiteSpace: 'nowrap' }}>🗺️ Kelola Wisata</button>
-              <button className={'sidebar-item' + (location.pathname === '/admin/klaim' ? ' active' : '')} onClick={() => go('/admin/klaim')} style={{ whiteSpace: 'nowrap' }}>📋 Pengajuan Klaim</button>
-              <button className={'sidebar-item' + (location.pathname === '/admin/ulasan' ? ' active' : '')} onClick={() => go('/admin/ulasan')} style={{ whiteSpace: 'nowrap' }}>💬 Kelola Ulasan</button>
+              <button className={'sidebar-item' + (location.pathname === '/admin' ? ' active' : '')} onClick={() => go('/admin')} style={{ whiteSpace: 'nowrap' }}><FaTachometerAlt /> Dashboard</button>
+              <button className={'sidebar-item' + (location.pathname === '/admin/wisata' ? ' active' : '')} onClick={() => go('/admin/wisata')} style={{ whiteSpace: 'nowrap' }}><FaMap /> Kelola Wisata</button>
+              <button className={'sidebar-item' + (location.pathname === '/admin/klaim' ? ' active' : '')} onClick={() => go('/admin/klaim')} style={{ whiteSpace: 'nowrap' }}><FaClipboardList /> Pengajuan Klaim</button>
+              <button className={'sidebar-item' + (location.pathname === '/admin/ulasan' ? ' active' : '')} onClick={() => go('/admin/ulasan')} style={{ whiteSpace: 'nowrap' }}><FaComments /> Kelola Ulasan</button>
             </>
           ) : user ? (
             <>
-              <button className={'sidebar-item' + (location.pathname === '/' ? ' active' : '')} onClick={() => go('/')} style={{ whiteSpace: 'nowrap' }}>🏠 Beranda</button>
-              <button className={'sidebar-item' + (location.pathname === '/favorites' ? ' active' : '')} onClick={() => go('/favorites')} style={{ whiteSpace: 'nowrap' }}>❤️ Destinasi Tersimpan</button>
-              <button className={'sidebar-item' + (location.pathname === '/profile' ? ' active' : '')} onClick={() => go('/profile')} style={{ whiteSpace: 'nowrap' }}>👤 Profil Saya</button>
-              {/* Notifikasi dengan badge */}
+              <button className={'sidebar-item' + (location.pathname === '/' ? ' active' : '')} onClick={() => go('/')} style={{ whiteSpace: 'nowrap' }}><FaHome /> Beranda</button>
+              <button className={'sidebar-item' + (location.pathname === '/favorites' ? ' active' : '')} onClick={() => go('/favorites')} style={{ whiteSpace: 'nowrap' }}><FaHeart /> Destinasi Tersimpan</button>
             </>
           ) : (
-            <button className={'sidebar-item' + (location.pathname === '/' ? ' active' : '')} onClick={() => go('/')} style={{ whiteSpace: 'nowrap' }}>🏠 Dashboard</button>
+            <button className={'sidebar-item'} onClick={() => go('/')} style={{ whiteSpace: 'nowrap' }}><FaHome /> Beranda</button>
           )}
         </div>
         <div style={{ padding: '12px 10px', borderTop: '1px solid rgba(255,255,255,.1)' }}>
           {user ? (
-            <button className="logout-item" onClick={() => { logout(); onClose(); navigate('/'); }} style={{ whiteSpace: 'nowrap' }}>🚪 Logout</button>
+            <button className="logout-item" onClick={() => { logout(); onClose(); navigate('/'); }} style={{ whiteSpace: 'nowrap' }}><FaSignOutAlt /> Logout</button>
           ) : (
-            <button className="sidebar-item" onClick={() => go('/login')} style={{ color: 'rgba(255,255,255,.8)', whiteSpace: 'nowrap' }}>👤 Login</button>
+            <button className="sidebar-item" onClick={() => go('/login')} style={{ color: 'rgba(255,255,255,.8)', whiteSpace: 'nowrap' }}><FaSignInAlt /> Login</button>
           )}
         </div>
       </div>
