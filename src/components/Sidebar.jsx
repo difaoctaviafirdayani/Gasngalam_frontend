@@ -10,7 +10,7 @@ export default function Sidebar({ open, onClose }) {
   return (
     <div style={{
       width: open ? 220 : 0, minWidth: open ? 220 : 0,
-      overflow: 'hidden', background: 'var(--brand)', flexShrink: 0,
+      overflow: 'hidden', background: 'var(--brand-dark)', flexShrink: 0,
       position: 'sticky', top: 56, height: 'calc(100vh - 56px)',
       transition: 'width .26s cubic-bezier(.4,0,.2,1), min-width .26s cubic-bezier(.4,0,.2,1)',
       display: 'flex', flexDirection: 'column', zIndex: 100,

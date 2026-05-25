@@ -378,3 +378,36 @@ main {
   border-color: var(--brand-gold);
   background: var(--brand-gold-pale);
 }
+.card-cat-badge {
+  background: rgba(0, 0, 0, 0.65) !important;
+  color: #ffffff !important;
+}
+.card-loc {
+  color: var(--text2) !important;
+}
+
+.card-rating span {
+  color: var(--text2) !important;
+}
+[data-theme="dark"] [style*="letterSpacing: '2px'"] {
+  color: var(--text2) !important;
+}
+[data-theme="dark"] .hero-desc {
+  color: #ffffff !important;
+}
+[data-theme="dark"] .cat-btn {
+  color: var(--text2) !important;
+}
+
+[data-theme="dark"] .cat-btn.active {
+  color: #ffffff !important;
+}
+[data-theme="dark"] {
+  --brand-dark: #111827;
+}
+[data-theme="dark"] .back-btn {
+  color: var(--brand-gold) !important;
+}
+[data-theme="dark"] .searchbar::placeholder {
+  color: var(--brand-gold) !important;
+}

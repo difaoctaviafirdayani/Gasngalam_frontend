@@ -105,7 +105,7 @@ export default function Topbar() {
       <nav className="topbar">
         <button className="menu-btn" onClick={() => setSidebarOpen(true)}>&#9776;</button>
         <a className="logo-wrap" onClick={() => navigate('/')}>
-          <img src={logo} alt="GasNgalam" style={{ height: 28, objectFit: 'contain' }} />
+          <img id="topbar-logo" src={logo} alt="GasNgalam" style={{ height: 28, objectFit: 'contain', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }} />
         </a>
         <div className="search-wrap">
           <div style={{ position: 'relative', width: '100%', maxWidth: 480 }}>
@@ -161,7 +161,7 @@ export default function Topbar() {
 
           {/* DARK MODE TOGGLE */}
           <button className="theme-toggle-btn" onClick={toggleTheme} title="Ganti tema">
-            {theme === 'light' ? '🌙' : '☀️'}
+            {theme === 'light' ? <FaMoon /> : <FaSun />}
           </button>
 
           {!user ? (

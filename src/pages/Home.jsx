@@ -356,25 +356,24 @@ export default function Home() {
   return (
     <div>
       {/* HERO BANNER */}
-      <div style={{ display: 'flex', height: 420, overflow: 'hidden', borderBottom: '1px solid #e0e0e0' }}>
-        <div style={{ flexShrink: 0, width: 380, background: '#ffffff', padding: '0 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: '#aaa', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 14 }}>Wisata Kota Malang · Jawa Timur</div>
-          <h1 style={{ margin: 0, lineHeight: 1.05, fontWeight: 900, color: '#111', fontSize: 42, letterSpacing: '-1px' }}>
-            EKSPLOR<br /><span style={{ color: '#f5a623' }}>KOTA MALANG</span>
-          </h1>
-          <p style={{ margin: '18px 0 0', fontSize: 14, color: '#666', lineHeight: 1.75 }}>
-            Temukan Destinasi Terbaik di Kota Malang — dari taman kota yang asri hingga kampung budaya yang memukau.
-          </p>
-        </div>
-        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-          <img src={tuguImg} alt="Tugu Malang" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }} />
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, #fff 0%, transparent 12%)' }} />
-          <div style={{ position: 'absolute', bottom: 14, right: 14, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)', color: '#fff', fontSize: 11, fontWeight: 600, padding: '5px 12px', borderRadius: 6, display: 'flex', alignItems: 'center', gap: 5 }}>
-            <><FaMapMarkerAlt /> Tugu Malang</>
-          </div>
-        </div>
-      </div>
-
+      <div style={{ display: 'flex', height: 420, overflow: 'hidden', borderBottom: '1px solid var(--border)' }}>
+  <div style={{ flexShrink: 0, width: 380, background: 'var(--white)', padding: '0 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text2)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 14 }}>Wisata Kota Malang · Jawa Timur</div>
+    <h1 style={{ margin: 0, lineHeight: 1.05, fontWeight: 900, color: 'var(--text)', fontSize: 42, letterSpacing: '-1px' }}>
+      EKSPLOR<br /><span style={{ color: '#f5a623' }}>KOTA MALANG</span>
+    </h1>
+    <p className="hero-desc" style={{ margin: '18px 0 0', fontSize: 14, color: 'var(--text2)', lineHeight: 1.75 }}>
+      Temukan Destinasi Terbaik di Kota Malang — dari taman kota yang asri hingga kampung budaya yang memukau.
+    </p>
+  </div>
+  <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+    <img src={tuguImg} alt="Tugu Malang" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }} />
+    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, var(--white) 0%, transparent 12%)' }} />
+    <div style={{ position: 'absolute', bottom: 14, right: 14, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)', color: '#fff', fontSize: 11, fontWeight: 600, padding: '5px 12px', borderRadius: 6, display: 'flex', alignItems: 'center', gap: 5 }}>
+      <><FaMapMarkerAlt /> Tugu Malang</>
+    </div>
+  </div>
+</div>
       {/* KATEGORI */}
       <div className="cat-section" style={{ position: 'sticky', top: 0, zIndex: 100, background: 'var(--white)' }}>
         <div className="cat-inner">
