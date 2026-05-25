@@ -4,6 +4,7 @@ import { useApp } from '../context/AppContext';
 import Sidebar from './Sidebar';
 import logo from '../assets/logo gasngalam.svg';
 import api from '../services/api';
+import { FaMoon, FaSun } from 'react-icons/fa';
 
 function NotifDropdown({ onClose }) {
   const { setNotifCount } = useApp();

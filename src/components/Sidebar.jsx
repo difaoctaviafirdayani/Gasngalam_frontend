@@ -33,14 +33,6 @@ export default function Sidebar({ open, onClose }) {
               <button className={'sidebar-item' + (location.pathname === '/favorites' ? ' active' : '')} onClick={() => go('/favorites')} style={{ whiteSpace: 'nowrap' }}>❤️ Destinasi Tersimpan</button>
               <button className={'sidebar-item' + (location.pathname === '/profile' ? ' active' : '')} onClick={() => go('/profile')} style={{ whiteSpace: 'nowrap' }}>👤 Profil Saya</button>
               {/* Notifikasi dengan badge */}
-              <button className={'sidebar-item' + (location.pathname === '/notifications' ? ' active' : '')} onClick={() => go('/notifications')} style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span>🔔 Notifikasi</span>
-                {notifCount > 0 && (
-                  <span style={{ background: '#e74c3c', color: '#fff', fontSize: 10, fontWeight: 800, borderRadius: 99, padding: '1px 6px', minWidth: 18, textAlign: 'center' }}>
-                    {notifCount > 9 ? '9+' : notifCount}
-                  </span>
-                )}
-              </button>
             </>
           ) : (
             <button className={'sidebar-item' + (location.pathname === '/' ? ' active' : '')} onClick={() => go('/')} style={{ whiteSpace: 'nowrap' }}>🏠 Dashboard</button>
