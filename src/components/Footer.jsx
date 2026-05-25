@@ -1,44 +1,44 @@
 import { useNavigate } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
 import logo from '../assets/logo-gasngalam.svg';
 import {
   FaInstagram, FaFacebookF, FaYoutube, FaTiktok,
   FaMapMarkerAlt, FaEnvelope, FaPhoneAlt,
-  FaHome, FaHeart, FaSearch,
-  FaLandmark, FaTree, FaBuilding, FaGraduationCap, FaShoppingBag,
 } from 'react-icons/fa';
 
 const socialIcons = [
   { Icon: FaInstagram, label: 'Instagram' },
-  { Icon: FaFacebookF, label: 'Facebook' },
-  { Icon: FaYoutube,   label: 'YouTube'  },
-  { Icon: FaTiktok,    label: 'TikTok'   },
+  { Icon: FaFacebookF, label: 'Facebook'  },
+  { Icon: FaYoutube,   label: 'YouTube'   },
+  { Icon: FaTiktok,    label: 'TikTok'    },
 ];
 
 const contactInfo = [
-  { Icon: FaMapMarkerAlt, text: 'Kota Malang, Jawa Timur' },
-  { Icon: FaEnvelope,     text: 'info@gasngalam.id'       },
-  { Icon: FaPhoneAlt,     text: '(0341) 123-4567'         },
+  { Icon: FaMapMarkerAlt, text: 'Kota Malang, Jawa Timur, Indonesia' },
+  { Icon: FaEnvelope,     text: 'info@gasngalam.id'                  },
+  { Icon: FaPhoneAlt,     text: '+62 812-3456-7890'                  },
 ];
-
-const gold     = '#C9A227';
-const goldPale = 'rgba(201,162,39,0.15)';
 
 export default function Footer() {
   const navigate = useNavigate();
+  const { theme } = useApp();
+  const isDark = theme === 'dark';
   const year = new Date().getFullYear();
+
+  const gold     = '#C9A227';
+  const goldPale = isDark ? 'rgba(201,162,39,0.15)' : 'rgba(201,162,39,0.12)';
+  const footerBg = isDark ? '#050709' : '#0f1117';
 
   return (
     <footer style={{
-      background: '#0f1117',
-      borderTop: '1px solid rgba(201,162,39,0.2)',
+      background: footerBg,
+      borderTop: `1px solid ${isDark ? 'rgba(201,162,39,0.15)' : 'rgba(201,162,39,0.2)'}`,
+      transition: 'background .3s',
     }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '60px 60px 0' }}>
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: '2fr 1fr 1fr 1.5fr',
-          gap: 48,
-          paddingBottom: 48,
-          borderBottom: '1px solid rgba(255,255,255,0.07)',
+          display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1.5fr', gap: 48,
+          paddingBottom: 48, borderBottom: '1px solid rgba(255,255,255,0.07)',
         }}>
 
           {/* Brand */}
@@ -48,76 +48,54 @@ export default function Footer() {
               Kota Malang
             </div>
             <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.8, maxWidth: 240 }}>
-              Temukan destinasi wisata terbaik di Kota Malang.<br />
-              Dari budaya, kuliner, hingga hiburan — semua ada di sini.
+              Platform informasi wisata resmi Kota Malang untuk membantu kamu menemukan destinasi terbaik dan pengalaman tak terlupakan.
             </p>
             <div style={{ marginTop: 22, display: 'flex', gap: 10 }}>
               {socialIcons.map(({ Icon, label }) => (
-                <a href="#" key={label} title={label} aria-label={label} style={{
+                <div key={label} title={label} aria-label={label} style={{
                   width: 36, height: 36, borderRadius: '50%',
                   border: '1px solid rgba(255,255,255,0.12)',
                   background: 'rgba(255,255,255,0.04)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'pointer', transition: 'all .2s',
-                  color: 'rgba(255,255,255,0.45)', textDecoration: 'none',
+                  cursor: 'pointer', transition: 'all .2s', color: 'rgba(255,255,255,0.45)',
                 }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = gold; e.currentTarget.style.background = goldPale; e.currentTarget.style.color = gold; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = 'rgba(255,255,255,0.45)'; }}
                 >
                   <Icon size={14} />
-                </a>
+                </div>
               ))}
             </div>
           </div>
 
-          {/* Jelajahi */}
-          <div>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#fff', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 20 }}>JELAJAHI</div>
-            {[
-              { Icon: FaHome,    label: 'Beranda',       path: '/'          },
-              { Icon: FaHeart,   label: 'Favorit Saya',  path: '/favorites' },
-              { Icon: FaSearch,  label: 'Cari Destinasi', path: '/search'   },
-            ].map(({ Icon, label, path }) => (
-              <div key={label} onClick={() => navigate(path)} style={{
-                display: 'flex', alignItems: 'center', gap: 8,
-                fontSize: 13, color: 'rgba(255,255,255,0.45)',
-                marginBottom: 12, cursor: 'pointer', transition: 'color .15s',
-              }}
-                onMouseEnter={e => e.currentTarget.style.color = '#fff'}
-                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.45)'}
-              >
-                <Icon size={12} style={{ color: gold, flexShrink: 0 }} />
-                {label}
+          {/* JELAJAHI & INFORMASI — persis sama dengan LandingPage */}
+          {[
+            { title: 'JELAJAHI',  links: ['Destinasi', 'Aktivitas', 'Kuliner', 'Event', 'Panduan'] },
+            { title: 'INFORMASI', links: ['Tentang Kami', 'Blog', 'FAQ', 'Kebijakan Privasi', 'Syarat & Ketentuan'] },
+          ].map(({ title, links }) => (
+            <div key={title}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: '#fff', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 20 }}>
+                {title}
               </div>
-            ))}
-          </div>
-
-          {/* Kategori */}
-          <div>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#fff', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 20 }}>KATEGORI</div>
-            {[
-              { Icon: FaLandmark,    label: 'Wisata Budaya'  },
-              { Icon: FaTree,        label: 'Taman Kota'     },
-              { Icon: FaBuilding,    label: 'Wisata Buatan'  },
-              { Icon: FaGraduationCap, label: 'Wisata Edukasi' },
-              { Icon: FaShoppingBag, label: 'Perbelanjaan'   },
-            ].map(({ Icon, label }) => (
-              <div key={label} style={{
-                display: 'flex', alignItems: 'center', gap: 8,
-                fontSize: 13, color: 'rgba(255,255,255,0.45)', marginBottom: 12,
-              }}>
-                <Icon size={12} style={{ color: gold, flexShrink: 0 }} />
-                {label}
-              </div>
-            ))}
-          </div>
+              {links.map(item => (
+                <div key={item} style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', marginBottom: 12, cursor: 'pointer', transition: 'color .15s' }}
+                  onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+                  onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.45)'}
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          ))}
 
           {/* Kontak */}
           <div>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#fff', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 20 }}>INFORMASI</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#fff', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 20 }}>
+              KONTAK
+            </div>
             {contactInfo.map(({ Icon, text }) => (
               <div key={text} style={{ display: 'flex', gap: 10, marginBottom: 14, alignItems: 'flex-start' }}>
-                <Icon size={13} style={{ color: gold, flexShrink: 0, marginTop: 2 }} />
+                <Icon size={14} style={{ color: gold, flexShrink: 0, marginTop: 1 }} />
                 <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>{text}</span>
               </div>
             ))}
@@ -125,20 +103,11 @@ export default function Footer() {
 
         </div>
 
-        {/* Bottom */}
-        <div style={{ padding: '20px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
-          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', gap: 5 }}>
-            © {year} <strong style={{ color: 'rgba(255,255,255,0.5)' }}>GasNgalam</strong>. Dibuat dengan
-            <FaHeart size={10} style={{ color: gold }} /> untuk Kota Malang.
+        {/* Bottom bar — persis sama dengan LandingPage */}
+        <div style={{ padding: '20px 0', display: 'flex', justifyContent: 'center' }}>
+          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)' }}>
+            © {year} Gasngalam Kota Malang. Made with Love, Kelompok 3 T2E.
           </span>
-          <div style={{ display: 'flex', gap: 16 }}>
-            {['Kebijakan Privasi', 'Syarat & Ketentuan', 'Tentang Kami'].map(item => (
-              <span key={item} style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', cursor: 'pointer', transition: 'color .15s' }}
-                onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}
-                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.3)'}
-              >{item}</span>
-            ))}
-          </div>
         </div>
       </div>
     </footer>
