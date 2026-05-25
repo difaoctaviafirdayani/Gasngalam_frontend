@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
+import { FaPencilAlt, FaCommentAlt, FaClipboardList } from 'react-icons/fa';
 
 const BACKEND_URL = 'http://127.0.0.1:8000';
 function resolveUrl(url) {
@@ -98,10 +99,10 @@ export default function Profile() {
   };
 
   const tabs = [
-    { key: 'edit',      label: '✏️ Edit Profil' },
-    { key: 'reviews',   label: '💬 Ulasan Saya' },
-    { key: 'claims',    label: '📋 Klaim Bisnis' },
-  ];
+  { key: 'edit',    label: 'Edit Profil' },
+  { key: 'reviews', label: 'Ulasan Saya' },
+  { key: 'claims',  label: 'Klaim Bisnis' },
+];
 
   return (
     <div className="content" style={{ maxWidth: 640, paddingTop: 28 }}>
