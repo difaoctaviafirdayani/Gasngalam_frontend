@@ -266,7 +266,7 @@ export default function AdminWisata() {
                 onClick={() => fileRef.current.click()}
                 style={{ padding: '8px 18px', border: '1.5px dashed var(--border)', borderRadius: 8, background: 'var(--bg)', cursor: 'pointer', fontSize: 12, color: 'var(--text2)', fontFamily: 'Inter,sans-serif' }}
               >
-                {photoPreview ? '🔄 Ganti Foto' : '📷 Upload Foto'}
+                {photoPreview ? ' Ganti Foto' : ' Upload Foto'}
               </button>
               {photoPreview && (
                 <button
@@ -334,7 +334,7 @@ export default function AdminWisata() {
       {/* ── Confirm Dialog Hapus ── */}
       <ConfirmDialog
         open={!!confirmHapus}
-        icon="🗑️"
+        icon=""
         title="Hapus Destinasi?"
         message={`Destinasi "${confirmHapus?.name}" akan dihapus permanen dan tidak bisa dikembalikan.`}
         confirmLabel="Ya, Hapus"

@@ -20,15 +20,15 @@ export default function AdminDashboard() {
   }, []);
 
   const cards = [
-    { icon: '🗺️', num: stats.total_destinations, label: 'Total Wisata',   path: '/admin/wisata', color: '#3B82F6' },
-    { icon: '👥', num: stats.total_users,         label: 'Total User',     path: null,            color: '#10B981' },
-    { icon: '💬', num: stats.total_reviews,        label: 'Total Ulasan',  path: '/admin/ulasan', color: '#8B5CF6' },
-    { icon: '📋', num: stats.pending_claims,       label: 'Klaim Pending', path: '/admin/klaim',  color: '#F59E0B' },
+    { icon: '', num: stats.total_destinations, label: 'Total Wisata',   path: '/admin/wisata', color: '#3B82F6' },
+    { icon: '', num: stats.total_users,         label: 'Total User',     path: null,            color: '#10B981' },
+    { icon: '', num: stats.total_reviews,        label: 'Total Ulasan',  path: '/admin/ulasan', color: '#8B5CF6' },
+    { icon: '', num: stats.pending_claims,       label: 'Klaim Pending', path: '/admin/klaim',  color: '#F59E0B' },
   ];
 
   return (
     <AdminLayout active="Dashboard">
-      <div className="admin-page-title">Hi, Admin! 👋</div>
+      <div className="admin-page-title">Hi, Admin! </div>
       <div className="admin-page-sub">Selamat datang di panel admin GasNgalam</div>
 
       {/* 4 card sejajar + clickable */}

@@ -287,11 +287,11 @@ ${d.photo_full_url ? `<img class="hero" src="${d.photo_full_url}" alt="${d.name}
           <div>
             <h1 className="detail-title">{d.name}</h1>
             <div className="detail-meta-row">
-              <div className="detail-meta-item" style={{ color: 'var(--red)' }}>📍 {d.location}</div>
+              <div className="detail-meta-item" style={{ color: 'var(--red)' }}> {d.location}</div>
               <div className="detail-meta-item" style={{ color: 'var(--gold)', fontWeight: 700 }}>
                 ★ {d.rating} <span style={{ fontWeight: 400, color: 'var(--text3)' }}>({d.review_count} ulasan)</span>
               </div>
-              <div className="detail-meta-item">🗺️ {jarakKm} dari lokasimu</div>
+              <div className="detail-meta-item"> {jarakKm} dari lokasimu</div>
               <div style={{ background: 'var(--bg)', padding: '3px 10px', borderRadius: 99, fontSize: 11.5, color: 'var(--text2)', fontWeight: 500, border: '1px solid var(--border)' }}>
                 {d.category}
               </div>
@@ -302,7 +302,7 @@ ${d.photo_full_url ? `<img class="hero" src="${d.photo_full_url}" alt="${d.name}
               <button className={'btn-fav' + (fav ? ' active' : '')} onClick={() => toggleFav(d.id)}>
                 {fav ? '❤️ Tersimpan' : '🤍 Simpan'}
               </button>
-              <button className="btn-action" onClick={() => navigate('/destination/' + d.id + '/rating')}>💬 Rating dan Komentar</button>
+              <button className="btn-action" onClick={() => navigate('/destination/' + d.id + '/rating')}> Rating dan Komentar</button>
               <button className="btn-action" onClick={() => { if (requireLogin('Anda perlu login untuk mengajukan klaim bisnis.')) navigate('/klaim/' + d.id); }}>📋 Ajukan Klaim Bisnis</button>
 
         
@@ -371,7 +371,7 @@ ${d.photo_full_url ? `<img class="hero" src="${d.photo_full_url}" alt="${d.name}
           <div>
             {/* Tab Info / Peta */}
             <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', marginBottom: 0 }}>
-              {[['info', '📋 Info'], ['map', '🗺️ Peta']].map(([key, label]) => (
+              {[['info', ' Info'], ['map', ' Peta']].map(([key, label]) => (
                 <button key={key} onClick={() => setInfoTab(key)} style={{
                   flex: 1, padding: '8px 0', fontSize: 13, fontWeight: 600,
                   background: 'none', border: 'none', cursor: 'pointer',
