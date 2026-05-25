@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import AdminLayout from './AdminLayout';
 import { useApp } from '../../context/AppContext';
 import api from '../../services/api';
+import {
+  FaStar, FaTrashAlt, FaFlag, FaCheck, FaTimes,
+} from 'react-icons/fa';
+import { MdOutlineFlag } from 'react-icons/md';
 
 const BACKEND_URL = 'http://127.0.0.1:8000';
 function resolvePhoto(url) {
@@ -12,14 +16,14 @@ function resolvePhoto(url) {
 }
 
 export default function AdminUlasan() {
-  const { showToast }                     = useApp();
-  const navigate                          = useNavigate();
-  const [filter, setFilter]               = useState('semua');
-  const [ulasan, setUlasan]               = useState([]);
-  const [fotoPopup, setFotoPopup]         = useState(null);
-  const [hapusTarget, setHapusTarget]     = useState(null);
-  const [zoom, setZoom]                   = useState(1);
-  const imgRef                            = useRef();
+  const { showToast }                 = useApp();
+  const navigate                      = useNavigate();
+  const [filter, setFilter]           = useState('semua');
+  const [ulasan, setUlasan]           = useState([]);
+  const [fotoPopup, setFotoPopup]     = useState(null);
+  const [hapusTarget, setHapusTarget] = useState(null);
+  const [zoom, setZoom]               = useState(1);
+  const imgRef                        = useRef();
 
   const fetchUlasan = () => {
     api.get('/admin/reviews')
@@ -37,25 +41,18 @@ export default function AdminUlasan() {
 
   const doHapus = async () => {
     if (!hapusTarget) return;
-    const id = hapusTarget;
-    setHapusTarget(null);
+    const id = hapusTarget; setHapusTarget(null);
     try {
       await api.delete(`/admin/reviews/${id}`);
-      showToast('Ulasan berhasil dihapus!');
-      fetchUlasan();
-    } catch (err) {
-      showToast(err.message || 'Gagal menghapus ulasan');
-    }
+      showToast('Ulasan berhasil dihapus!'); fetchUlasan();
+    } catch (err) { showToast(err.message || 'Gagal menghapus ulasan'); }
   };
 
   const tinjauLaporan = async (id) => {
     try {
       await api.patch(`/admin/reviews/${id}/report`);
-      showToast('Laporan sudah ditinjau.');
-      fetchUlasan();
-    } catch (err) {
-      showToast(err.message || 'Gagal update laporan');
-    }
+      showToast('Laporan sudah ditinjau.'); fetchUlasan();
+    } catch (err) { showToast(err.message || 'Gagal update laporan'); }
   };
 
   const list          = filter === 'dilaporkan' ? ulasan.filter(u => u.is_reported) : ulasan;
@@ -84,9 +81,10 @@ export default function AdminUlasan() {
         <button
           className={'tab-pill' + (filter === 'dilaporkan' ? ' active' : '')}
           onClick={() => setFilter('dilaporkan')}
-          style={reportedCount > 0 && filter !== 'dilaporkan' ? { borderColor: 'var(--red)', color: 'var(--red)' } : {}}
-        >
-          ⚑ Dilaporkan
+          style={reportedCount > 0 && filter !== 'dilaporkan' ? { borderColor: 'var(--red)', color: 'var(--red)' } : {}}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            <MdOutlineFlag size={14} /> Dilaporkan
+          </span>
           {reportedCount > 0 && (
             <span style={{ background: 'var(--red)', color: '#fff', borderRadius: 99, padding: '1px 7px', fontSize: 11, marginLeft: 5 }}>
               {reportedCount}
@@ -121,25 +119,23 @@ export default function AdminUlasan() {
                   </div>
                 </td>
                 <td style={{ fontSize: 12 }}>{c.destination?.name}</td>
-                <td>⭐ {c.rating}</td>
-
-                {/* KLIK KOMENTAR → redirect ke halaman detail admin */}
+                <td>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                    <FaStar size={12} color="#f5a623" /> {c.rating}
+                  </span>
+                </td>
                 <td style={{ maxWidth: 180, fontSize: 12, color: 'var(--text2)' }}>
                   <span
                     onClick={() => navigate(`/admin/destination/${c.destination_id}`)}
                     title="Klik untuk lihat halaman detail destinasi"
-                    style={{ cursor: 'pointer', textDecoration: 'underline dotted', textUnderlineOffset: 3 }}
-                  >
+                    style={{ cursor: 'pointer', textDecoration: 'underline dotted', textUnderlineOffset: 3 }}>
                     {c.comment?.substring(0, 70)}{c.comment?.length > 70 ? '...' : ''}
                   </span>
                 </td>
-
-                {/* KLIK FOTO → popup zoom */}
                 <td>
                   {c.photo_full_url ? (
                     <img
-                      src={c.photo_full_url}
-                      alt="foto"
+                      src={c.photo_full_url} alt="foto"
                       onClick={() => { setFotoPopup(c.photo_full_url); resetZoom(); }}
                       onError={e => { e.target.style.display = 'none'; }}
                       style={{ width: 44, height: 36, objectFit: 'cover', borderRadius: 5, border: '1px solid var(--border)', cursor: 'zoom-in' }}
@@ -148,23 +144,26 @@ export default function AdminUlasan() {
                     <span style={{ fontSize: 11, color: 'var(--text4)' }}>–</span>
                   )}
                 </td>
-
                 <td style={{ fontSize: 12, whiteSpace: 'nowrap' }}>
                   {new Date(c.created_at).toLocaleDateString('id-ID')}
                 </td>
                 <td>
                   {c.is_reported
-                    ? <span className="badge badge-red" style={{ fontSize: 11 }}>⚑ Dilaporkan</span>
-                    : <span className="badge badge-green" style={{ fontSize: 11 }}>OK</span>
+                    ? <span className="badge badge-red" style={{ fontSize: 11, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                        <FaFlag size={9} /> Dilaporkan
+                      </span>
+                    : <span className="badge badge-green" style={{ fontSize: 11, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                        <FaCheck size={9} /> OK
+                      </span>
                   }
                 </td>
                 <td style={{ whiteSpace: 'nowrap' }}>
                   {c.is_reported && (
-                    <button className="action-btn" onClick={() => tinjauLaporan(c.id)} style={{ background: '#fff3cd', color: '#856404', borderColor: '#ffc107' }}>
-                      ✓ Tinjau
+                    <button className="action-btn" onClick={() => tinjauLaporan(c.id)}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#fff3cd', color: '#856404', borderColor: '#ffc107' }}>
+                      <FaCheck size={10} /> Tinjau
                     </button>
                   )}
-                  {/* HAPUS → popup konfirmasi custom */}
                   <button className="action-btn red" onClick={() => setHapusTarget(c.id)}>Hapus</button>
                 </td>
               </tr>
@@ -173,14 +172,16 @@ export default function AdminUlasan() {
         </table>
       </div>
 
-      {/* ── POPUP KONFIRMASI HAPUS ── */}
+      {/* POPUP KONFIRMASI HAPUS */}
       {hapusTarget && (
         <div onClick={() => setHapusTarget(null)} style={overlayStyle}>
           <div onClick={e => e.stopPropagation()} style={{
             background: '#fff', borderRadius: 14, padding: 28, width: '100%',
             maxWidth: 360, textAlign: 'center', boxShadow: '0 8px 40px rgba(0,0,0,0.25)',
           }}>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>🗑️</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+              <FaTrashAlt size={34} color="var(--red)" />
+            </div>
             <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 8 }}>Hapus Ulasan?</div>
             <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 24, lineHeight: 1.6 }}>
               Ulasan ini akan dihapus permanen dan tidak bisa dikembalikan.
@@ -189,15 +190,16 @@ export default function AdminUlasan() {
               <button className="btn-secondary" onClick={() => setHapusTarget(null)} style={{ padding: '8px 22px' }}>
                 Batal
               </button>
-              <button className="action-btn red" onClick={doHapus} style={{ padding: '8px 22px' }}>
-                Ya, Hapus
+              <button className="action-btn red" onClick={doHapus}
+                style={{ padding: '8px 22px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <FaTrashAlt size={11} /> Ya, Hapus
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── POPUP FOTO ZOOM ── */}
+      {/* POPUP FOTO ZOOM */}
       {fotoPopup && (
         <div onClick={closeFoto} style={overlayStyle}>
           <div onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
@@ -206,13 +208,13 @@ export default function AdminUlasan() {
               <span style={{ color: '#fff', fontSize: 13, fontWeight: 600, lineHeight: '32px', minWidth: 48, textAlign: 'center' }}>{Math.round(zoom * 100)}%</span>
               <button onClick={zoomIn} style={{ background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', fontSize: 18, fontWeight: 700 }}>+</button>
               <button onClick={resetZoom} style={{ background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: 8, height: 32, padding: '0 10px', cursor: 'pointer', fontSize: 11, fontWeight: 700 }}>Reset</button>
-              <button onClick={closeFoto} style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>✕</button>
+              <button onClick={closeFoto} style={{ background: '#e74c3c', color: '#fff', border: 'none', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <FaTimes size={13} />
+              </button>
             </div>
             <div style={{ overflow: 'auto', maxWidth: '90vw', maxHeight: '80vh', borderRadius: 10 }}>
               <img
-                ref={imgRef}
-                src={fotoPopup}
-                alt="foto ulasan"
+                ref={imgRef} src={fotoPopup} alt="foto ulasan"
                 style={{
                   transform: `scale(${zoom})`, transformOrigin: 'top left',
                   display: 'block', borderRadius: 10, transition: 'transform 0.2s ease',

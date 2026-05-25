@@ -1,26 +1,24 @@
-// src/pages/admin/ManageWisata.jsx
 import { useState, useEffect, useRef } from 'react';
 import AdminLayout from './AdminLayout';
 import { useApp } from '../../context/AppContext';
 import api from '../../services/api';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import {
+  FaPlus, FaPencilAlt, FaTrashAlt,
+  FaSave, FaTimes, FaStar
+} from 'react-icons/fa';
+import { MdAddLocationAlt } from 'react-icons/md';
 
 const CATEGORIES = [
-  'Wisata Budaya',
-  'Taman Kota',
-  'Wisata Edukasi',
-  'Kuliner & Belanja',
-  'Wisata Hiburan',
-  'Wisata Alam',
+  'Wisata Budaya', 'Taman Kota', 'Wisata Edukasi',
+  'Kuliner & Belanja', 'Wisata Hiburan', 'Wisata Alam',
 ];
 
 const EMPTY_FORM = {
   name: '', category: '', location: '',
   ticket_price: '', open_hours: '',
   contact: '', social_media: '', address: '',
-  description: '',
-  lat: '', lng: '',
-  is_active: true,
+  description: '', lat: '', lng: '', is_active: true,
 };
 
 export default function AdminWisata() {
@@ -33,56 +31,39 @@ export default function AdminWisata() {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [submitting, setSubmitting]     = useState(false);
   const fileRef                         = useRef();
-
   const [confirmHapus, setConfirmHapus] = useState(null);
 
   const fetchDestinations = () => {
-    api.get('/destinations')
-      .then(res => setDestinations(res.data))
-      .catch(() => {});
+    api.get('/destinations').then(res => setDestinations(res.data)).catch(() => {});
   };
 
   useEffect(() => { fetchDestinations(); }, []);
 
   const resetForm = () => {
-    setForm(EMPTY_FORM);
-    setPhoto(null);
-    setPhotoPreview(null);
+    setForm(EMPTY_FORM); setPhoto(null); setPhotoPreview(null);
     if (fileRef.current) fileRef.current.value = '';
-    setEditData(null);
-    setShowForm(false);
+    setEditData(null); setShowForm(false);
   };
 
   const openEdit = (d) => {
     setEditData(d);
     setForm({
-      name:         d.name         || '',
-      category:     d.category     || '',
-      location:     d.location     || '',
-      ticket_price: d.ticket_price || '',
-      open_hours:   d.open_hours   || '',
-      contact:      d.contact      || '',
-      social_media: d.social_media || '',
-      address:      d.address      || '',
-      description:  d.description  || '',
-      lat:          d.lat          || '',
-      lng:          d.lng          || '',
-      is_active:    d.is_active    ?? true,
+      name: d.name || '', category: d.category || '', location: d.location || '',
+      ticket_price: d.ticket_price || '', open_hours: d.open_hours || '',
+      contact: d.contact || '', social_media: d.social_media || '',
+      address: d.address || '', description: d.description || '',
+      lat: d.lat || '', lng: d.lng || '', is_active: d.is_active ?? true,
     });
-    setPhoto(null);
-    setPhotoPreview(d.photo_full_url || null);
-    setShowForm(true);
+    setPhoto(null); setPhotoPreview(d.photo_full_url || null); setShowForm(true);
   };
 
   const handlePhoto = (e) => {
-    const f = e.target.files[0];
-    if (!f) return;
+    const f = e.target.files[0]; if (!f) return;
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(f.type)) {
       showToast('Format foto harus JPG, PNG, atau WebP'); return;
     }
     if (f.size > 5 * 1024 * 1024) { showToast('Ukuran foto maksimal 5MB'); return; }
-    setPhoto(f);
-    setPhotoPreview(URL.createObjectURL(f));
+    setPhoto(f); setPhotoPreview(URL.createObjectURL(f));
   };
 
   const set      = k => e => setForm(prev => ({ ...prev, [k]: e.target.value }));
@@ -96,46 +77,31 @@ export default function AdminWisata() {
     try {
       const fd = new FormData();
       Object.entries(form).forEach(([k, v]) => {
-        if (k === 'is_active') {
-          fd.append(k, v ? '1' : '0');
-        } else if (v !== '' && v !== null && v !== undefined) {
-          fd.append(k, v);
-        }
+        if (k === 'is_active') fd.append(k, v ? '1' : '0');
+        else if (v !== '' && v !== null && v !== undefined) fd.append(k, v);
       });
       if (photo) fd.append('photo', photo);
-
       if (editData) {
-        await api.post(`/admin/destinations/${editData.id}`, fd, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        await api.post(`/admin/destinations/${editData.id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
         showToast('Destinasi berhasil diupdate!');
       } else {
-        await api.post('/admin/destinations', fd, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        await api.post('/admin/destinations', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
         showToast('Destinasi berhasil ditambahkan!');
       }
-      resetForm();
-      fetchDestinations();
+      resetForm(); fetchDestinations();
     } catch (err) {
       showToast(err.message || 'Gagal menyimpan destinasi');
-    } finally {
-      setSubmitting(false);
-    }
+    } finally { setSubmitting(false); }
   };
 
   const hapus   = (id, name) => setConfirmHapus({ id, name });
-
   const doHapus = async () => {
     try {
       await api.delete(`/admin/destinations/${confirmHapus.id}`);
-      showToast('Destinasi berhasil dihapus!');
-      fetchDestinations();
+      showToast('Destinasi berhasil dihapus!'); fetchDestinations();
     } catch (err) {
       showToast(err.message || 'Gagal menghapus destinasi');
-    } finally {
-      setConfirmHapus(null);
-    }
+    } finally { setConfirmHapus(null); }
   };
 
   const inp = {
@@ -158,15 +124,19 @@ export default function AdminWisata() {
           <div className="admin-page-title">Daftar Wisata</div>
           <div className="admin-page-sub">Manajemen data destinasi wisata</div>
         </div>
-        <button className="btn-primary" onClick={() => { resetForm(); setShowForm(true); }}>
-          + Tambah Destinasi
+        <button className="btn-primary"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          onClick={() => { resetForm(); setShowForm(true); }}>
+          <FaPlus size={11} /> Tambah Destinasi
         </button>
       </div>
 
       {showForm && (
         <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, padding: 22, marginBottom: 22 }}>
-          <div style={{ fontWeight: 700, marginBottom: 16, fontSize: 15 }}>
-            {editData ? '✏️ Edit Destinasi' : '➕ Tambah Destinasi Baru'}
+          <div style={{ fontWeight: 700, marginBottom: 16, fontSize: 15, display: 'flex', alignItems: 'center', gap: 8 }}>
+            {editData
+              ? <><FaPencilAlt size={14} /> Edit Destinasi</>
+              : <><MdAddLocationAlt size={16} /> Tambah Destinasi Baru</>}
           </div>
 
           <div className="form-row">
@@ -238,14 +208,11 @@ export default function AdminWisata() {
             <Lbl>Deskripsi</Lbl>
             <textarea
               style={{ ...inp, resize: 'vertical', minHeight: 80 }}
-              value={form.description}
-              onChange={set('description')}
-              placeholder="Deskripsi singkat destinasi ini..."
-              rows={3}
+              value={form.description} onChange={set('description')}
+              placeholder="Deskripsi singkat destinasi ini..." rows={3}
             />
           </div>
 
-          {/* Upload Foto — kosong jika belum diisi, bisa ditambahkan kapan saja */}
           <div className="fg" style={{ marginBottom: 14 }}>
             <Lbl>Foto Utama <span style={{ fontWeight: 400, color: 'var(--text4)', fontSize: 11 }}>(JPG/PNG/WebP, maks. 5MB)</span></Lbl>
             <input ref={fileRef} type="file" accept=".jpg,.jpeg,.png,.webp" style={{ display: 'none' }} onChange={handlePhoto} />
@@ -257,18 +224,15 @@ export default function AdminWisata() {
                   <span style={{ fontSize: 10, color: 'var(--text4)', fontStyle: 'italic', textAlign: 'center', lineHeight: 1.4 }}>Belum ada<br/>foto</span>
                 </div>
               )}
-              <button
-                onClick={() => fileRef.current.click()}
-                style={{ padding: '8px 18px', border: '1.5px dashed var(--border)', borderRadius: 8, background: 'var(--bg)', cursor: 'pointer', fontSize: 12, color: 'var(--text2)', fontFamily: 'Inter,sans-serif' }}
-              >
+              <button onClick={() => fileRef.current.click()}
+                style={{ padding: '8px 18px', border: '1.5px dashed var(--border)', borderRadius: 8, background: 'var(--bg)', cursor: 'pointer', fontSize: 12, color: 'var(--text2)', fontFamily: 'Inter,sans-serif' }}>
                 {photoPreview ? 'Ganti Foto' : 'Upload Foto'}
               </button>
               {photoPreview && (
                 <button
                   onClick={() => { setPhoto(null); setPhotoPreview(null); if (fileRef.current) fileRef.current.value = ''; }}
-                  style={{ fontSize: 12, color: 'var(--red)', background: 'none', border: 'none', cursor: 'pointer' }}
-                >
-                  ✕ Hapus
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--red)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                  <FaTimes size={11} /> Hapus
                 </button>
               )}
             </div>
@@ -276,8 +240,12 @@ export default function AdminWisata() {
 
           <div className="form-actions" style={{ marginTop: 6 }}>
             <button className="btn-secondary" onClick={resetForm} disabled={submitting}>Batal</button>
-            <button className="btn-primary" onClick={submitForm} disabled={submitting}>
-              {submitting ? 'Menyimpan...' : (editData ? 'Simpan Perubahan' : 'Tambah Destinasi')}
+            <button className="btn-primary"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              onClick={submitForm} disabled={submitting}>
+              {submitting
+                ? 'Menyimpan...'
+                : <><FaSave size={12} /> {editData ? 'Simpan Perubahan' : 'Tambah Destinasi'}</>}
             </button>
           </div>
         </div>
@@ -287,13 +255,8 @@ export default function AdminWisata() {
         <table className="tbl">
           <thead>
             <tr>
-              <th>Foto</th>
-              <th>Nama Wisata</th>
-              <th>Kategori</th>
-              <th>Lokasi</th>
-              <th>Rating</th>
-              <th>Status</th>
-              <th>Kelola</th>
+              <th>Foto</th><th>Nama Wisata</th><th>Kategori</th>
+              <th>Lokasi</th><th>Rating</th><th>Status</th><th>Kelola</th>
             </tr>
           </thead>
           <tbody>
@@ -312,7 +275,9 @@ export default function AdminWisata() {
                 <td><strong>{d.name}</strong></td>
                 <td>{d.category}</td>
                 <td style={{ fontSize: 12, color: 'var(--text3)' }}>{d.location}</td>
-                <td>⭐ {d.rating} ({d.review_count})</td>
+                <td style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <FaStar size={12} color="#f5a623" /> {d.rating} ({d.review_count})
+                </td>
                 <td>
                   <span className={`badge ${d.is_active ? 'badge-green' : 'badge-red'}`}>
                     {d.is_active ? 'Aktif' : 'Nonaktif'}
@@ -330,7 +295,7 @@ export default function AdminWisata() {
 
       <ConfirmDialog
         open={!!confirmHapus}
-        icon=""
+        icon={<FaTrashAlt size={32} color="var(--red)" />}
         title="Hapus Destinasi?"
         message={`Destinasi "${confirmHapus?.name}" akan dihapus permanen dan tidak bisa dikembalikan.`}
         confirmLabel="Ya, Hapus"

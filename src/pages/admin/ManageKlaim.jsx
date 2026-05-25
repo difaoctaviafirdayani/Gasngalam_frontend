@@ -3,12 +3,14 @@ import AdminLayout from './AdminLayout';
 import { useApp } from '../../context/AppContext';
 import api from '../../services/api';
 
+import { FiX, FiExternalLink, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+
 export default function AdminKlaim() {
   const { showToast } = useApp();
   const [filter, setFilter]         = useState('semua');
   const [klaim, setKlaim]           = useState([]);
-  const [detailItem, setDetailItem] = useState(null); // REVISI 4: detail popup
-  const [konfirmasi, setKonfirmasi] = useState(null); // REVISI 4: konfirmasi popup {id, status}
+  const [detailItem, setDetailItem] = useState(null);
+  const [konfirmasi, setKonfirmasi] = useState(null);
 
   const fetchKlaim = () => {
     api.get('/admin/claims')
@@ -18,7 +20,6 @@ export default function AdminKlaim() {
 
   useEffect(() => { fetchKlaim(); }, []);
 
-  // REVISI 4: eksekusi setelah konfirmasi
   const doUpdate = async () => {
     if (!konfirmasi) return;
     const { id, status } = konfirmasi;
@@ -27,7 +28,7 @@ export default function AdminKlaim() {
       await api.patch(`/admin/claims/${id}`, { status });
       showToast('Klaim berhasil ' + (status === 'approved' ? 'disetujui' : 'ditolak') + '!');
       fetchKlaim();
-      setDetailItem(null); // tutup detail juga kalau sedang dibuka
+      setDetailItem(null);
     } catch (err) {
       showToast(err.message || 'Gagal update klaim');
     }
@@ -93,7 +94,6 @@ export default function AdminKlaim() {
                 <td>{new Date(k.created_at).toLocaleDateString('id-ID')}</td>
                 <td><span className={'badge ' + badgeClass(k.status)}>{badgeLabel(k.status)}</span></td>
                 <td>
-                  {/* REVISI 4: tombol detail */}
                   <button
                     className="action-btn"
                     onClick={() => setDetailItem(k)}
@@ -103,7 +103,6 @@ export default function AdminKlaim() {
                   </button>
                   {k.status === 'pending' && (
                     <>
-                      {/* REVISI 4: buka konfirmasi dulu, bukan langsung update */}
                       <button className="action-btn green" onClick={() => setKonfirmasi({ id: k.id, status: 'approved' })}>Setujui</button>
                       <button className="action-btn red"   onClick={() => setKonfirmasi({ id: k.id, status: 'rejected' })}>Tolak</button>
                     </>
@@ -118,13 +117,15 @@ export default function AdminKlaim() {
         </table>
       </div>
 
-      {/* REVISI 4: Popup Detail Klaim */}
+      {/* Popup Detail Klaim */}
       {detailItem && (
         <div onClick={() => setDetailItem(null)} style={overlayStyle}>
           <div onClick={e => e.stopPropagation()} style={cardStyle}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
               <div style={{ fontWeight: 800, fontSize: 16 }}>Detail Pengajuan Klaim</div>
-              <button onClick={() => setDetailItem(null)} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#999' }}>✕</button>
+              <button onClick={() => setDetailItem(null)} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#999', display: 'flex', alignItems: 'center' }}>
+                <FiX size={20} />
+              </button>
             </div>
 
             {[
@@ -160,8 +161,8 @@ export default function AdminKlaim() {
                       style={{ maxWidth: '100%', borderRadius: 8, border: '1px solid var(--border)' }}
                     />
                     <a href={detailItem.document_url} target="_blank" rel="noopener noreferrer"
-                      style={{ display: 'inline-block', marginTop: 8, fontSize: 12, color: '#1a4fa8' }}>
-                      🔗 Buka di tab baru
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 5, marginTop: 8, fontSize: 12, color: '#1a4fa8' }}>
+                      <FiExternalLink size={12} /> Buka di tab baru
                     </a>
                   </div>
                 ) : (
@@ -172,8 +173,8 @@ export default function AdminKlaim() {
                       title="preview-pdf"
                     />
                     <a href={detailItem.document_url} target="_blank" rel="noopener noreferrer"
-                      style={{ display: 'inline-block', marginTop: 8, fontSize: 12, color: '#1a4fa8' }}>
-                      🔗 Buka PDF di tab baru
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 5, marginTop: 8, fontSize: 12, color: '#1a4fa8' }}>
+                      <FiExternalLink size={12} /> Buka PDF di tab baru
                     </a>
                   </div>
                 )}
@@ -191,12 +192,15 @@ export default function AdminKlaim() {
         </div>
       )}
 
-      {/* REVISI 4: Popup Konfirmasi Tolak/Setujui */}
+      {/* Popup Konfirmasi */}
       {konfirmasi && (
         <div onClick={() => setKonfirmasi(null)} style={overlayStyle}>
           <div onClick={e => e.stopPropagation()} style={{ ...cardStyle, maxWidth: 380, textAlign: 'center' }}>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>
-              {konfirmasi.status === 'approved' ? '✅' : '❌'}
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+              {konfirmasi.status === 'approved'
+                ? <FiCheckCircle size={40} color="#22c55e" />
+                : <FiXCircle size={40} color="#ef4444" />
+              }
             </div>
             <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 8 }}>
               {konfirmasi.status === 'approved' ? 'Setujui Klaim?' : 'Tolak Klaim?'}

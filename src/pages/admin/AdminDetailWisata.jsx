@@ -4,6 +4,9 @@ import AdminLayout from './AdminLayout';
 import { useApp } from '../../context/AppContext';
 import api from '../../services/api';
 
+import { FiArrowLeft, FiMapPin, FiPhone, FiClock, FiTag, FiInstagram, FiImage } from 'react-icons/fi';
+import { FaMapMarkedAlt, FaStar, FaRegStar } from 'react-icons/fa';
+
 export default function AdminDetailWisata() {
   const { id }                      = useParams();
   const navigate                    = useNavigate();
@@ -25,7 +28,9 @@ export default function AdminDetailWisata() {
 
   const stars = (r) =>
     [1, 2, 3, 4, 5].map(s => (
-      <span key={s} style={{ color: r >= s ? '#f5a623' : '#ddd', fontSize: 18 }}>★</span>
+      <span key={s} style={{ color: r >= s ? '#f5a623' : '#ddd', fontSize: 18, display: 'inline-flex' }}>
+        {r >= s ? <FaStar /> : <FaRegStar />}
+      </span>
     ));
 
   const mapsUrl = d?.address
@@ -52,7 +57,7 @@ export default function AdminDetailWisata() {
           gap: 6,
         }}
       >
-        ← Kembali ke Kelola Ulasan
+        <FiArrowLeft size={14} /> Kembali ke Kelola Ulasan
       </button>
 
       {loading && (
@@ -96,7 +101,7 @@ export default function AdminDetailWisata() {
                 alignItems: 'center', justifyContent: 'center',
                 gap: 10, color: 'rgba(255,255,255,0.4)',
               }}>
-                <span style={{ fontSize: 52 }}>🖼️</span>
+                <FiImage size={52} />
                 <span style={{ fontSize: 13 }}>Belum ada foto utama</span>
               </div>
             )}
@@ -147,9 +152,11 @@ export default function AdminDetailWisata() {
                   marginBottom: 14, fontSize: 13,
                   color: 'var(--text3)', alignItems: 'center',
                 }}>
-                  <span>📍 {d.location}</span>
-                  <span style={{ color: '#f5a623', fontWeight: 700 }}>
-                    ★ {d.rating}
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <FiMapPin size={13} /> {d.location}
+                  </span>
+                  <span style={{ color: '#f5a623', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <FaStar size={13} /> {d.rating}
                     <span style={{ fontWeight: 400, color: 'var(--text3)' }}>
                       {' '}({d.review_count} ulasan)
                     </span>
@@ -181,7 +188,9 @@ export default function AdminDetailWisata() {
                   <div style={{ flex: 1, minWidth: 160 }}>
                     {[5, 4, 3].map(s => (
                       <div key={s} className="bar-row">
-                        <span>★{s}</span>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
+                          <FaStar size={11} color="#f5a623" />{s}
+                        </span>
                         <div className="bar-track">
                           <div
                             className="bar-fill"
@@ -227,7 +236,9 @@ export default function AdminDetailWisata() {
                           <span className="comment-time"> · {c.time}</span>
                         </div>
                       </div>
-                      <div className="comment-rating">★ {c.rating}</div>
+                      <div className="comment-rating" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                        <FaStar size={12} color="#f5a623" /> {c.rating}
+                      </div>
                     </div>
 
                     <div className="comment-text">{c.text}</div>
@@ -258,7 +269,9 @@ export default function AdminDetailWisata() {
 
                 {/* Alamat + mini map */}
                 <div className="info-row">
-                  <div className="info-label">Alamat</div>
+                  <div className="info-label" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <FiMapPin size={13} /> Alamat
+                  </div>
                   <div className="info-val" style={{ fontSize: 12 }}>{d.address || '-'}</div>
                   {mapsUrl && (
                     <a
@@ -285,7 +298,7 @@ export default function AdminDetailWisata() {
                       onMouseEnter={e => e.currentTarget.style.background = 'var(--bg3)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'var(--bg2)'}
                     >
-                      <span style={{ fontSize: 28 }}>🗺️</span>
+                      <FaMapMarkedAlt size={28} />
                       <span>Klik untuk lihat di Google Maps</span>
                     </a>
                   )}
@@ -293,21 +306,21 @@ export default function AdminDetailWisata() {
 
                 {/* Baris info lainnya */}
                 {[
-                  { label: 'Contact Person',  val: d.contact },
-                  { label: 'Jam Operasional', val: d.open_hours },
-                  { label: 'HTM',             val: d.ticket_price, cls: 'price' },
-                  { label: 'Sosial Media',    val: d.social_media },
+                  { label: 'Contact Person',  val: d.contact,       icon: <FiPhone size={13} /> },
+                  { label: 'Jam Operasional', val: d.open_hours,    icon: <FiClock size={13} /> },
+                  { label: 'HTM',             val: d.ticket_price,  icon: <FiTag size={13} />,  cls: 'price' },
+                  { label: 'Sosial Media',    val: d.social_media,  icon: <FiInstagram size={13} /> },
                 ].map(item => (
                   <div key={item.label} className="info-row">
-                    <div className="info-label">{item.label}</div>
+                    <div className="info-label" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                      {item.icon} {item.label}
+                    </div>
                     <div className={`info-val${item.cls ? ' ' + item.cls : ''}`} style={{ fontSize: 12 }}>
                       {item.val || '-'}
                     </div>
                   </div>
                 ))}
               </div>
-
-
 
             </div>
           </div>
