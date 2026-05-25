@@ -6,7 +6,7 @@ import logo from '../assets/logo-gasngalam.svg';
 
 export default function UserLayout({ children }) {
   const navigate = useNavigate();
-  const { user, theme, toggleTheme } = useApp(); // ✅ tambah theme, toggleTheme
+  const { user, userDetail, theme, toggleTheme } = useApp();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
@@ -56,8 +56,11 @@ export default function UserLayout({ children }) {
           {!user ? (
             <button className="nav-btn" onClick={() => navigate('/login')}>Login</button>
           ) : (
-           <div className="user-chip" onClick={() => navigate('/profile')}>
-  <div className="user-avatar">{user[0].toUpperCase()}</div>
+  <div className="user-chip" onClick={() => navigate('/profile')}>
+  {userDetail?.avatar_url
+    ? <img src={userDetail.avatar_url} alt="avatar" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover' }} />
+    : <div className="user-avatar">{user[0].toUpperCase()}</div>
+  }
   <span>{user}</span>
 </div>
           )}
