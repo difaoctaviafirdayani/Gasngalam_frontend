@@ -2,9 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import Sidebar from './Sidebar';
-import logo from '../assets/logo gasngalam.svg';
+import logo from '../assets/logo-gasngalam.svg';
 import api from '../services/api';
-import { FaMoon, FaSun } from 'react-icons/fa';
+import { FaMoon, FaSun, FaBell, FaBellSlash, FaClipboardList } from 'react-icons/fa';
 
 function NotifDropdown({ onClose }) {
   const { setNotifCount } = useApp();
@@ -38,17 +38,20 @@ function NotifDropdown({ onClose }) {
       width: 320, maxHeight: 420, overflowY: 'auto', zIndex: 9999,
     }}>
       <div style={{ padding: '12px 14px 8px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontWeight: 700, fontSize: 14 }}>🔔 Notifikasi</span>
+        <span style={{ fontWeight: 700, fontSize: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <FaBell size={14} /> Notifikasi
+        </span>
         <button onClick={markAllRead} style={{ fontSize: 11, color: 'var(--brand)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
           Tandai semua dibaca
         </button>
       </div>
+
       {loading ? (
         <div style={{ padding: 20, textAlign: 'center', color: 'var(--text3)', fontSize: 13 }}>Memuat...</div>
       ) : notifs.length === 0 ? (
         <div style={{ padding: 24, textAlign: 'center', color: 'var(--text3)', fontSize: 13 }}>
-          <div style={{ fontSize: 28, marginBottom: 6 }}>🔕</div>
-          Belum ada notifikasi
+          <FaBellSlash size={24} style={{ marginBottom: 6, opacity: 0.4 }} />
+          <div>Belum ada notifikasi</div>
         </div>
       ) : notifs.map(n => (
         <div
@@ -63,7 +66,9 @@ function NotifDropdown({ onClose }) {
           }}
         >
           <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-            <span style={{ fontSize: 18, flexShrink: 0, marginTop: 1 }}>📋</span>
+            <span style={{ fontSize: 16, flexShrink: 0, marginTop: 1, color: 'var(--brand)' }}>
+              <FaClipboardList size={16} />
+            </span>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: n.is_read ? 500 : 700, fontSize: 13, color: 'var(--text)' }}>{n.title}</div>
               <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 2, lineHeight: 1.4 }}>{n.body}</div>
@@ -82,7 +87,7 @@ function NotifDropdown({ onClose }) {
 }
 
 export default function Topbar() {
- const { user, userDetail, theme, toggleTheme, notifCount, fetchNotifCount } = useApp();
+  const { user, userDetail, theme, toggleTheme, notifCount, fetchNotifCount } = useApp();
   const navigate = useNavigate();
   const [search, setSearch]           = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -106,8 +111,14 @@ export default function Topbar() {
       <nav className="topbar">
         <button className="menu-btn" onClick={() => setSidebarOpen(true)}>&#9776;</button>
         <a className="logo-wrap" onClick={() => navigate('/')}>
-          <img id="topbar-logo" src={logo} alt="GasNgalam" style={{ height: 28, objectFit: 'contain', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }} />
+          <img
+            id="topbar-logo"
+            src={logo}
+            alt="GasNgalam"
+            style={{ height: 28, objectFit: 'contain', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }}
+          />
         </a>
+
         <div className="search-wrap">
           <div style={{ position: 'relative', width: '100%', maxWidth: 480 }}>
             <svg className="search-icon" viewBox="0 0 24 24">
@@ -126,7 +137,7 @@ export default function Topbar() {
         </div>
 
         <div className="topbar-right">
-          {/* NOTIFIKASI — kiri dark mode */}
+          {/* NOTIFIKASI */}
           {user && (
             <div ref={notifRef} style={{ position: 'relative' }}>
               <button
@@ -168,19 +179,19 @@ export default function Topbar() {
           {!user ? (
             <button className="nav-btn" onClick={() => navigate('/login')}>Login</button>
           ) : (
-          <div className="user-chip" onClick={() => setSidebarOpen(true)}>
-      {userDetail?.avatar_url
-        ? <img
-            src={userDetail.avatar_url}
-            alt="avatar"
-            style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border)' }}
-          />
-        : <div className="user-avatar">
-            {(userDetail?.name || user || 'U')[0].toUpperCase()}
-          </div>
-      }
-      <span>{userDetail?.name || user}</span>
-    </div>
+            <div className="user-chip" onClick={() => setSidebarOpen(true)}>
+              {userDetail?.avatar_url
+                ? <img
+                    src={userDetail.avatar_url}
+                    alt="avatar"
+                    style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border)' }}
+                  />
+                : <div className="user-avatar">
+                    {(userDetail?.name || user || 'U')[0].toUpperCase()}
+                  </div>
+              }
+              <span>{userDetail?.name || user}</span>
+            </div>
           )}
         </div>
       </nav>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import Sidebar from '../components/Sidebar';
 import logo from '../assets/logo-gasngalam.svg';
+import { FaMoon, FaSun } from 'react-icons/fa';
 
 export default function UserLayout({ children }) {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ export default function UserLayout({ children }) {
         <div className="topbar-right">
           {/* ✅ Tombol toggle */}
           <button className="theme-toggle-btn" onClick={toggleTheme} title="Ganti tema">
-            {theme === 'light' ? '🌙' : '☀️'}
+            {theme === 'light' ? <FaMoon size={14} /> : <FaSun size={14} />}
           </button>
           {/* NOTIFIKASI */}
   {user && (

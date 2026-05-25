@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
+import { FaBell, FaBellSlash, FaClipboardList, FaSpinner } from 'react-icons/fa';
 
 export default function Notifications() {
-  const navigate                = useNavigate();
-  const { setNotifCount }       = useApp();
-  const [notifs, setNotifs]     = useState([]);
-  const [loading, setLoading]   = useState(true);
+  const navigate              = useNavigate();
+  const { setNotifCount }     = useApp();
+  const [notifs, setNotifs]   = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api.get('/notifications')
@@ -28,7 +29,9 @@ export default function Notifications() {
     setNotifCount(0);
   };
 
-  const typeIcon = (type) => type === 'claim_status' ? '📋' : '🔔';
+  const typeIcon = (type) => type === 'claim_status'
+    ? <FaClipboardList size={18} />
+    : <FaBell size={18} />;
 
   const statusColor = (data) => {
     if (!data) return null;
@@ -42,22 +45,22 @@ export default function Notifications() {
       <button className="back-btn" onClick={() => navigate(-1)}>← Kembali</button>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800 }}>🔔 Notifikasi</h2>
-        <button
-          onClick={markAllRead}
-          style={{ fontSize: 12, color: 'var(--brand)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}
-        >
+        <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <FaBell size={18} /> Notifikasi
+        </h2>
+        <button onClick={markAllRead} style={{ fontSize: 12, color: 'var(--brand)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
           Tandai semua dibaca
         </button>
       </div>
 
       {loading ? (
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--text3)' }}>
-          <div style={{ fontSize: 36 }}>⏳</div><p>Memuat notifikasi...</p>
+          <FaSpinner size={32} style={{ animation: 'spin 1s linear infinite' }} />
+          <p>Memuat notifikasi...</p>
         </div>
       ) : notifs.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text3)' }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>🔕</div>
+          <FaBellSlash size={44} style={{ marginBottom: 12, opacity: 0.4 }} />
           <p style={{ fontWeight: 600 }}>Belum ada notifikasi</p>
           <p style={{ fontSize: 13 }}>Kamu akan menerima notifikasi saat status klaim kamu berubah.</p>
         </div>
@@ -66,30 +69,25 @@ export default function Notifications() {
           key={n.id}
           onClick={() => !n.is_read && markRead(n.id)}
           style={{
-            padding: '14px 16px',
-            borderRadius: 10,
-            marginBottom: 8,
+            padding: '14px 16px', borderRadius: 10, marginBottom: 8,
             background: n.is_read ? 'var(--white)' : 'var(--brand)0d',
             border: `1px solid ${n.is_read ? 'var(--border)' : 'var(--brand)33'}`,
-            cursor: n.is_read ? 'default' : 'pointer',
-            transition: 'all .2s',
+            cursor: n.is_read ? 'default' : 'pointer', transition: 'all .2s',
           }}
         >
           <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
             <div style={{
               width: 40, height: 40, borderRadius: '50%',
               background: (n.data && statusColor(n.data)) ? statusColor(n.data) + '22' : 'var(--brand)22',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 18, flexShrink: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+              color: (n.data && statusColor(n.data)) || 'var(--brand)',
             }}>
               {typeIcon(n.type)}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
                 <div style={{ fontWeight: n.is_read ? 600 : 800, fontSize: 14, color: 'var(--text)' }}>{n.title}</div>
-                {!n.is_read && (
-                  <div style={{ width: 9, height: 9, borderRadius: '50%', background: 'var(--brand)', flexShrink: 0 }} />
-                )}
+                {!n.is_read && <div style={{ width: 9, height: 9, borderRadius: '50%', background: 'var(--brand)', flexShrink: 0 }} />}
               </div>
               <div style={{ fontSize: 13, color: 'var(--text2)', marginTop: 4, lineHeight: 1.5 }}>{n.body}</div>
               <div style={{ fontSize: 11, color: 'var(--text4)', marginTop: 6 }}>

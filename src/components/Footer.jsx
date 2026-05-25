@@ -1,114 +1,143 @@
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo-gasngalam.svg';
+import {
+  FaInstagram, FaFacebookF, FaYoutube, FaTiktok,
+  FaMapMarkerAlt, FaEnvelope, FaPhoneAlt,
+  FaHome, FaHeart, FaSearch,
+  FaLandmark, FaTree, FaBuilding, FaGraduationCap, FaShoppingBag,
+} from 'react-icons/fa';
+
+const socialIcons = [
+  { Icon: FaInstagram, label: 'Instagram' },
+  { Icon: FaFacebookF, label: 'Facebook' },
+  { Icon: FaYoutube,   label: 'YouTube'  },
+  { Icon: FaTiktok,    label: 'TikTok'   },
+];
+
+const contactInfo = [
+  { Icon: FaMapMarkerAlt, text: 'Kota Malang, Jawa Timur' },
+  { Icon: FaEnvelope,     text: 'info@gasngalam.id'       },
+  { Icon: FaPhoneAlt,     text: '(0341) 123-4567'         },
+];
+
+const gold     = '#C9A227';
+const goldPale = 'rgba(201,162,39,0.15)';
 
 export default function Footer() {
   const navigate = useNavigate();
   const year = new Date().getFullYear();
 
   return (
-    <footer className="footer">
-      <div className="footer-inner">
+    <footer style={{
+      background: '#0f1117',
+      borderTop: '1px solid rgba(201,162,39,0.2)',
+    }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '60px 60px 0' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '2fr 1fr 1fr 1.5fr',
+          gap: 48,
+          paddingBottom: 48,
+          borderBottom: '1px solid rgba(255,255,255,0.07)',
+        }}>
 
-        {/* Brand + Deskripsi */}
-        <div className="footer-brand-col">
-          <img src={logo} alt="GasNgalam" style={{ height: 28, objectFit: 'contain',  }} />
-          <p className="footer-tagline">
-            Temukan destinasi wisata terbaik di Kota Malang.<br />
-            Dari budaya, kuliner, hingga hiburan — semua ada di sini.
-          </p>
-          <div className="footer-socials">
-            <a href="#" className="footer-social-btn" title="Instagram" aria-label="Instagram">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-              </svg>
-            </a>
-            <a href="#" className="footer-social-btn" title="Facebook" aria-label="Facebook">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-              </svg>
-            </a>
-            <a href="#" className="footer-social-btn" title="Twitter / X" aria-label="Twitter">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-              </svg>
-            </a>
-            <a href="#" className="footer-social-btn" title="TikTok" aria-label="TikTok">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.75a8.16 8.16 0 0 0 4.77 1.52V6.81a4.85 4.85 0 0 1-1-.12z"/>
-              </svg>
-            </a>
+          {/* Brand */}
+          <div>
+            <img src={logo} alt="GasNgalam" style={{ height: 26, objectFit: 'contain', filter: 'brightness(0) invert(1)', marginBottom: 6 }} />
+            <div style={{ fontSize: 9, color: gold, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 600, marginBottom: 14 }}>
+              Kota Malang
+            </div>
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.8, maxWidth: 240 }}>
+              Temukan destinasi wisata terbaik di Kota Malang.<br />
+              Dari budaya, kuliner, hingga hiburan — semua ada di sini.
+            </p>
+            <div style={{ marginTop: 22, display: 'flex', gap: 10 }}>
+              {socialIcons.map(({ Icon, label }) => (
+                <a href="#" key={label} title={label} aria-label={label} style={{
+                  width: 36, height: 36, borderRadius: '50%',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  background: 'rgba(255,255,255,0.04)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', transition: 'all .2s',
+                  color: 'rgba(255,255,255,0.45)', textDecoration: 'none',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = gold; e.currentTarget.style.background = goldPale; e.currentTarget.style.color = gold; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = 'rgba(255,255,255,0.45)'; }}
+                >
+                  <Icon size={14} />
+                </a>
+              ))}
+            </div>
           </div>
+
+          {/* Jelajahi */}
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#fff', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 20 }}>JELAJAHI</div>
+            {[
+              { Icon: FaHome,    label: 'Beranda',       path: '/'          },
+              { Icon: FaHeart,   label: 'Favorit Saya',  path: '/favorites' },
+              { Icon: FaSearch,  label: 'Cari Destinasi', path: '/search'   },
+            ].map(({ Icon, label, path }) => (
+              <div key={label} onClick={() => navigate(path)} style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                fontSize: 13, color: 'rgba(255,255,255,0.45)',
+                marginBottom: 12, cursor: 'pointer', transition: 'color .15s',
+              }}
+                onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.45)'}
+              >
+                <Icon size={12} style={{ color: gold, flexShrink: 0 }} />
+                {label}
+              </div>
+            ))}
+          </div>
+
+          {/* Kategori */}
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#fff', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 20 }}>KATEGORI</div>
+            {[
+              { Icon: FaLandmark,    label: 'Wisata Budaya'  },
+              { Icon: FaTree,        label: 'Taman Kota'     },
+              { Icon: FaBuilding,    label: 'Wisata Buatan'  },
+              { Icon: FaGraduationCap, label: 'Wisata Edukasi' },
+              { Icon: FaShoppingBag, label: 'Perbelanjaan'   },
+            ].map(({ Icon, label }) => (
+              <div key={label} style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                fontSize: 13, color: 'rgba(255,255,255,0.45)', marginBottom: 12,
+              }}>
+                <Icon size={12} style={{ color: gold, flexShrink: 0 }} />
+                {label}
+              </div>
+            ))}
+          </div>
+
+          {/* Kontak */}
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#fff', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 20 }}>INFORMASI</div>
+            {contactInfo.map(({ Icon, text }) => (
+              <div key={text} style={{ display: 'flex', gap: 10, marginBottom: 14, alignItems: 'flex-start' }}>
+                <Icon size={13} style={{ color: gold, flexShrink: 0, marginTop: 2 }} />
+                <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>{text}</span>
+              </div>
+            ))}
+          </div>
+
         </div>
 
-        {/* Navigasi */}
-        <div className="footer-nav-col">
-          <div className="footer-nav-title">Jelajahi</div>
-          <ul className="footer-nav-list">
-            <li><button onClick={() => navigate('/')} className="footer-nav-link">🏠 Beranda</button></li>
-            <li><button onClick={() => navigate('/favorites')} className="footer-nav-link">❤️ Favorit Saya</button></li>
-            <li><button onClick={() => navigate('/search')} className="footer-nav-link">🔍 Cari Destinasi</button></li>
-          </ul>
-        </div>
-
-        {/* Kategori */}
-        <div className="footer-nav-col">
-          <div className="footer-nav-title">Kategori</div>
-          <ul className="footer-nav-list">
-            <li><span className="footer-nav-plain">🏛️ Wisata Budaya</span></li>
-            <li><span className="footer-nav-plain">🌳 Taman Kota</span></li>
-            <li><span className="footer-nav-plain">🎡 Wisata Buatan</span></li>
-            <li><span className="footer-nav-plain">📚 Wisata Edukasi</span></li>
-            <li><span className="footer-nav-plain">🛒 Perbelanjaan</span></li>
-          </ul>
-        </div>
-
-        {/* Kontak */}
-        <div className="footer-nav-col">
-          <div className="footer-nav-title">Informasi</div>
-          <ul className="footer-nav-list">
-            <li>
-              <span className="footer-contact-item">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-                </svg>
-                Kota Malang, Jawa Timur
-              </span>
-            </li>
-            <li>
-              <span className="footer-contact-item">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
-                </svg>
-                info@gasngalam.id
-              </span>
-            </li>
-            <li>
-              <span className="footer-contact-item">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.89a16 16 0 0 0 5.9 5.9l1.09-1.09a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 16z"/>
-                </svg>
-                (0341) 123-4567
-              </span>
-            </li>
-          </ul>
-        </div>
-
-      </div>
-
-      {/* Bottom bar */}
-      <div className="footer-bottom">
-        <div className="footer-bottom-inner">
-          <span className="footer-copy">
-            © {year} <strong>GasNgalam</strong>. Dibuat dengan ❤️ untuk Kota Malang.
+        {/* Bottom */}
+        <div style={{ padding: '20px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', gap: 5 }}>
+            © {year} <strong style={{ color: 'rgba(255,255,255,0.5)' }}>GasNgalam</strong>. Dibuat dengan
+            <FaHeart size={10} style={{ color: gold }} /> untuk Kota Malang.
           </span>
-          <div className="footer-bottom-links">
-            <span className="footer-bottom-link">Kebijakan Privasi</span>
-            <span className="footer-bottom-sep">·</span>
-            <span className="footer-bottom-link">Syarat &amp; Ketentuan</span>
-            <span className="footer-bottom-sep">·</span>
-            <span className="footer-bottom-link">Tentang Kami</span>
+          <div style={{ display: 'flex', gap: 16 }}>
+            {['Kebijakan Privasi', 'Syarat & Ketentuan', 'Tentang Kami'].map(item => (
+              <span key={item} style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', cursor: 'pointer', transition: 'color .15s' }}
+                onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.3)'}
+              >{item}</span>
+            ))}
           </div>
         </div>
       </div>
