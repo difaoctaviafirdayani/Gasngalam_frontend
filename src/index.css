@@ -140,22 +140,38 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .card-dist{font-size:11px;color:var(--text4)}
 
 /* LIST */
-.list-item{background:var(--white);border-radius:var(--r);padding:13px 14px;display:flex;gap:13px;cursor:pointer;transition:all .18s;margin-bottom:10px;border:1px solid var(--border);box-shadow:var(--shadow-xs)}
+.list-item{background:var(--white);border-radius:var(--r);padding:13px 14px;display:flex;gap:13px;cursor:pointer;transition:all .18s;margin-bottom:10px;border:1px solid var(--border);box-shadow:var(--shadow-xs);align-items:flex-start}
 .list-item:hover{box-shadow:var(--shadow-md);border-color:var(--brand-gold)}
 .list-thumb{width:72px;height:64px;border-radius:var(--r-sm);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px}
 .list-info{flex:1;min-width:0}
 .list-name{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:3px}
 .list-loc{font-size:11px;color:var(--brand);display:flex;align-items:center;gap:3px;margin-bottom:5px;font-weight:600}
-.list-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.list-meta{display:flex;flex-direction:row;align-items:center;gap:10px;}
 .list-rating{font-size:12px;font-weight:700;color:var(--gold)}
 .list-cat{font-size:11px;color:var(--text3);background:var(--bg);padding:2px 8px;border-radius:99px;font-weight:500;border:1px solid var(--border)}
-.list-right{display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0}
+.list-right{display:flex;flex-direction:row;align-items:center;gap:6px;flex-shrink:0;}
 .fav-list-btn{font-size:16px;background:none;border:none;cursor:pointer;transition:.18s;padding:2px}
 .fav-list-btn:hover{transform:scale(1.2)}
 
 /* SORT */
 .sort-tabs{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap}
-.sort-btn{padding:6px 16px;border-radius:99px;border:1.5px solid var(--border);background:var(--white);font-size:12px;cursor:pointer;color:var(--text2);font-family:'Inter',sans-serif;font-weight:500;transition:.12s}
+.sort-btn{
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text2);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  transition: .15s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  white-space: nowrap;
+}
 .sort-btn.active,.sort-btn:hover{background:var(--brand);color:var(--white);border-color:var(--brand)}
 
 /* DETAIL */

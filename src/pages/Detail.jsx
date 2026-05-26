@@ -292,9 +292,20 @@ ${d.photo_full_url ? `<img class="hero" src="${d.photo_full_url}" alt="${d.name}
               <button
                 className={'btn-fav' + (fav ? ' active' : '')}
                 onClick={() => toggleFav(d.id)}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  background: fav ? '#fff0f5' : 'var(--white)',
+                  border: fav ? '1.5px solid #ff4f81' : '1.5px solid var(--border)',
+                  color: fav ? '#ff4f81' : 'var(--text)',
+                }}
               >
-                {fav ? <FaHeart /> : <FaRegHeart />}
+                {fav ? (
+                  <FaHeart style={{ color: '#ff4f81' }} />
+                ) : (
+                  <FaRegHeart style={{ color: '#222' }} />
+                )}
                 {fav ? 'Tersimpan' : 'Simpan'}
               </button>
 

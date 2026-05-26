@@ -228,7 +228,7 @@ export default function Home() {
         {thumbEl(d)}
         <span className="card-cat-badge">{d.category}</span>
         <button className="card-fav" onClick={e => { e.stopPropagation(); toggleFav(d.id); }}>
-          {favs.has(d.id) ? <FaHeart /> : <FaRegHeart />}
+          {favs.has(d.id) ? (<FaHeart style={{ color: '#ff4f81'}}/> ):(<FaRegHeart style={{ color: '#222'}}/>)}
         </button>
       </div>
       <div className="card-body">
@@ -263,7 +263,6 @@ export default function Home() {
         <div className="list-info">
           <div className="list-name">{d.name}</div>
           <div className="list-loc">{d.location}</div>
-          {/* rating + kategori: paksa 1 baris */}
           <div className="list-meta" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'nowrap' }}>
             <div className="list-rating" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
               <FaStar style={{ marginRight: 4 }} />{d.rating} ({d.review_count})
@@ -273,12 +272,11 @@ export default function Home() {
             </div>
           </div>
         </div>
-        {/* Sisi kanan: peta + jarak + love — paksa 1 baris */}
         <div className="list-right" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 0, marginLeft: 'auto' }}>
           <FaMap style={{ fontSize: 12, color: 'var(--text4)', flexShrink: 0 }} />
           {jarak && <span style={{ fontSize: 11, color: 'var(--text4)', whiteSpace: 'nowrap', flexShrink: 0 }}>{jarak}</span>}
           <button className="fav-list-btn" style={{ flexShrink: 0 }} onClick={e => { e.stopPropagation(); toggleFav(d.id); }}>
-            {favs.has(d.id) ? <FaHeart /> : <FaRegHeart />}
+            {favs.has(d.id) ? (<FaHeart style={{ color: '#ff4f81'}}/> ):(<FaRegHeart style={{ color: '#222'}}/>)}
           </button>
         </div>
       </div>
@@ -379,42 +377,103 @@ export default function Home() {
         </div>
       </div>
 
-      {/* SORT + VIEW MODE BAR — 1 row */}
-      <div style={{ background: 'var(--white)', borderBottom: '1px solid var(--border)', padding: '8px 20px', position: 'sticky', top: 44, zIndex: 99 }}>
-        <div style={{ maxWidth: 1020, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-          {/* Kiri: sort buttons */}
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-            <button className={'sort-btn' + (sortMode === 'nearest' ? ' active' : '')} onClick={handleNearest} disabled={geoLoading}>
-              <FaMapMarkerAlt style={{ marginRight: 4 }} />{geoLoading ? 'Loading...' : 'Terdekat'}
+      {/* SORT + VIEW MODE BAR */}
+      <div
+        style={{
+          background: 'var(--white)',
+          borderBottom: '1px solid var(--border)',
+          padding: '10px 24px',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 1020,
+            margin: '0 auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          {/* FILTER */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+            }}
+          >
+            <button
+              className={'sort-btn' + (sortMode === 'nearest' ? ' active' : '')}
+              onClick={handleNearest}
+              disabled={geoLoading}
+            >
+              <FaMapMarkerAlt style={{ marginRight: 5 }} />
+              {geoLoading ? 'Loading...' : 'Terdekat'}
             </button>
-            <button className={'sort-btn' + (sortMode === 'popular' ? ' active' : '')} onClick={() => setSortMode(sortMode === 'popular' ? 'default' : 'popular')}>
-              <FaFire style={{ marginRight: 4 }} />Terpopuler
+            <button
+              className={'sort-btn' + (sortMode === 'popular' ? ' active' : '')}
+              onClick={() =>
+                setSortMode(sortMode === 'popular' ? 'default' : 'popular')
+              }
+            >
+              <FaFire style={{ marginRight: 5 }} />
+              Terpopuler
             </button>
             {sortMode !== 'default' && (
-              <button className="sort-btn" onClick={() => setSortMode('default')}>
-                <FaTimes style={{ marginRight: 4 }} />Reset
+              <button
+                className="sort-btn"
+                onClick={() => setSortMode('default')}
+              >
+                <FaTimes style={{ marginRight: 5 }} />
+                Reset
               </button>
             )}
           </div>
-          {/* Kanan: view mode toggle */}
-          <div style={{ display: 'flex', gap: 4, background: 'var(--bg)', borderRadius: 8, padding: 3, flexShrink: 0 }}>
-            {[['card', <FaThLarge />], ['list', <FaBars />], ['map', <FaMap />]].map(([mode, icon]) => (
+          {/* VIEW MODE */}
+          <div
+            style={{
+              display: 'flex',
+              gap: 2,
+              background: 'var(--bg)',
+              borderRadius: 8,
+              padding: 3,
+            }}
+          >
+            {[
+              ['card', <FaThLarge />],
+              ['list', <FaBars />],
+              ['map', <FaMap />]
+            ].map(([mode, icon]) => (
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
-                title={mode === 'card' ? 'Tampilan Grid' : mode === 'list' ? 'Tampilan List' : 'Tampilan Peta'}
                 style={{
-                  padding: '4px 10px', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 14,
-                  background: viewMode === mode ? 'var(--white)' : 'transparent',
-                  boxShadow: viewMode === mode ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
-                  transition: 'all .2s',
+                  width: 34,
+                  height: 30,
+                  border: 'none',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background:
+                    viewMode === mode
+                      ? 'var(--white)'
+                      : 'transparent',
+                  boxShadow:
+                    viewMode === mode
+                      ? '0 1px 4px rgba(0,0,0,0.08)'
+                      : 'none',
+                  transition: '.2s',
                 }}
-              >{icon}</button>
+              >
+                {icon}
+              </button>
             ))}
           </div>
         </div>
       </div>
-
       <div className="content">{renderContent()}</div>
     </div>
   );
