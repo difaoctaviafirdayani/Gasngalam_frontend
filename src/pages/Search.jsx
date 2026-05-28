@@ -125,7 +125,7 @@ export default function Search() {
               <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.5px' }}>Harga Tiket</div>
               <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, cursor: 'pointer' }}>
                 <input type="checkbox" checked={filterFree} onChange={e => setFilterFree(e.target.checked)} />
-                <FaTicketAlt size={11} style={{ color: 'var(--text3)' }} /> Gratis / Bebas
+                <FaTicketAlt size={11} style={{ color: 'var(--text3)' }} /> Gratis
               </label>
             </div>
 
