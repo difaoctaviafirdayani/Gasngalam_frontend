@@ -189,8 +189,7 @@ export function AppProvider({ children }) {
       formData.append('rating',  rating);
       formData.append('comment', text);
       if (photo) formData.append('photo', photo);
-      // Hapus explicit Content-Type header — biarkan browser set multipart boundary otomatis
-      await api.post(`/destinations/${destId}/reviews`, formData);
+      await api.post(`/destinations/${destId}/reviews`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       showToast('Ulasan berhasil ditambahkan!');
       await fetchComments(destId);
     } catch (err) { showToast(err.message || 'Gagal mengirim ulasan'); }
@@ -215,7 +214,7 @@ export function AppProvider({ children }) {
       formData.append('phone',          hp);
       formData.append('description',    ket);
       if (file) formData.append('document', file);
-      await api.post('/claims', formData);
+      await api.post('/claims', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       showToast('Klaim berhasil dikirim! Menunggu verifikasi admin.');
       fetchNotifCount();
       return true;

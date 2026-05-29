@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import Sidebar from '../components/Sidebar';
@@ -8,36 +8,15 @@ import { FaMoon, FaSun } from 'react-icons/fa';
 export default function UserLayout({ children }) {
   const navigate = useNavigate();
   const { user, userDetail, theme, toggleTheme } = useApp();
-
-  // Sidebar default: buka hanya jika layar >= 1024px (laptop ke atas)
-  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 1024);
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const w = window.innerWidth;
-      setIsMobile(w < 768);
-      // Layar besar: sidebar buka otomatis; layar kecil: tutup otomatis
-      if (w >= 1024) {
-        setSidebarOpen(true);
-      } else {
-        setSidebarOpen(false);
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const isDark = theme === 'dark';
-  // Di mobile/tablet sidebar jadi overlay (floating), bukan geser konten
-  const sidebarAsOverlay = isMobile || window.innerWidth < 1024;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
-      {/* HEADER / TOPBAR */}
       <header style={{
-        display: 'flex', alignItems: 'center', gap: 10,
-        padding: '0 16px', height: 56, flexShrink: 0,
+        display: 'flex', alignItems: 'center', gap: 14,
+        padding: '0 20px', height: 56, flexShrink: 0,
         background: 'var(--white)', borderBottom: '1px solid var(--border)',
         zIndex: 200, boxShadow: 'var(--shadow-xs)',
         width: '100%', boxSizing: 'border-box',
@@ -48,7 +27,7 @@ export default function UserLayout({ children }) {
             src={logo}
             alt="GasNgalam"
             style={{
-              height: 26,
+              height: 28,
               width: 'auto',
               display: 'block',
               filter: isDark ? 'brightness(0) invert(1)' : 'none',
@@ -56,8 +35,8 @@ export default function UserLayout({ children }) {
             }}
           />
         </a>
-        <div style={{ flex: 1, position: 'relative', maxWidth: 420, margin: '0 auto' }}>
-          <svg style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', width: 14, height: 14, stroke: 'var(--text4)', fill: 'none', strokeWidth: 2, pointerEvents: 'none' }} viewBox="0 0 24 24">
+        <div style={{ flex: 1, maxWidth: 440, position: 'relative', margin: '0 auto' }}>
+          <svg style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', width: 14, height: 14, stroke: 'var(--text4)', fill: 'none', strokeWidth: 2, pointerEvents: 'none' }} viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8" />
             <path d="m21 21-4.35-4.35" />
           </svg>
@@ -107,29 +86,8 @@ export default function UserLayout({ children }) {
         </div>
       </header>
 
-      {/* BODY: sidebar + main */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', position: 'relative' }}>
-
-        {/* OVERLAY gelap di belakang sidebar, muncul hanya di mobile/tablet saat sidebar buka */}
-        {sidebarAsOverlay && sidebarOpen && (
-          <div
-            onClick={() => setSidebarOpen(false)}
-            style={{
-              position: 'fixed', inset: 0, top: 56,
-              background: 'rgba(0,0,0,0.45)',
-              zIndex: 150,
-            }}
-          />
-        )}
-
-        {/* SIDEBAR */}
-        <Sidebar
-          open={sidebarOpen}
-          overlay={sidebarAsOverlay}
-          onClose={() => setSidebarOpen(false)}
-        />
-
-        {/* MAIN CONTENT */}
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <main style={{ flex: 1, overflowY: 'auto', background: 'var(--bg)', minWidth: 0 }}>
           {children}
         </main>
