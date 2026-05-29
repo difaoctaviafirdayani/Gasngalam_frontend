@@ -2,20 +2,46 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { FaHome, FaHeart, FaSignOutAlt, FaTachometerAlt, FaMap, FaClipboardList, FaComments, FaSignInAlt } from 'react-icons/fa';
 
-export default function Sidebar({ open, onClose }) {
+export default function Sidebar({ open, overlay, onClose }) {
   const { user, role, logout } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
   const go = (path) => { navigate(path); onClose(); };
 
+  // Mode overlay (mobile/tablet): posisi fixed floating di atas konten
+  // Mode push (laptop+): posisi sticky geser konten
+  const overlayStyle = overlay
+    ? {
+        position: 'fixed',
+        top: 56,
+        left: 0,
+        bottom: 0,
+        width: 220,
+        zIndex: 160,
+        transform: open ? 'translateX(0)' : 'translateX(-100%)',
+        transition: 'transform .26s cubic-bezier(.4,0,.2,1)',
+        background: 'var(--brand-dark)',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }
+    : {
+        width: open ? 220 : 0,
+        minWidth: open ? 220 : 0,
+        overflow: 'hidden',
+        background: 'var(--brand-dark)',
+        flexShrink: 0,
+        position: 'sticky',
+        top: 56,
+        height: 'calc(100vh - 56px)',
+        transition: 'width .26s cubic-bezier(.4,0,.2,1), min-width .26s cubic-bezier(.4,0,.2,1)',
+        display: 'flex',
+        flexDirection: 'column',
+        zIndex: 100,
+      };
+
   return (
-    <div style={{
-      width: open ? 220 : 0, minWidth: open ? 220 : 0,
-      overflow: 'hidden', background: 'var(--brand-dark)', flexShrink: 0,
-      position: 'sticky', top: 56, height: 'calc(100vh - 56px)',
-      transition: 'width .26s cubic-bezier(.4,0,.2,1), min-width .26s cubic-bezier(.4,0,.2,1)',
-      display: 'flex', flexDirection: 'column', zIndex: 100,
-    }}>
+    <div style={overlayStyle}>
       <div style={{ width: 220, display: 'flex', flexDirection: 'column', height: '100%' }}>
         <div style={{ padding: '16px 10px 10px', flex: 1 }}>
           <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.2px', color: 'rgba(255,255,255,.4)', padding: '6px 10px', marginBottom: 4 }}>

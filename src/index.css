@@ -669,3 +669,84 @@ main {
 .hero-animate {
   animation: floatUp 3s ease-in-out infinite;
 }
+/* ===== TABLET RESPONSIVE (768px – 1023px) ===== */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .content {
+    padding: 20px 16px;
+    max-width: 100%;
+  }
+  .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .detail-grid {
+    grid-template-columns: 1fr 200px;
+    gap: 14px;
+  }
+  .detail-title {
+    font-size: 22px;
+  }
+  .hero-title {
+    font-size: 24px;
+  }
+  .footer-inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .footer-brand-col {
+    grid-column: 1 / -1;
+  }
+  .sort-tabs {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .rating-wrap {
+    padding: 14px;
+  }
+  .add-review-box {
+    padding: 16px;
+  }
+  .klaim-header {
+    padding: 14px 16px;
+  }
+  .form-card {
+    padding: 18px;
+  }
+  /* Searchbar lebih compact di tablet */
+  .searchbar {
+    font-size: 13px;
+  }
+}
+
+/* ===== PERBAIKAN SEARCHBAR TOPBAR DI SEMUA UKURAN ===== */
+@media (max-width: 767px) {
+  .topbar-right .user-chip span {
+    display: none;
+  }
+  .topbar-right .user-chip {
+    padding: 5px;
+    border-radius: 50%;
+  }
+  .searchbar {
+    font-size: 13px;
+  }
+}
+
+/* ===== TABLET: Rating & Klaim form lebih nyaman ===== */
+@media (max-width: 1023px) {
+  .detail-grid {
+    gap: 14px;
+  }
+  .info-card {
+    position: static;
+  }
+}
+
+/* ===== LAPTOP KE ATAS: pastikan konten tidak terlalu lebar ===== */
+@media (min-width: 1024px) {
+  .content {
+    max-width: 1020px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+}
