@@ -50,7 +50,6 @@ const contactInfo = [
   { icon: <FaPhoneAlt />,     text: '+62 812-3456-7890'                  },
 ];
 
-// Fallback gradient per kategori — hanya muncul jika foto gagal load (error teknis)
 const categoryGradient = {
   'Wisata Budaya':     'linear-gradient(160deg,#1a1408 0%,#8b7355 100%)',
   'Wisata Edukasi':    'linear-gradient(160deg,#1a0808 0%,#c0392b 100%)',
@@ -73,11 +72,10 @@ export default function LandingPage() {
     setDestLoading(true);
     fetch('http://localhost:8000/api/destinations?limit=5&sort=popular')
       .then(res => res.json())
-     .then(data => {
-  const list = Array.isArray(data) ? data : (data.data ?? []);
-  // Tampilkan semua destinasi (dengan atau tanpa foto)
-  setDestinations(list.slice(0, 5));
-})
+      .then(data => {
+        const list = Array.isArray(data) ? data : (data.data ?? []);
+        setDestinations(list.slice(0, 5));
+      })
       .catch(() => setDestinations([]))
       .finally(() => setDestLoading(false));
   }, []);
@@ -137,9 +135,17 @@ export default function LandingPage() {
         <div style={{ position: 'absolute', inset: 0, background: isDark ? 'linear-gradient(to top, rgba(5,7,15,0.8) 0%, transparent 60%)' : 'linear-gradient(to top, rgba(10,12,20,0.6) 0%, transparent 60%)' }} />
         <div style={{ position: 'relative', zIndex: 2, width: '100%', padding: '100px 60px 80px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 40, maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ maxWidth: 560 }}>
-            <h1 style={{ fontSize: 'clamp(42px, 5.5vw, 68px)', fontWeight: 900, lineHeight: 1.05, marginBottom: 20, letterSpacing: '-1px', color: '#fff' }}>
-              Rasakan <br /><span style={{ color: gold }}>Keindahan</span><br />Kota Malang
-            </h1>
+            <h1 className="hero-animate" style={{ 
+  fontSize: 'clamp(42px, 5.5vw, 68px)', 
+  fontWeight: 900, 
+  lineHeight: 1.05, 
+  marginBottom: 20, 
+  letterSpacing: '-1px', 
+  color: '#fff',
+  textShadow: '0 0 30px rgba(255,255,255,0.8), 2px 4px 12px rgba(0,0,0,0.9)'
+}}>
+  Rasakan <br /><span style={{ color: gold }}>Keindahan</span><br />Kota Malang
+</h1>
             <p style={{ fontSize: 15.5, color: 'rgba(255,255,255,0.75)', lineHeight: 1.75, marginBottom: 36, maxWidth: 440 }}>
               Temukan destinasi wisata terbaik, kuliner lezat, budaya unik, dan pengalaman seru di setiap sudut Kota Malang.
             </p>
@@ -154,24 +160,24 @@ export default function LandingPage() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: 280, flexShrink: 0 }}>
             {heroFeatures.map(({ icon, title, desc }) => (
-              <div key={title} style={{ background: 'rgba(10,12,20,0.72)', backdropFilter: 'blur(12px)', border: '1px solid rgba(201,162,39,0.22)', borderRadius: 12, padding: '16px 18px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'all .25s' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(20,22,35,0.88)'; e.currentTarget.style.borderColor = 'rgba(201,162,39,0.5)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(10,12,20,0.72)'; e.currentTarget.style.borderColor = 'rgba(201,162,39,0.22)'; }}
+              <div key={title} style={{ background: isDark ? 'rgba(10,12,20,0.72)' : 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px)', border: `1px solid ${isDark ? 'rgba(201,162,39,0.22)' : 'rgba(201,162,39,0.4)'}`, borderRadius: 12, padding: '16px 18px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'all .25s' }}
+                onMouseEnter={e => { e.currentTarget.style.background = isDark ? 'rgba(20,22,35,0.88)' : 'rgba(255,255,255,1)'; e.currentTarget.style.borderColor = 'rgba(201,162,39,0.5)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = isDark ? 'rgba(10,12,20,0.72)' : 'rgba(255,255,255,0.85)' ; e.currentTarget.style.borderColor = isDark ? 'rgba(201,162,39,0.22)' : 'rgba(201,162,39,0.4)'; }}
               >
                 <div style={{ width: 38, height: 38, borderRadius: 10, background: goldPale, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0, color: gold, border: '1px solid rgba(201,162,39,0.3)' }}>
                   {icon}
                 </div>
                 <div>
-                  <div style={{ fontSize: 13.5, fontWeight: 700, color: '#fff', marginBottom: 3 }}>{title}</div>
-                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{desc}</div>
-                </div>
+                  <div style={{ fontSize: 13.5, fontWeight: 700, color: isDark ? '#fff' : '#0f1117', marginBottom: 3 }}>{title}</div>
+                  <div style={{ fontSize: 12, color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(15,17,23,0.6)', lineHeight: 1.5 }}>{desc}</div>
+                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* DESTINASI POPULER — hanya destinasi yang sudah ada fotonya */}
+      {/* DESTINASI POPULER */}
       <section style={{ padding: '80px 60px', background: sectionBg, transition: 'background .3s' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40 }}>
@@ -198,7 +204,7 @@ export default function LandingPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16 }}>
               {Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} style={{ borderRadius: 16, overflow: 'hidden', background: cardBg, border: `1px solid ${cardBorder}` }}>
-                  <div style={{ aspectRatio: '4/3', background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  <div style={{ aspectRatio: '4/3', background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }} />
                   <div style={{ padding: '14px' }}>
                     <div style={{ height: 14, width: '80%', borderRadius: 6, background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)', marginBottom: 8 }} />
                     <div style={{ height: 11, width: '50%', borderRadius: 6, background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }} />
@@ -219,7 +225,6 @@ export default function LandingPage() {
                 const reviews  = dest.review_count ?? 0;
                 const photoUrl = dest.photo_full_url ?? null;
                 const fallback = categoryGradient[type] ?? defaultGradient;
-
                 return (
                   <div
                     key={dest.id}
@@ -359,8 +364,8 @@ export default function LandingPage() {
             </div>
           </div>
           <div style={{ padding: '20px 0', display: 'flex', justifyContent: 'center' }}>
-            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)' }}>
-              © 2026 Gasngalam Kota Malang. Made with Love, Kelompok 3 T2E.
+            <span style={{ fontSize: 12, color: '#C9A227' }}>
+              © 2026 Gasngalam Kota Malang. Deployed with Confidence, Kelompok 3 T2E.
             </span>
           </div>
         </div>

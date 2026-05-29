@@ -661,3 +661,11 @@ main {
     font-size: 40px;
   }
 }
+@keyframes floatUp {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+.hero-animate {
+  animation: floatUp 3s ease-in-out infinite;
+}
