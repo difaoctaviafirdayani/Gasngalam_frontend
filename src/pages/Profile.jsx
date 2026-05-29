@@ -10,7 +10,7 @@ import {
 } from 'react-icons/fa';
 import { MdSyncAlt } from 'react-icons/md';
 
-const BACKEND_URL = 'http://127.0.0.1:8000';
+const BACKEND_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://127.0.0.1:8000';
 function resolveUrl(url) {
   if (!url) return null;
   if (url.startsWith('http')) return url;
