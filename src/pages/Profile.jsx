@@ -27,6 +27,7 @@ export default function Profile() {
   const [favorites, setFavorites] = useState([]);
   const [claims, setClaims] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
+  const [loadedTabs, setLoadedTabs] = useState(new Set());
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
   const fileRef = useRef(null);
@@ -39,17 +40,35 @@ export default function Profile() {
   }, [userDetail]);
 
   useEffect(() => {
-    if (tab === 'reviews' && reviews.length === 0) {
+    if (tab === 'reviews' && !loadedTabs.has('reviews')) {
       setLoadingData(true);
-      api.get('/user/reviews').then(res => setReviews(res.data)).catch(() => {}).finally(() => setLoadingData(false));
+      api.get('/user/reviews')
+        .then(res => {
+          setReviews(Array.isArray(res.data) ? res.data : []);
+          setLoadedTabs(prev => new Set([...prev, 'reviews']));
+        })
+        .catch(() => {})
+        .finally(() => setLoadingData(false));
     }
-    if (tab === 'favorites' && favorites.length === 0) {
+    if (tab === 'favorites' && !loadedTabs.has('favorites')) {
       setLoadingData(true);
-      api.get('/favorites').then(res => setFavorites(res.data)).catch(() => {}).finally(() => setLoadingData(false));
+      api.get('/favorites')
+        .then(res => {
+          setFavorites(Array.isArray(res.data) ? res.data : []);
+          setLoadedTabs(prev => new Set([...prev, 'favorites']));
+        })
+        .catch(() => {})
+        .finally(() => setLoadingData(false));
     }
-    if (tab === 'claims' && claims.length === 0) {
+    if (tab === 'claims' && !loadedTabs.has('claims')) {
       setLoadingData(true);
-      api.get('/user/claims').then(res => setClaims(res.data)).catch(() => {}).finally(() => setLoadingData(false));
+      api.get('/user/claims')
+        .then(res => {
+          setClaims(Array.isArray(res.data) ? res.data : []);
+          setLoadedTabs(prev => new Set([...prev, 'claims']));
+        })
+        .catch(() => {})
+        .finally(() => setLoadingData(false));
     }
   }, [tab]);
 
@@ -75,7 +94,7 @@ export default function Profile() {
         formData.append('password_confirmation', form.password_confirmation);
       }
       if (avatarFile) formData.append('avatar', avatarFile);
-      await api.post('/user/profile', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await api.post('/user/profile', formData);
       showToast('Profil berhasil disimpan!');
       setForm(f => ({ ...f, password: '', password_confirmation: '' }));
       setAvatarFile(null);
@@ -87,6 +106,8 @@ export default function Profile() {
       } else {
         showToast(msg || 'Gagal menyimpan profil');
       }
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -100,9 +121,9 @@ export default function Profile() {
 
   const statusBadge = (status) => {
     const map = {
-      pending:  [<MdSyncAlt />,      'Pending',    '#f39c12'],
-      approved: [<FaCheckCircle />,   'Disetujui',  '#27ae60'],
-      rejected: [<FaTimesCircle />,   'Ditolak',    '#e74c3c'],
+      pending:  [<MdSyncAlt />,     'Pending',   '#f39c12'],
+      approved: [<FaCheckCircle />, 'Disetujui', '#27ae60'],
+      rejected: [<FaTimesCircle />, 'Ditolak',   '#e74c3c'],
     };
     const [icon, label, color] = map[status] || [<FaQuestionCircle />, 'Unknown', '#999'];
     return (
@@ -336,7 +357,6 @@ export default function Profile() {
         </div>
       )}
 
-      {/* Keyframe for spinner */}
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>
   );

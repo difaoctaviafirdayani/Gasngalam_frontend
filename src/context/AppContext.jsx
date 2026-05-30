@@ -13,7 +13,7 @@ function resolvePhotoUrl(url) {
 export function AppProvider({ children }) {
   const [user, setUser]             = useState(null);
   const [userId, setUserId]         = useState(null);
-  const [userDetail, setUserDetail] = useState(null); // {id, name, email, avatar_url, role}
+  const [userDetail, setUserDetail] = useState(null);
   const [role, setRole]             = useState(null);
   const [favs, setFavs]             = useState(new Set());
   const [comments, setComments]     = useState({});
@@ -36,7 +36,7 @@ export function AppProvider({ children }) {
     } catch {}
   }, []);
 
- const fetchMe = useCallback(async () => {
+  const fetchMe = useCallback(async () => {
     try {
       const res = await api.get('/me');
       setUserDetail(res.data);
@@ -59,7 +59,6 @@ export function AppProvider({ children }) {
     }
   }, []);
 
-  // Poll notif count setiap 30 detik kalau user login
   useEffect(() => {
     if (!user) return;
     const interval = setInterval(fetchNotifCount, 30000);
@@ -189,7 +188,7 @@ export function AppProvider({ children }) {
       formData.append('rating',  rating);
       formData.append('comment', text);
       if (photo) formData.append('photo', photo);
-      await api.post(`/destinations/${destId}/reviews`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await api.post(`/destinations/${destId}/reviews`, formData);
       showToast('Ulasan berhasil ditambahkan!');
       await fetchComments(destId);
     } catch (err) { showToast(err.message || 'Gagal mengirim ulasan'); }
@@ -214,11 +213,15 @@ export function AppProvider({ children }) {
       formData.append('phone',          hp);
       formData.append('description',    ket);
       if (file) formData.append('document', file);
-      await api.post('/claims', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await api.post('/claims', formData);
       showToast('Klaim berhasil dikirim! Menunggu verifikasi admin.');
       fetchNotifCount();
       return true;
-    } catch (err) { showToast(err.message || 'Gagal mengirim klaim'); return false; }
+    } catch (err) {
+      const errMsg = err.message || 'Gagal mengirim klaim';
+      showToast(errMsg);
+      return false;
+    }
   };
 
   return (
