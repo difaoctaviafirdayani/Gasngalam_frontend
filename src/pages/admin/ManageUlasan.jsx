@@ -8,7 +8,7 @@ import {
 } from 'react-icons/fa';
 import { MdOutlineFlag } from 'react-icons/md';
 
-const BACKEND_URL = 'http://127.0.0.1:8000';
+const BACKEND_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://127.0.0.1:8000';
 function resolvePhoto(url) {
   if (!url) return null;
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
@@ -172,7 +172,6 @@ export default function AdminUlasan() {
         </table>
       </div>
 
-      {/* POPUP KONFIRMASI HAPUS */}
       {hapusTarget && (
         <div onClick={() => setHapusTarget(null)} style={overlayStyle}>
           <div onClick={e => e.stopPropagation()} style={{
@@ -187,9 +186,7 @@ export default function AdminUlasan() {
               Ulasan ini akan dihapus permanen dan tidak bisa dikembalikan.
             </div>
             <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-              <button className="btn-secondary" onClick={() => setHapusTarget(null)} style={{ padding: '8px 22px' }}>
-                Batal
-              </button>
+              <button className="btn-secondary" onClick={() => setHapusTarget(null)} style={{ padding: '8px 22px' }}>Batal</button>
               <button className="action-btn red" onClick={doHapus}
                 style={{ padding: '8px 22px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                 <FaTrashAlt size={11} /> Ya, Hapus
@@ -199,7 +196,6 @@ export default function AdminUlasan() {
         </div>
       )}
 
-      {/* POPUP FOTO ZOOM */}
       {fotoPopup && (
         <div onClick={closeFoto} style={overlayStyle}>
           <div onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
