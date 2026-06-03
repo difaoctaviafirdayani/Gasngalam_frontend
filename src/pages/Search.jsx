@@ -27,11 +27,22 @@ export default function Search() {
   const [results, setResults]         = useState([]);
   const [loading, setLoading]         = useState(false);
   const [categories, setCategories]   = useState([]);
+  const [userCoords, setUserCoords]   = useState(null);
 
   const [filterCat,     setFilterCat]     = useState('');
   const [filterFree,    setFilterFree]    = useState(false);
   const [filterOpenNow, setFilterOpenNow] = useState(false);
   const [sortBy,        setSortBy]        = useState('rating');
+
+  // Ambil lokasi user sekali saat halaman load
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => setUserCoords(null)
+      );
+    }
+  }, []);
 
   useEffect(() => {
     api.get('/categories').then(res => setCategories(res.data)).catch(() => {});
@@ -45,11 +56,16 @@ export default function Search() {
     if (filterCat)     p.category = filterCat;
     if (filterFree)    p.free     = '1';
     if (filterOpenNow) p.open_now = '1';
+    // Kirim koordinat user jika tersedia agar backend hitung jarak
+    if (userCoords) {
+      p.lat = userCoords.lat;
+      p.lng = userCoords.lng;
+    }
     api.get('/destinations', { params: p })
       .then(res => setResults(res.data))
       .catch(() => setResults([]))
       .finally(() => setLoading(false));
-  }, [q, filterCat, filterFree, filterOpenNow, sortBy]);
+  }, [q, filterCat, filterFree, filterOpenNow, sortBy, userCoords]);
 
   const resetFilters = () => {
     setFilterCat(''); setFilterFree(false); setFilterOpenNow(false); setSortBy('rating');
@@ -194,8 +210,8 @@ export default function Search() {
                     {favs.has(d.id) ? <FaHeart style={{ color: '#e74c3c' }} /> : <FaRegHeart />}
                   </button>
                   {d.distance && (
-                    <div style={{ fontSize: 11, color: 'var(--text4)', display: 'flex', alignItems: 'center', gap: 3 }}>
-                      <FaMapMarkerAlt size={9} /> {d.distance}
+                    <div style={{ fontSize: 11, color: 'var(--text4)', display: 'flex', alignItems: 'center', gap: 3, whiteSpace: 'nowrap' }}>
+                      <FaMapMarkerAlt size={9} style={{ color: 'var(--text4)' }} /> {d.distance}
                     </div>
                   )}
                 </div>
