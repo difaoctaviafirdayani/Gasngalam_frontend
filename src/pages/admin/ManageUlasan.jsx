@@ -158,7 +158,7 @@ export default function AdminUlasan() {
                   }
                 </td>
                 <td style={{ whiteSpace: 'nowrap' }}>
-                  {c.is_reported && (
+                  {!!c.is_reported && (
                     <button className="action-btn" onClick={() => tinjauLaporan(c.id)}
                       style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#fff3cd', color: '#856404', borderColor: '#ffc107' }}>
                       <FaCheck size={10} /> Tinjau

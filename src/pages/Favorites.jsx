@@ -37,11 +37,9 @@ export default function Favorites() {
             <p>Memuat...</p>
           </div>
         ) : favDests.length === 0 ? (
-          <div className="fav-empty">
-            <div className="fav-empty-icon">
-              <FaHeart size={36} style={{ color: '#ddd' }} />
-            </div>
-            <div className="fav-empty-title">Belum ada destinasi tersimpan</div>
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text3)' }}>
+            <FaHeart size={36} style={{ display: 'block', margin: '0 auto 14px', color: '#ddd' }} />
+            <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 6 }}>Belum ada destinasi tersimpan</div>
             <p style={{ fontSize: 13 }}>Mulai eksplor dan simpan wisata favoritmu!</p>
           </div>
         ) : favDests.map(d => (

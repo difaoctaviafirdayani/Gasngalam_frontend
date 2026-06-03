@@ -154,12 +154,12 @@ export default function Search() {
               </div>
             ) : (!q.trim() && !filterCat && !filterFree && !filterOpenNow) ? (
               <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text3)' }}>
-                <FaSearch size={36} style={{ marginBottom: 10, opacity: 0.4 }} />
+                <FaSearch size={36} style={{ display: 'block', margin: '0 auto 10px', opacity: 0.4 }} />
                 <p>Ketik kata kunci di search bar atau gunakan filter untuk mencari destinasi.</p>
               </div>
             ) : results.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text3)' }}>
-                <FaSearch size={36} style={{ marginBottom: 10, opacity: 0.4 }} />
+                <FaSearch size={36} style={{ display: 'block', margin: '0 auto 10px', opacity: 0.4 }} />
                 <p>Destinasi wisata tidak ditemukan.<br />Coba kata kunci atau filter lain.</p>
               </div>
             ) : results.map(d => (
@@ -189,15 +189,15 @@ export default function Search() {
                     </div>
                   )}
                 </div>
-                <div className="list-right">
-                  {d.distance && (
-                    <div style={{ fontSize: 11, color: 'var(--text4)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                      {d.distance} <FaMap size={10} />
-                    </div>
-                  )}
+                <div className="list-right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
                   <button className="fav-list-btn" onClick={e => { e.stopPropagation(); toggleFav(d.id); }}>
                     {favs.has(d.id) ? <FaHeart style={{ color: '#e74c3c' }} /> : <FaRegHeart />}
                   </button>
+                  {d.distance && (
+                    <div style={{ fontSize: 11, color: 'var(--text4)', display: 'flex', alignItems: 'center', gap: 3 }}>
+                      <FaMapMarkerAlt size={9} /> {d.distance}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
