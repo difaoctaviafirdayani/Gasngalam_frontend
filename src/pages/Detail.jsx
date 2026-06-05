@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Footer from '../components/Footer';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
-import { FaHeart, FaRegHeart, FaClipboardList } from 'react-icons/fa';
+import { FaHeart, FaRegHeart, FaClipboardList, FaSpinner } from 'react-icons/fa';
 import { MdRateReview } from 'react-icons/md';
 
 // Lazy-load Leaflet hanya jika dibutuhkan
@@ -238,8 +238,10 @@ ${d.photo_full_url ? `<img class="hero" src="${d.photo_full_url}" alt="${d.name}
   };
 
   if (loading) return (
-    <div><div className="content" style={{ textAlign: 'center', paddingTop: 60 }}>
-      <p>Memuat...</p>
+    <div><div className="content" style={{ textAlign: 'center', paddingTop: 80, color: 'var(--text3)' }}>
+      <FaSpinner style={{ fontSize: 40, animation: 'spin 1s linear infinite', marginBottom: 14, opacity: 0.5, display: 'block', margin: '0 auto 14px' }} />
+      <p style={{ margin: 0, fontWeight: 600, fontSize: 15 }}>Memuat...</p>
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div></div>
   );
 

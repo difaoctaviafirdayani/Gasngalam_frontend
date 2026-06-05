@@ -54,15 +54,17 @@ export default function Notifications() {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: 60, color: 'var(--text3)' }}>
-          <FaSpinner size={32} style={{ animation: 'spin 1s linear infinite' }} />
-          <p>Memuat notifikasi...</p>
+        /* Loading state: ikon di tengah atas teks */
+        <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text3)' }}>
+          <FaSpinner size={40} style={{ animation: 'spin 1s linear infinite', marginBottom: 14, opacity: 0.5 }} />
+          <p style={{ fontWeight: 600, margin: 0 }}>Memuat notifikasi...</p>
         </div>
       ) : notifs.length === 0 ? (
+        /* Empty state: ikon di tengah atas teks */
         <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text3)' }}>
-          <FaBellSlash size={44} style={{ marginBottom: 12, opacity: 0.4 }} />
-          <p style={{ fontWeight: 600 }}>Belum ada notifikasi</p>
-          <p style={{ fontSize: 13 }}>Kamu akan menerima notifikasi saat status klaim kamu berubah.</p>
+          <FaBellSlash size={52} style={{ marginBottom: 14, opacity: 0.35, display: 'block', margin: '0 auto 14px' }} />
+          <p style={{ fontWeight: 700, fontSize: 16, margin: '0 0 6px', color: 'var(--text2)' }}>Belum ada notifikasi</p>
+          <p style={{ fontSize: 13, margin: 0 }}>Kamu akan menerima notifikasi saat status klaim kamu berubah.</p>
         </div>
       ) : notifs.map(n => (
         <div
@@ -97,6 +99,8 @@ export default function Notifications() {
           </div>
         </div>
       ))}
+
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

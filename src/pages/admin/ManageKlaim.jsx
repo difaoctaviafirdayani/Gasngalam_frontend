@@ -11,6 +11,8 @@ export default function AdminKlaim() {
   const [klaim, setKlaim]           = useState([]);
   const [detailItem, setDetailItem] = useState(null);
   const [konfirmasi, setKonfirmasi] = useState(null);
+  // catatan alasan penolakan dari admin
+  const [adminNote, setAdminNote]   = useState('');
 
   const fetchKlaim = () => {
     api.get('/admin/claims')
@@ -20,12 +22,27 @@ export default function AdminKlaim() {
 
   useEffect(() => { fetchKlaim(); }, []);
 
+  const openKonfirmasi = (id, status) => {
+    setAdminNote(''); // reset catatan setiap kali buka popup
+    setKonfirmasi({ id, status });
+  };
+
   const doUpdate = async () => {
     if (!konfirmasi) return;
     const { id, status } = konfirmasi;
+
+    // Jika menolak, catatan wajib diisi
+    if (status === 'rejected' && !adminNote.trim()) {
+      showToast('Harap isi alasan penolakan untuk dikirim ke pengaju.');
+      return;
+    }
+
     setKonfirmasi(null);
     try {
-      await api.patch(`/admin/claims/${id}`, { status });
+      await api.patch(`/admin/claims/${id}`, {
+        status,
+        admin_notes: adminNote.trim() || null,
+      });
       showToast('Klaim berhasil ' + (status === 'approved' ? 'disetujui' : 'ditolak') + '!');
       fetchKlaim();
       setDetailItem(null);
@@ -103,8 +120,8 @@ export default function AdminKlaim() {
                   </button>
                   {k.status === 'pending' && (
                     <>
-                      <button className="action-btn green" onClick={() => setKonfirmasi({ id: k.id, status: 'approved' })}>Setujui</button>
-                      <button className="action-btn red"   onClick={() => setKonfirmasi({ id: k.id, status: 'rejected' })}>Tolak</button>
+                      <button className="action-btn green" onClick={() => openKonfirmasi(k.id, 'approved')}>Setujui</button>
+                      <button className="action-btn red"   onClick={() => openKonfirmasi(k.id, 'rejected')}>Tolak</button>
                     </>
                   )}
                   {k.status !== 'pending' && !detailItem && (
@@ -149,6 +166,21 @@ export default function AdminKlaim() {
               </div>
             </div>
 
+            {/* Catatan admin yang sudah ditulis sebelumnya */}
+            {detailItem.admin_notes && (
+              <div style={{ marginBottom: 14, fontSize: 13 }}>
+                <div style={{ color: 'var(--text3)', fontWeight: 600, marginBottom: 4 }}>Catatan Admin</div>
+                <div style={{
+                  color: detailItem.status === 'rejected' ? '#7b2a2a' : 'var(--text)',
+                  background: detailItem.status === 'rejected' ? '#fdf0f0' : 'var(--bg)',
+                  border: `1px solid ${detailItem.status === 'rejected' ? '#f5c6c6' : 'var(--border)'}`,
+                  padding: '10px 14px', borderRadius: 8, lineHeight: 1.6,
+                }}>
+                  {detailItem.admin_notes}
+                </div>
+              </div>
+            )}
+
             {/* File dokumen */}
             {detailItem.document_url && (
               <div style={{ marginBottom: 16, fontSize: 13 }}>
@@ -184,32 +216,71 @@ export default function AdminKlaim() {
             {/* Tombol aksi di dalam detail */}
             {detailItem.status === 'pending' && (
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
-                <button className="action-btn green" style={{ padding: '8px 18px' }} onClick={() => setKonfirmasi({ id: detailItem.id, status: 'approved' })}>Setujui</button>
-                <button className="action-btn red"   style={{ padding: '8px 18px' }} onClick={() => setKonfirmasi({ id: detailItem.id, status: 'rejected' })}>Tolak</button>
+                <button className="action-btn green" style={{ padding: '8px 18px' }} onClick={() => openKonfirmasi(detailItem.id, 'approved')}>Setujui</button>
+                <button className="action-btn red"   style={{ padding: '8px 18px' }} onClick={() => openKonfirmasi(detailItem.id, 'rejected')}>Tolak</button>
               </div>
             )}
           </div>
         </div>
       )}
 
-      {/* Popup Konfirmasi */}
+      {/* Popup Konfirmasi — dengan kolom catatan saat menolak */}
       {konfirmasi && (
         <div onClick={() => setKonfirmasi(null)} style={overlayStyle}>
-          <div onClick={e => e.stopPropagation()} style={{ ...cardStyle, maxWidth: 380, textAlign: 'center' }}>
+          <div onClick={e => e.stopPropagation()} style={{ ...cardStyle, maxWidth: 420 }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
               {konfirmasi.status === 'approved'
-                ? <FiCheckCircle size={40} color="#22c55e" />
-                : <FiXCircle size={40} color="#ef4444" />
+                ? <FiCheckCircle size={44} color="#22c55e" />
+                : <FiXCircle size={44} color="#ef4444" />
               }
             </div>
-            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 8 }}>
+
+            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6, textAlign: 'center' }}>
               {konfirmasi.status === 'approved' ? 'Setujui Klaim?' : 'Tolak Klaim?'}
             </div>
-            <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 22 }}>
+
+            <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 20, textAlign: 'center' }}>
               {konfirmasi.status === 'approved'
                 ? 'Klaim ini akan disetujui dan pengelola akan mendapat akses.'
-                : 'Klaim ini akan ditolak dan tidak bisa dikembalikan ke pending.'}
+                : 'Klaim ini akan ditolak. Berikan alasan agar pengaju mengerti.'}
             </div>
+
+            {/* Kolom catatan — selalu muncul, wajib diisi saat menolak */}
+            <div style={{ marginBottom: 20 }}>
+              <label style={{
+                display: 'block', fontSize: 12, fontWeight: 700,
+                color: konfirmasi.status === 'rejected' ? '#c0392b' : 'var(--text3)',
+                marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.4px',
+              }}>
+                {konfirmasi.status === 'rejected'
+                  ? 'Alasan Penolakan *'
+                  : 'Catatan (opsional)'}
+              </label>
+              <textarea
+                value={adminNote}
+                onChange={e => setAdminNote(e.target.value)}
+                placeholder={
+                  konfirmasi.status === 'rejected'
+                    ? 'Contoh: Dokumen yang dilampirkan tidak valid atau tidak sesuai dengan destinasi yang diklaim.'
+                    : 'Tambahkan catatan untuk pengaju (opsional)...'
+                }
+                rows={4}
+                style={{
+                  width: '100%', padding: '10px 12px',
+                  border: `1.5px solid ${konfirmasi.status === 'rejected' && !adminNote.trim() ? '#f5c6c6' : 'var(--border)'}`,
+                  borderRadius: 8, fontSize: 13, fontFamily: 'Inter, sans-serif',
+                  color: 'var(--text)', background: 'var(--white)',
+                  resize: 'vertical', boxSizing: 'border-box',
+                  outline: 'none', lineHeight: 1.55,
+                }}
+              />
+              {konfirmasi.status === 'rejected' && (
+                <div style={{ fontSize: 11, color: '#999', marginTop: 4 }}>
+                  Catatan ini akan dikirim ke pengaju dan ditampilkan di profil mereka.
+                </div>
+              )}
+            </div>
+
             <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
               <button
                 className="btn-secondary"

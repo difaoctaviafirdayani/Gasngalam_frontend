@@ -7,6 +7,7 @@ import {
   FaSave, FaUser, FaCrown, FaMapMarkerAlt,
   FaStar, FaHeart, FaClock, FaCheckCircle,
   FaTimesCircle, FaQuestionCircle, FaSpinner,
+  FaInfoCircle, FaExclamationCircle,
 } from 'react-icons/fa';
 import { MdSyncAlt } from 'react-icons/md';
 
@@ -60,12 +61,12 @@ export default function Profile() {
         .catch(() => {})
         .finally(() => setLoadingData(false));
     }
-    if (tab === 'claims' && !loadedTabs.has('claims')) {
+    // claims selalu re-fetch tiap kali tab dibuka — supaya status & catatan admin selalu terbaru
+    if (tab === 'claims') {
       setLoadingData(true);
       api.get('/user/claims')
         .then(res => {
           setClaims(Array.isArray(res.data) ? res.data : []);
-          setLoadedTabs(prev => new Set([...prev, 'claims']));
         })
         .catch(() => {})
         .finally(() => setLoadingData(false));
@@ -248,14 +249,17 @@ export default function Profile() {
       {tab === 'reviews' && (
         <div>
           {loadingData ? (
-            <div style={{ textAlign: 'center', padding: 40, color: 'var(--text3)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-              <FaSpinner size={24} style={{ animation: 'spin 1s linear infinite' }} />
-              <span>Memuat ulasan...</span>
+            /* Loading: ikon di tengah atas teks */
+            <div style={{ textAlign: 'center', padding: '48px 20px', color: 'var(--text3)' }}>
+              <FaSpinner size={40} style={{ animation: 'spin 1s linear infinite', marginBottom: 14, opacity: 0.5 }} />
+              <p style={{ margin: 0, fontWeight: 600 }}>Memuat ulasan...</p>
             </div>
           ) : reviews.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text3)' }}>
-              <FaCommentAlt size={36} style={{ marginBottom: 8, opacity: 0.4 }} />
-              <p>Kamu belum pernah memberikan ulasan.</p>
+            /* Empty: ikon di tengah atas teks */
+            <div style={{ textAlign: 'center', padding: '48px 20px', color: 'var(--text3)' }}>
+              <FaCommentAlt size={48} style={{ marginBottom: 14, opacity: 0.3, display: 'block', margin: '0 auto 14px' }} />
+              <p style={{ margin: '0 0 4px', fontWeight: 700, fontSize: 15, color: 'var(--text2)' }}>Belum ada ulasan</p>
+              <p style={{ margin: 0, fontSize: 13 }}>Kamu belum pernah memberikan ulasan.</p>
             </div>
           ) : reviews.map(r => (
             <div key={r.id} className="form-card" style={{ marginBottom: 12, cursor: 'pointer' }} onClick={() => navigate('/destination/' + r.destination_id)}>
@@ -283,14 +287,15 @@ export default function Profile() {
       {tab === 'favorites' && (
         <div>
           {loadingData ? (
-            <div style={{ textAlign: 'center', padding: 40, color: 'var(--text3)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-              <FaSpinner size={24} style={{ animation: 'spin 1s linear infinite' }} />
-              <span>Memuat favorit...</span>
+            <div style={{ textAlign: 'center', padding: '48px 20px', color: 'var(--text3)' }}>
+              <FaSpinner size={40} style={{ animation: 'spin 1s linear infinite', marginBottom: 14, opacity: 0.5 }} />
+              <p style={{ margin: 0, fontWeight: 600 }}>Memuat favorit...</p>
             </div>
           ) : favorites.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text3)' }}>
-              <FaHeart size={36} style={{ marginBottom: 8, opacity: 0.4 }} />
-              <p>Belum ada destinasi favorit.</p>
+            <div style={{ textAlign: 'center', padding: '48px 20px', color: 'var(--text3)' }}>
+              <FaHeart size={48} style={{ marginBottom: 14, opacity: 0.3, display: 'block', margin: '0 auto 14px' }} />
+              <p style={{ margin: '0 0 4px', fontWeight: 700, fontSize: 15, color: 'var(--text2)' }}>Belum ada favorit</p>
+              <p style={{ margin: 0, fontSize: 13 }}>Belum ada destinasi favorit.</p>
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(160px,1fr))', gap: 12 }}>
@@ -324,14 +329,16 @@ export default function Profile() {
       {tab === 'claims' && (
         <div>
           {loadingData ? (
-            <div style={{ textAlign: 'center', padding: 40, color: 'var(--text3)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-              <FaSpinner size={24} style={{ animation: 'spin 1s linear infinite' }} />
-              <span>Memuat data...</span>
+            <div style={{ textAlign: 'center', padding: '48px 20px', color: 'var(--text3)' }}>
+              <FaSpinner size={40} style={{ animation: 'spin 1s linear infinite', marginBottom: 14, opacity: 0.5 }} />
+              <p style={{ margin: 0, fontWeight: 600 }}>Memuat data...</p>
             </div>
           ) : claims.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text3)' }}>
-              <FaClipboardList size={36} style={{ marginBottom: 8, opacity: 0.4 }} />
-              <p>Kamu belum pernah mengajukan klaim bisnis.</p>
+            /* Empty: ikon di tengah atas teks */
+            <div style={{ textAlign: 'center', padding: '48px 20px', color: 'var(--text3)' }}>
+              <FaClipboardList size={48} style={{ marginBottom: 14, opacity: 0.3, display: 'block', margin: '0 auto 14px' }} />
+              <p style={{ margin: '0 0 4px', fontWeight: 700, fontSize: 15, color: 'var(--text2)' }}>Belum ada klaim</p>
+              <p style={{ margin: 0, fontSize: 13 }}>Kamu belum pernah mengajukan klaim bisnis.</p>
             </div>
           ) : claims.map(c => (
             <div key={c.id} className="form-card" style={{ marginBottom: 12 }}>
@@ -344,12 +351,45 @@ export default function Profile() {
                 </div>
                 {statusBadge(c.status)}
               </div>
-              {c.admin_notes && (
-                <div style={{ marginTop: 8, background: 'var(--bg)', borderRadius: 6, padding: '6px 10px', fontSize: 12, color: 'var(--text2)' }}>
-                  <strong>Catatan Admin:</strong> {c.admin_notes}
+
+              {/* Catatan alasan penolakan admin — ditampilkan menonjol jika status rejected */}
+              {c.status === 'rejected' && (
+                <div style={{
+                  marginTop: 10,
+                  background: '#fdf0f0',
+                  border: '1px solid #f5c6c6',
+                  borderRadius: 8,
+                  padding: '10px 12px',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, color: '#c0392b', fontWeight: 700, fontSize: 12 }}>
+                    <FaExclamationCircle size={13} /> Alasan Penolakan
+                  </div>
+                  <p style={{ margin: 0, fontSize: 13, color: '#7b2a2a', lineHeight: 1.55 }}>
+                    {c.admin_notes
+                      ? c.admin_notes
+                      : 'Admin tidak memberikan catatan spesifik. Silakan hubungi kami untuk informasi lebih lanjut.'}
+                  </p>
                 </div>
               )}
-              <div style={{ fontSize: 11, color: 'var(--text4)', marginTop: 6, display: 'flex', alignItems: 'center', gap: 4 }}>
+
+              {/* Catatan admin untuk status selain rejected (info biasa) */}
+              {c.admin_notes && c.status !== 'rejected' && (
+                <div style={{
+                  marginTop: 10,
+                  background: 'var(--bg)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 8,
+                  padding: '8px 12px',
+                  display: 'flex', alignItems: 'flex-start', gap: 7,
+                }}>
+                  <FaInfoCircle size={13} style={{ color: 'var(--brand)', marginTop: 1, flexShrink: 0 }} />
+                  <div style={{ fontSize: 12, color: 'var(--text2)' }}>
+                    <strong>Catatan Admin:</strong> {c.admin_notes}
+                  </div>
+                </div>
+              )}
+
+              <div style={{ fontSize: 11, color: 'var(--text4)', marginTop: 8, display: 'flex', alignItems: 'center', gap: 4 }}>
                 <FaClock size={10} /> {new Date(c.created_at).toLocaleDateString('id-ID')}
               </div>
             </div>
